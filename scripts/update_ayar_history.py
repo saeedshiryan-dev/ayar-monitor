@@ -36,7 +36,7 @@ def main():
     history = []
     valid_history = []
     no_trade_days = []
-    invalid_records = []
+    excluded_records = []
 
     for item in records:
         try:
@@ -64,7 +64,10 @@ def main():
             history.append(record)
 
             if record["volume"] == 0 or record["trade_count"] == 0:
-                no_trade_days.append(date)
+                no_trade_days.append({
+                    "date": date,
+                    "reason": "بدون معامله"
+                })
                 continue
 
             low = record["low"]
@@ -73,20 +76,31 @@ def main():
             close = record["close"]
             last = record["last"]
 
-            valid_ohlc = (
-                low > 0
-                and high >= low
-                and open_price > 0
-                and close > 0
-                and last > 0
-                and low <= open_price <= high
-                and low <= close <= high
-            )
+            reasons = []
 
-            if not valid_ohlc:
-                invalid_records.append({
+            if open_price <= 0:
+                reasons.append("قیمت بازگشایی نامعتبر")
+
+            if low <= 0 or high < low:
+                reasons.append("بازه کمینه و بیشینه نامعتبر")
+
+            if close <= 0 or last <= 0:
+                reasons.append("قیمت پایانی یا آخرین معامله نامعتبر")
+
+            if low > 0 and high >= low:
+                if close > 0 and not (low <= close <= high):
+                    reasons.append("قیمت پایانی خارج از بازه")
+
+                if last > 0 and not (low <= last <= high):
+                    reasons.append("آخرین معامله خارج از بازه")
+
+                if open_price > 0 and not (low <= open_price <= high):
+                    reasons.append("قیمت بازگشایی خارج از بازه")
+
+            if reasons:
+                excluded_records.append({
                     "date": date,
-                    "reason": "قیمت‌های OHLC نامعتبر"
+                    "reason": reasons
                 })
                 continue
 
@@ -105,12 +119,6 @@ def main():
     if len(dates) != len(set(dates)):
         raise ValueError("تاریخ‌های تکراری در داده وجود دارد")
 
-    if invalid_records:
-        raise ValueError(
-            f"{len(invalid_records)} رکورد معاملاتی دارای قیمت نامعتبر است: "
-            f"{invalid_records[:5]}"
-        )
-
     if len(valid_history) < 200:
         raise ValueError("تعداد روزهای معاملاتی معتبر برای تحلیل کافی نیست")
 
@@ -124,7 +132,7 @@ def main():
         "record_count": len(history),
         "valid_record_count": len(valid_history),
         "no_trade_day_count": len(no_trade_days),
-        "invalid_record_count": len(invalid_records),
+        "excluded_record_count": len(excluded_records),
         "first_date": history[0]["date"],
         "last_date": history[-1]["date"],
         "first_valid_date": valid_history[0]["date"],
@@ -133,7 +141,7 @@ def main():
         "valid_history": valid_history,
         "data_quality": {
             "no_trade_days": no_trade_days,
-            "invalid_records": invalid_records
+            "excluded_records": excluded_records
         }
     }
 
@@ -151,9 +159,12 @@ def main():
     print("Total records:", len(history))
     print("Valid trading days:", len(valid_history))
     print("No-trade days:", len(no_trade_days))
-    print("Invalid trading records:", len(invalid_records))
+    print("Excluded records:", len(excluded_records))
     print("First valid date:", valid_history[0]["date"])
     print("Last valid date:", valid_history[-1]["date"])
+
+    for item in excluded_records:
+        print("EXCLUDED:", item)
 
 
 if __name__ == "__main__":
