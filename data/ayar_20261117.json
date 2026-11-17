@@ -1,0 +1,111 @@
+{
+  "symbol": "عیار",
+  "insCode": "34144395039913458",
+  "date": "2026-11-17",
+  "timezone": "Asia/Tehran",
+  "source": "TSETMC",
+  "retrieved_at": "2026-11-17T22:00:10.396835+03:30",
+  "validated": true,
+  "validation": {
+    "trade_count": true,
+    "volume": true,
+    "minimum": true,
+    "maximum": true,
+    "last_trade": true
+  },
+  "daily": {
+    "last_trade": 662301,
+    "closing_price": 663847,
+    "yesterday_price": 661714,
+    "minimum": 662000,
+    "maximum": 666000,
+    "volume": 34796364,
+    "trade_count": 50526
+  },
+  "candles_1h": [
+    {
+      "start": "12:00",
+      "end": "13:00",
+      "open": 664747,
+      "high": 666000,
+      "low": 662500,
+      "close": 664560,
+      "volume": 12781811,
+      "trades": 16463
+    },
+    {
+      "start": "13:00",
+      "end": "14:00",
+      "open": 664560,
+      "high": 665398,
+      "low": 663000,
+      "close": 663400,
+      "volume": 5418966,
+      "trades": 6966
+    },
+    {
+      "start": "14:00",
+      "end": "15:00",
+      "open": 663400,
+      "high": 664300,
+      "low": 663000,
+      "close": 663900,
+      "volume": 3965947,
+      "trades": 5653
+    },
+    {
+      "start": "15:00",
+      "end": "16:00",
+      "open": 663900,
+      "high": 664699,
+      "low": 663450,
+      "close": 663892,
+      "volume": 2789919,
+      "trades": 4912
+    },
+    {
+      "start": "16:00",
+      "end": "17:00",
+      "open": 663890,
+      "high": 664503,
+      "low": 663356,
+      "close": 664000,
+      "volume": 3041750,
+      "trades": 4338
+    },
+    {
+      "start": "17:00",
+      "end": "18:00",
+      "open": 664000,
+      "high": 664050,
+      "low": 662000,
+      "close": 662301,
+      "volume": 6797969,
+      "trades": 12193
+    }
+  ],
+  "candles_4h": [
+    {
+      "start": "12:00",
+      "end": "16:00",
+      "open": 664747,
+      "high": 666000,
+      "low": 662500,
+      "close": 663892,
+      "volume": 24956643,
+      "trades": 33994,
+      "partial": false
+    },
+    {
+      "start": "16:00",
+      "end": "18:00",
+      "open": 663890,
+      "high": 664503,
+      "low": 662000,
+      "close": 662301,
+      "volume": 9839719,
+      "trades": 16531,
+      "partial": true
+    }
+  ]
+}
