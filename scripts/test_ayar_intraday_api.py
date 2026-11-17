@@ -74,3 +74,5 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# Trigger validation run after enabling push workflow trigger.
