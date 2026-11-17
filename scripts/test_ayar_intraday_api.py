@@ -41,10 +41,33 @@ def main():
                     continue
                 active.append(trade)
 
-            volume = sum(int(t["qTitTran"]) for t in active)
-            prices = [int(t["pTran"]) for t in active if int(t["pTran"]) > 0]
+            # TSETMC may repeat an identical trade row under the same nTran.
+            # Keep one row per transaction number, but reject conflicting duplicates.
+            unique_by_number = {}
+            for trade in active:
+                number = str(trade.get("nTran"))
+                signature = (
+                    int(trade.get("hEven", 0) or 0),
+                    int(trade.get("pTran", 0) or 0),
+                    int(trade.get("qTitTran", 0) or 0),
+                )
+                if number in unique_by_number:
+                    previous = unique_by_number[number]
+                    previous_signature = (
+                        int(previous.get("hEven", 0) or 0),
+                        int(previous.get("pTran", 0) or 0),
+                        int(previous.get("qTitTran", 0) or 0),
+                    )
+                    if signature != previous_signature:
+                        raise ValueError(f"Conflicting duplicate nTran={number}")
+                else:
+                    unique_by_number[number] = trade
+
+            normalized = list(unique_by_number.values())
+            volume = sum(int(t["qTitTran"]) for t in normalized)
+            prices = [int(t["pTran"]) for t in normalized if int(t["pTran"]) > 0]
             checks = {
-                "trade_count": len(active) == int(daily["trade_count"]),
+                "trade_count": len(normalized) == int(daily["trade_count"]),
                 "volume": volume == int(daily["volume"]),
                 "minimum": bool(prices) and min(prices) == int(daily["low"]),
                 "maximum": bool(prices) and max(prices) == int(daily["high"]),
@@ -54,6 +77,7 @@ def main():
                 "http_status": response.status_code,
                 "raw_records": len(trades),
                 "active_records": len(active),
+                "unique_transactions": len(normalized),
                 "daily_trade_count": int(daily["trade_count"]),
                 "daily_volume": int(daily["volume"]),
                 "intraday_volume": volume,
