@@ -86,11 +86,12 @@ def main():
     if daily is None:
         raise ValueError("آمار روزانه امروز در دسترس نیست")
 
-    # پاک‌سازی و مرتب‌سازی معاملات
-    valid = []
+    # پاک‌سازی معاملات؛ بعضی شماره‌های معامله در پاسخ TSETMC تکرار می‌شوند.
+    # هر شماره معامله فقط یک بار شمرده می‌شود؛ رکوردهای متعارض باعث توقف می‌شوند.
+    unique_trades = {}
 
     for item in trades:
-        if item.get("canceled", 0) != 0:
+        if int(item.get("canceled", 0) or 0) != 0:
             continue
 
         try:
@@ -107,12 +108,19 @@ def main():
         if price <= 0 or volume <= 0:
             raise ValueError("قیمت یا حجم معامله نامعتبر است")
 
-        valid.append({
+        normalized = {
             "nTran": n,
             "hEven": h,
             "price": price,
             "volume": volume,
-        })
+        }
+
+        previous = unique_trades.get(n)
+        if previous is not None and previous != normalized:
+            raise ValueError(f"شماره معامله تکراری با اطلاعات متفاوت: {n}")
+        unique_trades[n] = normalized
+
+    valid = list(unique_trades.values())
 
     if not valid:
         print("WARNING: هیچ معامله معتبر باقی نماند.")
