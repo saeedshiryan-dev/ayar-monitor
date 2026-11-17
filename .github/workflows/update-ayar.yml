@@ -32,8 +32,14 @@ jobs:
       - name: Fetch Ayar historical data
         run: python scripts/update_ayar_history.py
 
-      - name: Calculate Ayar indicators
+      - name: Fetch and validate rolling intraday history
+        run: python scripts/update_ayar_intraday_history.py
+
+      - name: Calculate daily indicators
         run: python calculate_ayar_indicators.py
+
+      - name: Calculate 1h and 4h indicators
+        run: python calculate_ayar_intraday_indicators.py
 
       - name: Save updated data
         run: |
