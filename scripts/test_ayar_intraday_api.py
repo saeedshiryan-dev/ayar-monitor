@@ -62,6 +62,30 @@ def main():
             }, ensure_ascii=False))
             if not all(checks.values()):
                 failures += 1
+                from collections import Counter
+
+                canceled_counts = Counter(str(t.get("canceled", "<missing>")) for t in trades)
+                candidate_ids = [
+                    key for key in trades[0].keys()
+                    if any(token in key.lower() for token in ("id", "no", "num", "tran"))
+                ] if trades else []
+                duplicate_report = {}
+                for key in candidate_ids:
+                    values = [str(t.get(key)) for t in trades if t.get(key) is not None]
+                    duplicate_report[key] = {
+                        "present": len(values),
+                        "unique": len(set(values)),
+                        "duplicates": len(values) - len(set(values)),
+                    }
+                print(json.dumps({
+                    "diagnostics": {
+                        "canceled_distribution": dict(canceled_counts),
+                        "trade_fields": sorted(trades[0].keys()) if trades else [],
+                        "candidate_identifier_stats": duplicate_report,
+                        "sample_first_trade": trades[0] if trades else None,
+                        "sample_last_trade": trades[-1] if trades else None,
+                    }
+                }, ensure_ascii=False))
         except Exception as exc:
             failures += 1
             print(json.dumps({"date": date, "error": str(exc)}, ensure_ascii=False))
