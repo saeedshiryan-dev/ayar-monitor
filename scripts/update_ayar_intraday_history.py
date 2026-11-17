@@ -150,24 +150,48 @@ def main():
             if cached.get("validated") is True:
                 reused += 1
                 continue
-        try:
-            download_day(daily)
-            fetched += 1
-            time.sleep(0.15)
-        except Exception as error:
-            failed.append({"date": date, "error": str(error)})
-            raise RuntimeError(f"دریافت/اعتبارسنجی داده در {date} شکست خورد: {error}") from error
+        last_error = None
+        for attempt in range(3):
+            try:
+                download_day(daily)
+                fetched += 1
+                last_error = None
+                break
+            except Exception as error:
+                last_error = str(error)
+                time.sleep(1.0 * (attempt + 1))
+        if last_error is not None:
+            # Keep the day explicitly excluded: never build candles from
+            # data that failed reconciliation against official daily stats.
+            failed.append({"date": date, "error": last_error})
+        time.sleep(0.15)
 
-    print(json.dumps({
-        "status": "success",
+    valid_days = 0
+    valid_1h = 0
+    valid_4h = 0
+    for path in CACHE_DIR.glob("ayar_*.json"):
+        day = json.loads(path.read_text(encoding="utf-8"))
+        if day.get("validated") is True:
+            valid_days += 1
+            valid_1h += len(day.get("candles_1h", []))
+            valid_4h += len(day.get("candles_4h", []))
+
+    summary = {
+        "status": "success" if valid_1h >= 200 and valid_4h >= 200 else "insufficient_validated_history",
         "lookback_trading_days": len(selected),
         "downloaded_or_refreshed": fetched,
         "cached_reused": reused,
-        "failed": failed,
+        "failed_days_excluded": failed,
+        "validated_days_available": valid_days,
+        "validated_1h_candles": valid_1h,
+        "validated_4h_candles": valid_4h,
         "first_date": selected[0]["date"],
         "last_date": selected[-1]["date"],
         "cache_dir": str(CACHE_DIR),
-    }, ensure_ascii=False))
+    }
+    print(json.dumps(summary, ensure_ascii=False))
+    if summary["status"] != "success":
+        raise RuntimeError("تعداد کندل‌های معتبر برای محاسبه هر دو تایم‌فریم کافی نیست")
 
 
 if __name__ == "__main__":
