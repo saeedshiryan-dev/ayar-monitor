@@ -1,0 +1,74 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101827"><title>داشبورد پایش عیار</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<style>
+:root{color-scheme:dark;--bg:#0b1220;--panel:#131e30;--line:#26354b;--muted:#9aabc1;--txt:#edf3fb;--green:#2bc48a;--red:#f07178;--gold:#e6b85c;--blue:#69a9ff}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font-family:Tahoma,Arial,sans-serif;line-height:1.7}
+main{max-width:1100px;margin:auto;padding:18px 14px 44px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px}.brand{font-size:21px;font-weight:800}.sub,.muted{color:var(--muted);font-size:12px}
+button,select{background:#1c2a40;color:var(--txt);border:1px solid #344761;border-radius:10px;padding:10px 14px;font:inherit}
+button.active{background:#d5a84e;color:#172033;border-color:#d5a84e;font-weight:bold}
+.toolbar{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.card,.panel{background:var(--panel);border:1px solid var(--line);border-radius:15px;padding:14px;min-width:0}.k{font-size:12px;color:var(--muted)}.v{font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;direction:ltr;text-align:right}.unit{font-size:11px;color:var(--muted)}
+.status{margin:12px 0;padding:10px 13px;border-radius:11px;background:#1b2a3c;border:1px solid var(--line);font-size:13px}.good{color:var(--green)}.bad{color:var(--red)}.warn{color:var(--gold)}
+.panel{margin-top:12px}.panelhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}.panel h2{font-size:16px;margin:0}.chartbox{height:300px;position:relative}.smallchart{height:180px;position:relative}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.metric{background:#0f1929;border-radius:10px;padding:9px}.metric b{display:block;font-size:16px;direction:ltr;text-align:right}.metric span{font-size:11px;color:var(--muted)}
+.signal{font-size:14px;padding:12px;border-radius:10px;background:#0f1929}.foot{margin-top:16px;color:var(--muted);font-size:11px}
+@media(max-width:650px){main{padding:13px 10px 30px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.v{font-size:20px}.chartbox{height:250px}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.brand{font-size:18px}}
+</style></head>
+<body><main>
+<header class="top"><div><div class="brand">📈 داشبورد پایش صندوق عیار</div><div class="sub">داده معاملات تأییدشده TSETMC · منطقه زمانی تهران</div></div><div class="toolbar"><button id="refresh">به‌روزرسانی داده</button><a href="https://github.com/saeedshiryan-dev/ayar-monitor/actions" target="_blank" rel="noopener" style="color:#9fc7ff;font-size:12px">وضعیت دریافت داده‌ها ↗</a></div></header>
+<div class="toolbar" style="margin-bottom:12px"><button class="tf active" data-tf="1h">۱ ساعته</button><button class="tf" data-tf="4h">۴ ساعته</button><span id="updated" class="muted">در حال دریافت…</span></div>
+<div id="notice" class="status">در حال دریافت اطلاعات معتبر…</div>
+<section class="grid">
+<div class="card"><div class="k">آخرین قیمت پایانی کندل</div><div id="price" class="v">—</div><div class="unit">ریال / واحد گزارش‌شده منبع</div></div>
+<div class="card"><div class="k">RSI (14)</div><div id="rsi" class="v">—</div><div id="rsiHint" class="unit">—</div></div>
+<div class="card"><div class="k">حجم نسبت به میانگین ۲۰</div><div id="vr" class="v">—</div><div class="unit">Volume Ratio</div></div>
+<div class="card"><div class="k">تعداد کندل‌های معتبر</div><div id="count" class="v">—</div><div class="unit">در تایم‌فریم انتخابی</div></div>
+</section>
+<section class="panel"><div class="panelhead"><h2>نمودار قیمت و میانگین‌های متحرک</h2><span class="muted">نمایش ۱۲۰ کندل آخر</span></div><div class="chartbox"><canvas id="priceChart"></canvas></div></section>
+<section class="panel"><div class="panelhead"><h2>وضعیت اندیکاتورها</h2><span class="muted">مقادیر آخرین کندل</span></div><div class="metrics" id="metrics"></div></section>
+<section class="panel"><div class="panelhead"><h2>RSI و MACD</h2><span class="muted">تاریخچه کندل‌ها</span></div><div class="smallchart"><canvas id="rsiChart"></canvas></div><div class="smallchart" style="margin-top:14px"><canvas id="macdChart"></canvas></div></section>
+<section class="panel"><h2>جمع‌بندی تکنیکال خودکار</h2><div id="signal" class="signal" style="margin-top:10px">—</div><div class="foot">این جمع‌بندی صرفاً قواعد ساده اندیکاتوری است و توصیه قطعی خرید یا فروش نیست. کندل ناقص ۴ساعته با برچسب مشخص می‌شود. هیچ داده‌ای در این صفحه ساخته یا تخمین زده نمی‌شود.</div></section>
+<div class="foot">منبع: فایل داده تولیدشده در مخزن ayar-monitor · <a style="color:#9fc7ff" href="https://github.com/saeedshiryan-dev/ayar-monitor/blob/main/data/ayar_intraday_indicators.json" target="_blank" rel="noopener">مشاهده داده خام</a></div>
+</main>
+<script>
+const DATA_URL='https://raw.githubusercontent.com/saeedshiryan-dev/ayar-monitor/main/data/ayar_intraday_indicators.json';
+let data=null,tf='1h',charts={};
+const fmt=n=>n==null||!Number.isFinite(Number(n))?'—':Number(n).toLocaleString('en-US',{maximumFractionDigits:2});
+const faDate=s=>s? s.slice(6,8)+'/'+s.slice(4,6)+'/'+s.slice(0,4):'—';
+function destroyCharts(){Object.values(charts).forEach(c=>c&&c.destroy());charts={};}
+function draw(){
+ if(!data)return;const t=data.timeframes[tf],last=t.latest,ind=t.indicators,c=t.candles.slice(-120),start=t.candles.length-c.length;
+ document.getElementById('price').textContent=fmt(last.close);
+ document.getElementById('rsi').textContent=fmt(last.RSI14);
+ document.getElementById('rsiHint').textContent=last.RSI14<30?'اشباع فروش (نیازمند تأیید)':last.RSI14>70?'اشباع خرید (نیازمند تأیید)':'محدوده میانی';
+ document.getElementById('vr').textContent=fmt(last.Volume_Ratio)+'×';
+ document.getElementById('count').textContent=fmt(t.candle_count);
+ const partial=!!last.partial;
+ document.getElementById('notice').innerHTML='آخرین کندل: <b>'+last.datetime+'</b> · '+(partial?'<span class="warn">کندل ناقص / بازه کوتاه‌تر</span>':'<span class="good">کندل کامل</span>')+' · '+data.validation.cached_days+' روز معاملاتی اعتبارسنجی‌شده';
+ document.getElementById('updated').textContent='آخرین محاسبه: '+data.calculated_at.replace('T',' ').slice(0,19);
+ const keys=['EMA20','EMA50','EMA200','MACD','MACD_signal','MACD_histogram','Volume_SMA20','Volume_Ratio'];
+ const labels=['EMA 20','EMA 50','EMA 200','MACD','سیگنال MACD','هیستوگرام MACD','میانگین حجم ۲۰','نسبت حجم'];
+ document.getElementById('metrics').innerHTML=keys.map((k,i)=>'<div class="metric"><span>'+labels[i]+'</span><b>'+fmt(last[k])+'</b></div>').join('');
+ const closes=c.map(x=>x.close),labs=c.map(x=>faDate(x.date)+' '+x.start);
+ const slice=a=>a.slice(start,start+c.length);
+ const common={responsive:true,maintainAspectRatio:false,animation:false,interaction:{mode:'index',intersect:false},plugins:{legend:{labels:{color:'#cbd7e7',font:{family:'Tahoma'}}}},scales:{x:{ticks:{color:'#91a2b8',maxTicksLimit:7,maxRotation:0},grid:{color:'#26354b'}},y:{ticks:{color:'#91a2b8'},grid:{color:'#26354b'}}}};
+ destroyCharts();
+ charts.price=new Chart(document.getElementById('priceChart'),{type:'line',data:{labels:labs,datasets:[{label:'قیمت پایانی',data:closes,borderColor:'#e6b85c',borderWidth:2,pointRadius:0,tension:0},{label:'EMA20',data:slice(ind.EMA20),borderColor:'#69a9ff',borderWidth:1.5,pointRadius:0,spanGaps:true},{label:'EMA50',data:slice(ind.EMA50),borderColor:'#2bc48a',borderWidth:1.5,pointRadius:0,spanGaps:true},{label:'EMA200',data:slice(ind.EMA200),borderColor:'#d18cff',borderWidth:1.5,pointRadius:0,spanGaps:true}]},options:{...common,scales:{...common.scales,y:{...common.scales.y,ticks:{...common.scales.y.ticks,callback:v=>Number(v).toLocaleString('en-US')}}}}});
+ charts.rsi=new Chart(document.getElementById('rsiChart'),{type:'line',data:{labels:labs,datasets:[{label:'RSI 14',data:slice(ind.RSI14),borderColor:'#69a9ff',pointRadius:0,borderWidth:1.6,spanGaps:true}]},options:{...common,scales:{...common.scales,y:{min:0,max:100,ticks:{color:'#91a2b8'},grid:{color:'#26354b'}}}}});
+ charts.macd=new Chart(document.getElementById('macdChart'),{type:'line',data:{labels:labs,datasets:[{label:'MACD',data:slice(ind.MACD),borderColor:'#e6b85c',pointRadius:0,borderWidth:1.5,spanGaps:true},{label:'Signal',data:slice(ind.MACD_signal),borderColor:'#69a9ff',pointRadius:0,borderWidth:1.5,spanGaps:true},{label:'Histogram',data:slice(ind.MACD_histogram),borderColor:'#2bc48a',pointRadius:0,borderWidth:1,spanGaps:true}]},options:common});
+ const above=last.close>last.EMA20&&last.close>last.EMA50,below=last.close<last.EMA20&&last.close<last.EMA50;
+ const macdUp=last.MACD>last.MACD_signal;
+ let msg=above?'قیمت بالاتر از EMA20 و EMA50 است؛ ساختار کوتاه‌مدت مثبت‌تر است.':below?'قیمت پایین‌تر از EMA20 و EMA50 است؛ فشار روند کوتاه‌مدت منفی است.':'قیمت بین/نزدیک میانگین‌های EMA20 و EMA50 قرار دارد؛ روند کوتاه‌مدت شفاف نیست.';
+ msg+=' MACD '+(macdUp?'بالاتر از خط سیگنال است.':'پایین‌تر از خط سیگنال است.');
+ msg+=' RSI برابر '+fmt(last.RSI14)+' است؛ '+(last.RSI14<30?'در محدوده اشباع فروش':last.RSI14>70?'در محدوده اشباع خرید':'خارج از نواحی کلاسیک اشباع')+'.';
+ msg+=' نسبت حجم '+fmt(last.Volume_Ratio)+' برابر میانگین است.';
+ document.getElementById('signal').textContent=msg;
+}
+async function load(){const n=document.getElementById('notice');n.textContent='در حال دریافت داده از مخزن…';try{const res=await fetch(DATA_URL+'?v='+Date.now(),{cache:'no-store'});if(!res.ok)throw Error('HTTP '+res.status);const j=await res.json();if(!j.timeframes||!j.timeframes['1h']?.candles?.length||!j.timeframes['4h']?.candles?.length)throw Error('ساختار فایل داده معتبر نیست');data=j;draw();}catch(e){n.innerHTML='<span class="bad">دریافت داده ناموفق بود: '+e.message+'</span> · کمی بعد دوباره تلاش کن.';}}
+document.querySelectorAll('.tf').forEach(b=>b.addEventListener('click',()=>{tf=b.dataset.tf;document.querySelectorAll('.tf').forEach(x=>x.classList.toggle('active',x===b));draw();}));
+document.getElementById('refresh').addEventListener('click',load);load();
+</script></body></html>
