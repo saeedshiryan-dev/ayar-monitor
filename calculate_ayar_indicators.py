@@ -67,11 +67,24 @@ def rsi(values, period=14):
     return result
 
 
+def sma(values, period):
+    result = [None] * (period - 1)
+
+    for i in range(period - 1, len(values)):
+        result.append(
+            sum(values[i - period + 1:i + 1]) / period
+        )
+
+    return result
+
+
 def main():
     if not INPUT_FILE.exists():
         raise FileNotFoundError("فایل تاریخچه عیار پیدا نشد")
 
-    source = json.loads(INPUT_FILE.read_text(encoding="utf-8"))
+    source = json.loads(
+        INPUT_FILE.read_text(encoding="utf-8")
+    )
 
     history = source.get("valid_history")
 
@@ -80,19 +93,31 @@ def main():
 
     dates = []
     closes = []
+    volumes = []
 
     for item in history:
         date = str(item["date"])
         close = int(item["close"])
+        volume = int(item["volume"])
 
         if close <= 0:
-            raise ValueError(f"قیمت پایانی نامعتبر در تاریخ {date}")
+            raise ValueError(
+                f"قیمت پایانی نامعتبر در تاریخ {date}"
+            )
+
+        if volume < 0:
+            raise ValueError(
+                f"حجم معاملات نامعتبر در تاریخ {date}"
+            )
 
         if dates and date <= dates[-1]:
-            raise ValueError("ترتیب تاریخچه نامعتبر یا دارای تاریخ تکراری است")
+            raise ValueError(
+                "ترتیب تاریخچه نامعتبر یا دارای تاریخ تکراری است"
+            )
 
         dates.append(date)
         closes.append(close)
+        volumes.append(volume)
 
     ema20 = ema(closes, 20)
     ema50 = ema(closes, 50)
@@ -104,20 +129,24 @@ def main():
     ema26 = ema(closes, 26)
 
     macd_line = []
-    signal_input = []
 
     for fast, slow in zip(ema12, ema26):
         if fast is None or slow is None:
             macd_line.append(None)
         else:
-            value = fast - slow
-            macd_line.append(value)
-            signal_input.append(value)
+            macd_line.append(fast - slow)
 
-    signal_values = ema(signal_input, 9)
+    valid_macd = [
+        value for value in macd_line
+        if value is not None
+    ]
 
-    macd_signal = [None] * (len(closes) - len(signal_values))
-    macd_signal.extend(signal_values)
+    signal_values = ema(valid_macd, 9)
+
+    macd_signal = (
+        [None] * (len(macd_line) - len(signal_values))
+        + signal_values
+    )
 
     macd_histogram = []
 
@@ -126,6 +155,16 @@ def main():
             macd_histogram.append(None)
         else:
             macd_histogram.append(line - signal)
+
+    volume_sma20 = sma(volumes, 20)
+
+    volume_ratio = []
+
+    for volume, average in zip(volumes, volume_sma20):
+        if average is None or average == 0:
+            volume_ratio.append(None)
+        else:
+            volume_ratio.append(volume / average)
 
     latest = {
         "date": dates[-1],
@@ -137,6 +176,10 @@ def main():
         "MACD": round(macd_line[-1], 2),
         "MACD_signal": round(macd_signal[-1], 2),
         "MACD_histogram": round(macd_histogram[-1], 2),
+        "Volume": volumes[-1],
+        "Volume_SMA20": round(volume_sma20[-1], 2),
+        "Volume_Ratio": round(volume_ratio[-1], 3)
+        if volume_ratio[-1] is not None else None
     }
 
     output = {
@@ -151,16 +194,43 @@ def main():
         "last_date": dates[-1],
         "latest": latest,
         "indicators": {
-            "EMA20": [None if x is None else round(x, 2) for x in ema20],
-            "EMA50": [None if x is None else round(x, 2) for x in ema50],
-            "EMA200": [None if x is None else round(x, 2) for x in ema200],
-            "RSI14": [None if x is None else round(x, 2) for x in rsi14],
-            "MACD": [None if x is None else round(x, 2) for x in macd_line],
-            "MACD_signal": [None if x is None else round(x, 2) for x in macd_signal],
+            "EMA20": [
+                None if x is None else round(x, 2)
+                for x in ema20
+            ],
+            "EMA50": [
+                None if x is None else round(x, 2)
+                for x in ema50
+            ],
+            "EMA200": [
+                None if x is None else round(x, 2)
+                for x in ema200
+            ],
+            "RSI14": [
+                None if x is None else round(x, 2)
+                for x in rsi14
+            ],
+            "MACD": [
+                None if x is None else round(x, 2)
+                for x in macd_line
+            ],
+            "MACD_signal": [
+                None if x is None else round(x, 2)
+                for x in macd_signal
+            ],
             "MACD_histogram": [
                 None if x is None else round(x, 2)
                 for x in macd_histogram
             ],
+            "Volume": volumes,
+            "Volume_SMA20": [
+                None if x is None else round(x, 2)
+                for x in volume_sma20
+            ],
+            "Volume_Ratio": [
+                None if x is None else round(x, 3)
+                for x in volume_ratio
+            ]
         }
     }
 
@@ -181,4 +251,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-      
+            
