@@ -62,26 +62,40 @@ def main():
             }, ensure_ascii=False))
             if not all(checks.values()):
                 failures += 1
-                from collections import Counter
+                from collections import Counter, defaultdict
 
                 canceled_counts = Counter(str(t.get("canceled", "<missing>")) for t in trades)
-                candidate_ids = [
-                    key for key in trades[0].keys()
-                    if any(token in key.lower() for token in ("id", "no", "num", "tran"))
-                ] if trades else []
-                duplicate_report = {}
-                for key in candidate_ids:
-                    values = [str(t.get(key)) for t in trades if t.get(key) is not None]
-                    duplicate_report[key] = {
-                        "present": len(values),
-                        "unique": len(set(values)),
-                        "duplicates": len(values) - len(set(values)),
+                grouped = defaultdict(list)
+                for trade in active:
+                    grouped[str(trade.get("nTran"))].append(trade)
+
+                duplicate_groups = [
+                    {
+                        "nTran": key,
+                        "records": len(rows),
+                        "quantities": [int(row.get("qTitTran", 0) or 0) for row in rows],
+                        "prices": [int(row.get("pTran", 0) or 0) for row in rows],
+                        "times": [int(row.get("hEven", 0) or 0) for row in rows],
                     }
+                    for key, rows in grouped.items() if len(rows) > 1
+                ]
+                unique_first = {}
+                unique_last = {}
+                for key, rows in grouped.items():
+                    unique_first[key] = rows[0]
+                    unique_last[key] = rows[-1]
+
                 print(json.dumps({
                     "diagnostics": {
                         "canceled_distribution": dict(canceled_counts),
+                        "active_distinct_nTran": len(grouped),
+                        "active_duplicate_group_count": len(duplicate_groups),
+                        "active_duplicate_extra_rows": sum(x["records"] - 1 for x in duplicate_groups),
+                        "active_volume_raw": sum(int(t["qTitTran"]) for t in active),
+                        "active_volume_unique_first": sum(int(t["qTitTran"]) for t in unique_first.values()),
+                        "active_volume_unique_last": sum(int(t["qTitTran"]) for t in unique_last.values()),
+                        "duplicate_groups_sample": duplicate_groups[:30],
                         "trade_fields": sorted(trades[0].keys()) if trades else [],
-                        "candidate_identifier_stats": duplicate_report,
                         "sample_first_trade": trades[0] if trades else None,
                         "sample_last_trade": trades[-1] if trades else None,
                     }
