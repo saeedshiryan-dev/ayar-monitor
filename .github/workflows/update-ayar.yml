@@ -1,4 +1,3 @@
-
 name: Update Ayar Data
 
 on:
@@ -33,6 +32,9 @@ jobs:
       - name: Fetch Ayar historical data
         run: python scripts/update_ayar_history.py
 
+      - name: Calculate Ayar indicators
+        run: python calculate_ayar_indicators.py
+
       - name: Save updated data
         run: |
           git config user.name "github-actions[bot]"
@@ -40,4 +42,3 @@ jobs:
           git add data/
           git diff --cached --quiet || git commit -m "Update Ayar market data"
           git push
-          
