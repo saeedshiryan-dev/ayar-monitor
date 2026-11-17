@@ -4,7 +4,6 @@ name: Update Ayar Data
 on:
   workflow_dispatch:
   schedule:
-    # Every day at 18:30 Tehran time (15:00 UTC)
     - cron: "0 15 * * *"
 
 permissions:
@@ -28,8 +27,11 @@ jobs:
           python -m pip install --upgrade pip
           python -m pip install requests
 
-      - name: Fetch and process Ayar data
+      - name: Fetch daily Ayar data
         run: python scripts/update_ayar.py
+
+      - name: Fetch Ayar historical data
+        run: python scripts/update_ayar_history.py
 
       - name: Save updated data
         run: |
@@ -38,3 +40,4 @@ jobs:
           git add data/
           git diff --cached --quiet || git commit -m "Update Ayar market data"
           git push
+          
