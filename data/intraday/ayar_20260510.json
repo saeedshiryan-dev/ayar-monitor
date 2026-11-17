@@ -1,0 +1,126 @@
+{
+  "symbol": "عیار",
+  "insCode": "34144395039913458",
+  "date": "20260510",
+  "timezone": "Asia/Tehran",
+  "source": "TSETMC",
+  "retrieved_at": "2026-11-18T02:55:35.274777+03:30",
+  "validated": true,
+  "validation": {
+    "trade_count": true,
+    "volume": true,
+    "minimum": true,
+    "maximum": true
+  },
+  "raw_records": 85161,
+  "unique_transactions": 85161,
+  "daily_volume": 91408049,
+  "candles_1h": [
+    {
+      "date": "20260510",
+      "start": "12:00",
+      "end": "13:00",
+      "timestamp": "20260510T12:00:00+03:30",
+      "open": 558000,
+      "high": 559900,
+      "low": 555000,
+      "close": 555666,
+      "volume": 30751407,
+      "trades": 30132,
+      "partial": false
+    },
+    {
+      "date": "20260510",
+      "start": "13:00",
+      "end": "14:00",
+      "timestamp": "20260510T13:00:00+03:30",
+      "open": 555666,
+      "high": 557627,
+      "low": 553487,
+      "close": 555361,
+      "volume": 23296555,
+      "trades": 19926,
+      "partial": false
+    },
+    {
+      "date": "20260510",
+      "start": "14:00",
+      "end": "15:00",
+      "timestamp": "20260510T14:00:00+03:30",
+      "open": 555361,
+      "high": 556500,
+      "low": 554902,
+      "close": 556010,
+      "volume": 12870024,
+      "trades": 10872,
+      "partial": false
+    },
+    {
+      "date": "20260510",
+      "start": "15:00",
+      "end": "16:00",
+      "timestamp": "20260510T15:00:00+03:30",
+      "open": 556010,
+      "high": 557501,
+      "low": 555321,
+      "close": 555550,
+      "volume": 12190205,
+      "trades": 12300,
+      "partial": false
+    },
+    {
+      "date": "20260510",
+      "start": "16:00",
+      "end": "17:00",
+      "timestamp": "20260510T16:00:00+03:30",
+      "open": 555990,
+      "high": 557000,
+      "low": 555003,
+      "close": 556999,
+      "volume": 12298804,
+      "trades": 11929,
+      "partial": false
+    },
+    {
+      "date": "20260510",
+      "start": "17:00",
+      "end": "18:00",
+      "timestamp": "20260510T17:00:00+03:30",
+      "open": 556999,
+      "high": 556999,
+      "low": 556998,
+      "close": 556998,
+      "volume": 1054,
+      "trades": 2,
+      "partial": false
+    }
+  ],
+  "candles_4h": [
+    {
+      "date": "20260510",
+      "start": "12:00",
+      "end": "16:00",
+      "timestamp": "20260510T12:00:00+03:30",
+      "open": 558000,
+      "high": 559900,
+      "low": 553487,
+      "close": 555550,
+      "volume": 79108191,
+      "trades": 73230,
+      "partial": false
+    },
+    {
+      "date": "20260510",
+      "start": "16:00",
+      "end": "18:00",
+      "timestamp": "20260510T16:00:00+03:30",
+      "open": 555990,
+      "high": 557000,
+      "low": 555003,
+      "close": 556998,
+      "volume": 12299858,
+      "trades": 11931,
+      "partial": true
+    }
+  ]
+}
