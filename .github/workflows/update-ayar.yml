@@ -2,6 +2,11 @@ name: Update Ayar Data
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - 'scripts/update_ayar_intraday_history.py'
+      - 'calculate_ayar_intraday_indicators.py'
+      - '.github/workflows/update-ayar.yml'
   schedule:
     - cron: "0 15 * * *"
 
