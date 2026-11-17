@@ -2,6 +2,10 @@ name: Test Ayar Historical Intraday API
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - 'scripts/test_ayar_intraday_api.py'
+      - '.github/workflows/test-ayar-intraday.yml'
 
 permissions:
   contents: read
