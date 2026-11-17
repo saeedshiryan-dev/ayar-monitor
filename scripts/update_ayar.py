@@ -1,8 +1,7 @@
 
 import json
-import time
 from pathlib import Path
-from datetime import datetime, date, time as dt_time
+from datetime import datetime
 from zoneinfo import ZoneInfo
 
 import requests
@@ -58,8 +57,11 @@ def main():
         ["tradeHistory"]
     )
 
+    # اگر هنوز معامله‌ای ثبت نشده، فقط این اسکریپت پایان می‌یابد
     if not trades:
-        raise ValueError("معامله‌ای دریافت نشد؛ داده ذخیره نشد")
+        print("WARNING: امروز هنوز معامله‌ای ثبت نشده است.")
+        print("Intraday data skipped; historical data will continue.")
+        return
 
     # دریافت آمار روزانه برای کنترل صحت
     daily_url = (
@@ -102,6 +104,9 @@ def main():
         if not (120000 <= h <= 180000):
             raise ValueError("ساعت معامله خارج از بازه مورد انتظار است")
 
+        if price <= 0 or volume <= 0:
+            raise ValueError("قیمت یا حجم معامله نامعتبر است")
+
         valid.append({
             "nTran": n,
             "hEven": h,
@@ -110,7 +115,9 @@ def main():
         })
 
     if not valid:
-        raise ValueError("هیچ معامله معتبر باقی نماند")
+        print("WARNING: هیچ معامله معتبر باقی نماند.")
+        print("Intraday data skipped; historical data will continue.")
+        return
 
     valid.sort(key=lambda x: (x["hEven"], x["nTran"]))
 
@@ -160,7 +167,11 @@ def main():
             if start <= x["hEven"] < end
         ]
 
-        candle = make_candle(rows, f"{hour:02d}:00", f"{hour+1:02d}:00")
+        candle = make_candle(
+            rows,
+            f"{hour:02d}:00",
+            f"{hour+1:02d}:00"
+        )
 
         if candle:
             candles_1h.append(candle)
@@ -215,6 +226,7 @@ def main():
         json.dumps(result, ensure_ascii=False, indent=2),
         encoding="utf-8"
     )
+
     temporary.replace(output)
 
     print("SUCCESS:", output)
@@ -225,4 +237,4 @@ def main():
 
 if __name__ == "__main__":
     main()
-  
+    
