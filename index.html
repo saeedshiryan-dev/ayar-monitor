@@ -59,11 +59,11 @@ button.active{background:#d5a84e;color:#172033;border-color:#d5a84e;font-weight:
 </div>
 <div id="codalPortfolioInfo" class="foot">گزارش رسمی کدال در حال دریافت است؛ در صورت اختلال کدال، منبع جایگزین با برچسب جدا نمایش داده می‌شود.</div>
 <div id="codalPortfolioTables" style="overflow-x:auto;margin-top:10px"></div></section>
-<section class="panel" id="macroPanel"><div class="panelhead"><h2>داده‌های بنیادی بازار جهانی و ارز</h2><span id="macroStatus" class="muted">دریافت از الان‌چند</span></div>
+<section class="panel" id="macroPanel"><div class="panelhead"><h2>داده‌های بنیادی بازار جهانی و ارز</h2><span id="macroStatus" class="muted">دریافت از نر‌خ‌آرا</span></div>
 <div class="metrics">
 <div class="metric"><span>دلار آزاد (فروش، تومان)</span><b id="macroUsd">—</b><small id="macroUsdTime" class="muted">—</small></div>
 <div class="metric"><span>اونس جهانی طلا (دلار)</span><b id="macroXau">—</b><small id="macroXauTime" class="muted">—</small></div>
-</div><div id="macroQuality" class="foot">منبع: API الان‌چند · زمان هر مظنه جداگانه کنترل می‌شود؛ داده بیش از ۲۰ دقیقه تازه تلقی نمی‌شود.</div></section>
+</div><div id="macroQuality" class="foot">منبع: API عمومی نر‌خ‌آرا · زمان هر مظنه جداگانه کنترل می‌شود؛ داده بیش از ۲۰ دقیقه تازه تلقی نمی‌شود.</div></section>
 <section class="panel"><div class="panelhead"><h2>نمودار قیمت و میانگین‌های متحرک</h2><span class="muted">نمایش ۱۲۰ کندل آخر</span></div><div class="chartbox"><canvas id="priceChart"></canvas></div></section>
 <section class="panel"><div class="panelhead"><h2>وضعیت اندیکاتورها</h2><span class="muted">مقادیر آخرین کندل</span></div><div class="metrics" id="metrics"></div></section>
 <section class="panel"><div class="panelhead"><h2>RSI و MACD</h2><span class="muted">تاریخچه کندل‌ها</span></div><div class="smallchart"><canvas id="rsiChart"></canvas></div><div class="smallchart" style="margin-top:14px"><canvas id="macdChart"></canvas></div></section>
@@ -241,11 +241,11 @@ function drawMacro(j){
  const status=document.getElementById('macroStatus');
  const quality=document.getElementById('macroQuality');
  if(j.status==='ok'){
-  status.textContent='دریافت موفق · الان‌چند';
+  status.textContent='دریافت موفق · نر‌خ‌آرا';
   quality.textContent='دریافت: '+String(j.retrieved_at||'—').replace('T',' ').slice(0,19)+' · دلار و اونس هر دو دارای زمان منبع معتبر و کمتر از ۲۰ دقیقه هستند. واحد دلار: تومان؛ اونس: دلار/اونس تروا.';
  }else if(j.status==='missing_token'){
-  status.textContent='توکن API تنظیم نشده';
-  quality.textContent=j.error_fa||'برای فعال‌سازی، Secret با نام ALANCHAND_TOKEN در GitHub لازم است.';
+  status.textContent='منبع عمومی بدون نیاز به توکن';
+  quality.textContent=j.error_fa||'قیمت‌ها از API عمومی و بدون کلید دریافت می‌شوند.';
  }else{
   status.textContent='خطا در دریافت؛ آخرین داده معتبر در صورت وجود نمایش داده شده';
   quality.textContent=(j.error_fa||'خطای نامشخص')+' · زمان تلاش: '+String(j.retrieved_at||'—').replace('T',' ').slice(0,19);
