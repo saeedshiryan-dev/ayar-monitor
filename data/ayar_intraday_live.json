@@ -1,13 +1,58 @@
 {
   "symbol": "عیار",
-  "source": "TSETMC TradeHistory",
+  "source": "TSETMC GetTrade",
   "date": "20261118",
   "timezone": "Asia/Tehran",
-  "retrieved_at": "2026-11-18T13:38:34.021217+03:30",
-  "status": "not_available",
-  "trade_count": 0,
-  "candles_1h": [],
-  "candles_4h": [],
-  "note_fa": "کندل‌های موقت از معاملات ثبت‌شده امروز؛ آمار نهایی روز نیست.",
-  "reason": "هنوز معامله قابل استفاده‌ای از API معاملات امروز دریافت نشد"
+  "retrieved_at": "2026-11-18T13:44:19.627070+03:30",
+  "status": "ok",
+  "trade_count": 32389,
+  "candles_1h": [
+    {
+      "date": "20261118",
+      "start": "12:00",
+      "end": "13:00",
+      "timestamp": "20261118T12:00:00+03:30",
+      "open": 651900,
+      "high": 656400,
+      "low": 651550,
+      "close": 655555,
+      "volume": 20891383,
+      "trades": 26720,
+      "partial": false,
+      "provisional": true
+    },
+    {
+      "date": "20261118",
+      "start": "13:00",
+      "end": "14:00",
+      "timestamp": "20261118T13:00:00+03:30",
+      "open": 655556,
+      "high": 657700,
+      "low": 655556,
+      "close": 656609,
+      "volume": 4746706,
+      "trades": 5669,
+      "partial": true,
+      "provisional": true
+    }
+  ],
+  "candles_4h": [
+    {
+      "date": "20261118",
+      "start": "12:00",
+      "end": "16:00",
+      "timestamp": "20261118T12:00:00+03:30",
+      "open": 651900,
+      "high": 657700,
+      "low": 651550,
+      "close": 656609,
+      "volume": 25638089,
+      "trades": 32389,
+      "partial": true,
+      "provisional": true
+    }
+  ],
+  "note_fa": "کندل‌های موقت از endpoint معاملات زنده TSETMC؛ آمار نهایی روز نیست.",
+  "first_trade_time": "120002",
+  "last_trade_time": "134249"
 }
