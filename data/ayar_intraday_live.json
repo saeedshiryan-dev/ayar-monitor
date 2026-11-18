@@ -3,9 +3,9 @@
   "source": "TSETMC GetTrade",
   "date": "20261118",
   "timezone": "Asia/Tehran",
-  "retrieved_at": "2026-11-18T14:07:06.853778+03:30",
+  "retrieved_at": "2026-11-18T14:33:47.154785+03:30",
   "status": "ok",
-  "trade_count": 35731,
+  "trade_count": 39813,
   "candles_1h": [
     {
       "date": "20261118",
@@ -42,10 +42,10 @@
       "timestamp": "20261118T14:00:00+03:30",
       "open": 655738,
       "high": 655750,
-      "low": 655625,
-      "close": 655659,
-      "volume": 265519,
-      "trades": 569,
+      "low": 654600,
+      "close": 654600,
+      "volume": 2018332,
+      "trades": 4651,
       "partial": true,
       "provisional": true
     }
@@ -59,22 +59,22 @@
       "open": 651900,
       "high": 657700,
       "low": 651550,
-      "close": 655659,
-      "volume": 27505836,
-      "trades": 35731,
+      "close": 654600,
+      "volume": 29258649,
+      "trades": 39813,
       "partial": true,
       "provisional": true
     }
   ],
   "note_fa": "کندل‌های موقت از endpoint معاملات زنده TSETMC؛ آمار نهایی روز نیست.",
-  "quote_trade_count": 35719,
-  "quote_retrieved_at": "2026-11-18T14:06:33.277244+03:30",
-  "quote_age_seconds": 33.58,
-  "observed_trade_count_delta": -12,
+  "quote_trade_count": 40246,
+  "quote_retrieved_at": "2026-11-18T14:33:29.177337+03:30",
+  "quote_age_seconds": 17.98,
+  "observed_trade_count_delta": 433,
   "trade_count_difference": null,
   "count_reconciled": null,
   "count_reconciliation_status": "not_comparable_time_gap",
   "quality_note_fa": "snapshot قیمت و معاملات هم‌زمان نیستند؛ اختلاف مشاهده‌شده معیار قطعی کسری معاملات نیست.",
   "first_trade_time": "120002",
-  "last_trade_time": "140703"
+  "last_trade_time": "143126"
 }
