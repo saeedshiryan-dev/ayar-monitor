@@ -20,9 +20,15 @@ def parse_utc(value):
 
 
 def fetch_rate(symbol, expected_unit):
-    response = requests.get(f"{BASE}/{symbol}.json",
-                            headers={"Accept": "application/json"},
-                            timeout=TIMEOUT)
+    response = requests.get(
+        f"{BASE}/{symbol}.json",
+        headers={
+            "Accept": "application/json",
+            "Cache-Control": "no-cache",
+            "Pragma": "no-cache",
+        },
+        timeout=TIMEOUT,
+    )
     response.raise_for_status()
     payload = response.json()
     item = payload.get("item") if isinstance(payload, dict) else None
