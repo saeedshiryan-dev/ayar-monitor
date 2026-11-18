@@ -195,10 +195,19 @@ def main():
         if day.get("validated") is True:
             valid_days += 1
             valid_1h += len(day.get("candles_1h", []))
-            valid_4h += len(day.get("candles_4h", []))
+            valid_4h += sum(
+                1 for candle in day.get("candles_4h", [])
+                if int(candle.get("end", "00:00")[:2]) -
+                   int(candle.get("start", "00:00")[:2]) == 4
+            )
 
     summary = {
-        "status": "success" if valid_1h >= 200 and valid_4h >= 200 else "insufficient_validated_history",
+        "status": (
+            "success" if valid_1h >= 200 and valid_4h >= 200 else
+            "partial_4h_history" if valid_1h >= 200 and valid_4h < 200 else
+            "insufficient_validated_history"
+        ),
+        "four_hour_ema200_available": valid_4h >= 200,
         "lookback_trading_days": len(selected),
         "max_workers": MAX_WORKERS,
         "request_timeout_seconds": REQUEST_TIMEOUT[1],
@@ -214,8 +223,13 @@ def main():
         "cache_dir": str(CACHE_DIR),
     }
     print(json.dumps(summary, ensure_ascii=False))
-    if summary["status"] != "success":
-        raise RuntimeError("تعداد کندل‌های معتبر برای محاسبه هر دو تایم‌فریم کافی نیست")
+    if summary["status"] == "partial_4h_history":
+        print(
+            "WARNING: 1h indicators are ready, but 4h EMA200 is unavailable; "
+            "only complete, validated four-hour candles are counted."
+        )
+    elif summary["status"] != "success":
+        raise RuntimeError("تعداد کندل‌های معتبر یک‌ساعته برای محاسبه اندیکاتورها کافی نیست")
 
 
 if __name__ == "__main__":
