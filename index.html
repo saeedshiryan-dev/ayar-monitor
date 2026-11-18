@@ -67,7 +67,8 @@ button.active{background:#d5a84e;color:#172033;border-color:#d5a84e;font-weight:
 </main>
 <script>
 const DATA_URL='https://raw.githubusercontent.com/saeedshiryan-dev/ayar-monitor/main/data/ayar_intraday_indicators.json';
-const LIVE_URL='https://raw.githubusercontent.com/saeedshiryan-dev/ayar-monitor/main/data/ayar_live.json';\nconst FUND_HISTORY_URL='https://raw.githubusercontent.com/saeedshiryan-dev/ayar-monitor/main/data/ayar_fund_history.json';
+const LIVE_URL='https://raw.githubusercontent.com/saeedshiryan-dev/ayar-monitor/main/data/ayar_live.json';
+const FUND_HISTORY_URL='https://raw.githubusercontent.com/saeedshiryan-dev/ayar-monitor/main/data/ayar_fund_history.json';
 const CODAL_PORTFOLIO_URL='https://raw.githubusercontent.com/saeedshiryan-dev/ayar-monitor/main/data/ayar_codal_portfolio.json';
 let data=null,tf='1h',charts={};
 const fmt=n=>n==null||!Number.isFinite(Number(n))?'—':Number(n).toLocaleString('en-US',{maximumFractionDigits:2});
