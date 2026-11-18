@@ -13,7 +13,7 @@ DATA_DIR = Path("data")
 CACHE_DIR = DATA_DIR / "intraday"
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
 HISTORY_FILE = DATA_DIR / "ayar_daily_history.json"
-LOOKBACK_DAYS = 130
+LOOKBACK_DAYS = 230
 REFRESH_LATEST_DAYS = 3
 
 session = requests.Session()
