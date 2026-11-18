@@ -7,6 +7,7 @@ on:
       - 'scripts/ayar_market_status.py'
       - 'scripts/fetch_ayar_live.py'
       - 'scripts/update_ayar_intraday_live.py'
+      - 'calculate_ayar_intraday_indicators.py'
       - '.github/workflows/ayar-live.yml'
   schedule:
     # GitHub scheduled workflows use UTC; run every 5 minutes.
