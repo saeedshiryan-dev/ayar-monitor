@@ -2,17 +2,16 @@ name: Dashboard Browser Smoke Test
 
 on:
   workflow_dispatch:
-  push:
-    paths:
-      - 'index.html'
-      - 'scripts/smoke_dashboard.mjs'
-      - '.github/workflows/dashboard-smoke.yml'
+  workflow_run:
+    workflows: ["Deploy Ayar Dashboard"]
+    types: [completed]
 
 permissions:
   contents: read
 
 jobs:
   browser-smoke:
+    if: ${{ github.event_name == 'workflow_dispatch' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
