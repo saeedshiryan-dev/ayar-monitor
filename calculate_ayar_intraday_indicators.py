@@ -151,6 +151,10 @@ def main():
             "date": live.get("date"),
             "retrieved_at": live.get("retrieved_at"),
             "trade_count": live.get("trade_count", 0),
+            "quote_trade_count": live.get("quote_trade_count"),
+            "trade_count_difference": live.get("trade_count_difference"),
+            "count_reconciled": live.get("count_reconciled"),
+            "quality_note_fa": live.get("quality_note_fa"),
             "error": live.get("error"),
         }
         if live.get("status") == "ok":
