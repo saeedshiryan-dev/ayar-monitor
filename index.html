@@ -93,7 +93,7 @@ function drawNav(j){
  const p=n.premium_discount_percent;
  document.getElementById('navPremium').textContent=p==null?'—':(Number(p)>0?'+':'')+Number(p).toFixed(2)+'٪';
  const navDate=String(n.published_date||'');
- const navDateLabel=new RegExp('^[0-9]{8}?navDate.slice(0,4)+'/'+navDate.slice(4,6)+'/'+navDate.slice(6,8):(navDate||'—');
+ const navDateLabel=navDate.length===8?navDate.slice(0,4)+'/'+navDate.slice(4,6)+'/'+navDate.slice(6,8):(navDate||'—');
  document.getElementById('navPublishedAt').textContent=navDateLabel+(n.published_time?' '+n.published_time:'');
  document.getElementById('navSource').textContent=n.source||'منبع نامشخص';
  const status=n.status==='ok'?'NAV رسمی دریافت شد':n.status==='fallback_quote_snapshot'?'NAV از snapshot قیمت TSETMC':'NAV در دسترس نیست';
