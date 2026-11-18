@@ -60,7 +60,7 @@ def main():
     for p in files:
         d=json.loads(p.read_text(encoding="utf-8"))
         if d.get("validated") is not True: raise ValueError(f"Unvalidated cache: {p.name}")
-        h1.extend(d.get("candles_1h",[])); h4.extend(d.get("candles_4h",[]))
+        h1.extend(d.get("candles_1h",[])); h4.extend([x for x in d.get("candles_4h",[]) if int(x.get("end","00:00")[:2])-int(x.get("start","00:00")[:2])==4])
     live_path=DATA/"ayar_intraday_live.json"; meta={"status":"not_available"}
     if live_path.exists():
         live=json.loads(live_path.read_text(encoding="utf-8"))
@@ -72,7 +72,7 @@ def main():
                 d={(x["date"],x["start"]):x for x in base}
                 for x in new: d[(x["date"],x["start"])]=x
                 return sorted(d.values(),key=lambda x:(x["date"],x["start"]))
-            h1=merge(h1,live.get("candles_1h",[])); h4=merge(h4,live.get("candles_4h",[]))
+            h1=merge(h1,live.get("candles_1h",[])); h4=merge(h4,[x for x in live.get("candles_4h",[]) if int(x.get("end","00:00")[:2])-int(x.get("start","00:00")[:2])==4])
     result={"symbol":"عیار","source":"TSETMC","timezone":"Asia/Tehran",
       "calculated_at":datetime.now(TEHRAN).isoformat(),
       "method":"EMA seeded by SMA; RSI Wilder; MACD 12-26-9; volume SMA20",
