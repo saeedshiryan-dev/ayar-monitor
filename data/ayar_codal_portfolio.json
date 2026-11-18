@@ -2,9 +2,9 @@
   "status": "partial_secondary",
   "symbol": "عیار",
   "source": "Bourseeye secondary snapshot; Codal official endpoints unreachable from GitHub Actions",
-  "official_source_error": "Codal search failed: ConnectTimeout: HTTPSConnectionPool(host='search.codal.ir', port=443): Max retries exceeded with url: /api/search/v2/q?PageNumber=1&PageSize=50&Symbol=%D8%B9%DB%8C%D8%A7%D8%B1&Category=3&LetterType=-1&Length=-1&Audited=true&NotAudited=true&Consolidatable=true&NotConsolidatable=true&Childs=false&Mains=true&Publisher=false&TracingNo=-1&search=true (Caused by ConnectTimeoutError(<HTTPSConnection(host='search.codal.ir', port=443) at 0x7a8d6c7b0f20>, 'Connection to search.codal.ir timed out. (connect timeout=8)')); Excel download failed: ConnectionError: HTTPSConnectionPool(host='excel.codal.ir', port=443): Max retries exceeded with url: /service/Excel/GetAll/ufnsMFNlCf60hOOObOOO9l4CQQQaQQQQ8w%3D%3D/0 (Caused by NameResolutionError(\"HTTPSConnection(host='excel.codal.ir', port=443): Failed to resolve 'excel.codal.ir' ([Errno -3] Temporary failure in name resolution)\"))",
+  "official_source_error": "Codal search failed: ConnectTimeout: HTTPSConnectionPool(host='search.codal.ir', port=443): Max retries exceeded with url: /api/search/v2/q?PageNumber=1&PageSize=50&Symbol=%D8%B9%DB%8C%D8%A7%D8%B1&Category=3&LetterType=-1&Length=-1&Audited=true&NotAudited=true&Consolidatable=true&NotConsolidatable=true&Childs=false&Mains=true&Publisher=false&TracingNo=-1&search=true (Caused by ConnectTimeoutError(<HTTPSConnection(host='search.codal.ir', port=443) at 0x7a60e4855280>, 'Connection to search.codal.ir timed out. (connect timeout=8)')); Excel download failed: ConnectionError: HTTPSConnectionPool(host='excel.codal.ir', port=443): Max retries exceeded with url: /service/Excel/GetAll/ufnsMFNlCf60hOOObOOO9l4CQQQaQQQQ8w%3D%3D/0 (Caused by NameResolutionError(\"HTTPSConnection(host='excel.codal.ir', port=443): Failed to resolve 'excel.codal.ir' ([Errno -3] Temporary failure in name resolution)\"))",
   "secondary_page_error": null,
-  "retrieved_at": "2026-11-18T12:55:12.943110+00:00",
+  "retrieved_at": "2026-11-18T16:27:33.383251+00:00",
   "secondary_snapshot": {
     "page_url": "https://bourseeye.com/funds/1521/صندوق-طلای-عیار-مفید",
     "page_updated_date": null,
