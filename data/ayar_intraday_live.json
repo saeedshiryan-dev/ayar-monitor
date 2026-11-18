@@ -3,9 +3,9 @@
   "source": "TSETMC GetTrade",
   "date": "20261118",
   "timezone": "Asia/Tehran",
-  "retrieved_at": "2026-11-18T13:44:19.627070+03:30",
+  "retrieved_at": "2026-11-18T13:46:18.371766+03:30",
   "status": "ok",
-  "trade_count": 32389,
+  "trade_count": 32967,
   "candles_1h": [
     {
       "date": "20261118",
@@ -29,9 +29,9 @@
       "open": 655556,
       "high": 657700,
       "low": 655556,
-      "close": 656609,
-      "volume": 4746706,
-      "trades": 5669,
+      "close": 656596,
+      "volume": 5202514,
+      "trades": 6247,
       "partial": true,
       "provisional": true
     }
@@ -45,14 +45,18 @@
       "open": 651900,
       "high": 657700,
       "low": 651550,
-      "close": 656609,
-      "volume": 25638089,
-      "trades": 32389,
+      "close": 656596,
+      "volume": 26093897,
+      "trades": 32967,
       "partial": true,
       "provisional": true
     }
   ],
   "note_fa": "کندل‌های موقت از endpoint معاملات زنده TSETMC؛ آمار نهایی روز نیست.",
+  "quote_trade_count": 33002,
+  "trade_count_difference": 35,
+  "count_reconciled": false,
+  "quality_note_fa": "تعداد معاملات endpoint با آمار رسمی برابر نیست؛ کندل‌ها موقت‌اند و باید با احتیاط تفسیر شوند.",
   "first_trade_time": "120002",
-  "last_trade_time": "134249"
+  "last_trade_time": "134549"
 }
