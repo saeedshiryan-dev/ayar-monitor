@@ -195,7 +195,9 @@ def main():
         },
         "history_count": len(history),
         "first_date_in_source_order": dated[0],
-        "last_date_in_source_order": dated[-1],
+        "last_date_in_source_order": latest_record["date"],
+        "current_etf_nav_status": "ok" if current_etf and any(row.get("record_source") == "TSETMC Fund/GetETFByInsCode" for row in history) else "unavailable",
+        "current_etf_nav_error": etf_error,
         "history": history,
         "latest_record": latest_record,
         "fund_snapshot": {
