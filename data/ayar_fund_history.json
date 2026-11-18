@@ -2,7 +2,7 @@
   "symbol": "عیار",
   "insCode": "34144395039913458",
   "source": "TSETMC Fund/GetFunds/5 + Fund/GetFundInDetail",
-  "retrieved_at": "2026-11-18T14:42:16.017238+03:30",
+  "retrieved_at": "2026-11-18T14:44:05.124692+03:30",
   "timezone": "Asia/Tehran",
   "status": "ok",
   "fund": {
@@ -67,9 +67,11 @@
       "mfNameEng": ""
     }
   },
-  "history_count": 2314,
+  "history_count": 2315,
   "first_date_in_source_order": "2018-11-13T00:00:00",
-  "last_date_in_source_order": "2026-10-26T00:00:00",
+  "last_date_in_source_order": "2026-11-18T14:44:08",
+  "current_etf_nav_status": "ok",
+  "current_etf_nav_error": null,
   "history": [
     {
       "date": "2018-11-13T00:00:00",
@@ -32466,23 +32468,42 @@
         "navStat": 718590.0,
         "navRed": 718590.0
       }
+    },
+    {
+      "date": "2026-11-18T14:44:08",
+      "redemption_nav": 660816,
+      "subscription_nav": 663819,
+      "statistical_nav": null,
+      "net_asset_value": null,
+      "source_record": {
+        "insCode": "34144395039913458",
+        "deven": 20261118,
+        "hEven": 144408,
+        "pRedTran": 660816.0,
+        "pSubTran": 663819.0,
+        "iClose": 0
+      },
+      "record_source": "TSETMC Fund/GetETFByInsCode"
     }
   ],
   "latest_record": {
-    "date": "2026-10-26T00:00:00",
-    "redemption_nav": 718590,
-    "subscription_nav": 721857,
-    "statistical_nav": 718590,
-    "net_asset_value": 3857306354408509.5,
+    "date": "2026-11-18T14:44:08",
+    "redemption_nav": 660816,
+    "subscription_nav": 663819,
+    "statistical_nav": null,
+    "net_asset_value": null,
     "source_record": {
-      "recordDate": "2026-10-26T00:00:00",
-      "navSub": 721857.0,
-      "netAsset": 3857306354408509.5,
-      "navStat": 718590.0,
-      "navRed": 718590.0
-    }
+      "insCode": "34144395039913458",
+      "deven": 20261118,
+      "hEven": 144408,
+      "pRedTran": 660816.0,
+      "pSubTran": 663819.0,
+      "iClose": 0
+    },
+    "record_source": "TSETMC Fund/GetETFByInsCode"
   },
   "fund_snapshot": {
+    "as_of_date": "2026-10-26T00:00:00",
     "net_asset_value": 3857306354408509.5,
     "units": 5367878896,
     "fund_size": 0,
