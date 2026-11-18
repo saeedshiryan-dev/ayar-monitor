@@ -90,6 +90,63 @@ def main():
     except Exception as exc:
         trade_error = str(exc)[:300]
 
+    # دریافت دفتر سفارش زنده (۵ سطح خرید و فروش) از BestLimits رسمی TSETMC
+    orderbook = {
+        "status": "unavailable",
+        "source": "TSETMC BestLimits",
+        "retrieved_at": now.isoformat(),
+        "unit": "ریال",
+        "buy": [],
+        "sell": [],
+        "buy_total_volume": 0,
+        "sell_total_volume": 0,
+        "buy_total_orders": 0,
+        "sell_total_orders": 0,
+        "note_fa": None,
+        "error": None,
+    }
+    try:
+        book_payload = get_json(f"{BASE}/BestLimits/{INS_CODE}")
+        raw_levels = unwrap(book_payload, "bestLimits")
+        if not isinstance(raw_levels, list):
+            raise ValueError("فیلد bestLimits در پاسخ TSETMC وجود ندارد یا آرایه نیست")
+
+        # ترتیب سطوح مطابق number (۱ بهترین سطح)؛ فیلدهای رسمی Dem=خرید و Of=فروش
+        valid_levels = [r for r in raw_levels if isinstance(r, dict)]
+        valid_levels.sort(key=lambda r: as_int(r.get("number")) or 999)
+        for level in valid_levels[:5]:
+            buy = {
+                "level": as_int(level.get("number")),
+                "price": as_int(level.get("pMeDem") or level.get("pd")),
+                "volume": as_int(level.get("qTitMeDem") or level.get("qd")),
+                "orders": as_int(level.get("zOrdMeDem") or level.get("zd")),
+            }
+            sell = {
+                "level": as_int(level.get("number")),
+                "price": as_int(level.get("pMeOf") or level.get("po")),
+                "volume": as_int(level.get("qTitMeOf") or level.get("qo")),
+                "orders": as_int(level.get("zOrdMeOf") or level.get("zo")),
+            }
+            if buy["price"] > 0 or buy["volume"] > 0 or buy["orders"] > 0:
+                orderbook["buy"].append(buy)
+            if sell["price"] > 0 or sell["volume"] > 0 or sell["orders"] > 0:
+                orderbook["sell"].append(sell)
+
+        orderbook["buy_total_volume"] = sum(x["volume"] for x in orderbook["buy"])
+        orderbook["sell_total_volume"] = sum(x["volume"] for x in orderbook["sell"])
+        orderbook["buy_total_orders"] = sum(x["orders"] for x in orderbook["buy"])
+        orderbook["sell_total_orders"] = sum(x["orders"] for x in orderbook["sell"])
+        if orderbook["buy"] or orderbook["sell"]:
+            orderbook["status"] = "ok"
+            orderbook["note_fa"] = "۵ سطح برتر دفتر سفارش از TSETMC دریافت شد؛ قیمت‌ها ریال هستند."
+        else:
+            orderbook["status"] = "empty"
+            orderbook["note_fa"] = "TSETMC پاسخ داد اما در حال حاضر ردیف سفارش فعالی برنگرداند."
+    except Exception as exc:
+        orderbook["status"] = "error"
+        orderbook["error"] = str(exc)[:300]
+        orderbook["note_fa"] = "دریافت دفتر سفارش ناموفق بود؛ اطلاعات قیمت مستقل از دفتر سفارش ذخیره شد."
+
     # انتخاب آخرین جلسه از تاریخچه روزانه و مقایسه با snapshot
     last_session = daily_rows[-1] if daily_rows else None
     if quote_is_today:
@@ -123,6 +180,7 @@ def main():
         "tsetmc_quote_trade_count": quote_trades,
         "trade_endpoint_rows": len(trade_rows),
         "trade_endpoint_error": trade_error,
+        "orderbook": orderbook,
         "price_note_fa": (
             "قیمت لحظه‌ای از snapshot قیمت TSETMC دریافت شد."
             if live_price is not None else
