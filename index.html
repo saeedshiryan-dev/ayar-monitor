@@ -132,7 +132,7 @@ function drawFundHistory(j){
  });
  if(!history.length){const tr=document.createElement('tr');const td=document.createElement('td');td.colSpan=5;td.textContent='تاریخچه معتبر موجود نیست';tr.appendChild(td);body.appendChild(tr);}
  const fund=j.fund||{};
- document.getElementById('fundHistoryNote').textContent=(fund.name||'صندوق عیار')+' · شناسه ثبت: '+(fund.registration_number||'—')+' · منبع: '+(j.source||'TSETMC')+' · مقادیر netAsset و ترکیب پرتفوی عین فیلدهای منبع‌اند؛ واحد/تعریف آن‌ها باید جداگانه تأیید شود.';
+ document.getElementById('fundHistoryNote').textContent=(fund.name||'صندوق عیار')+' · شناسه ثبت: '+(fund.registration_number||'—')+' · تاریخ آخرین گزارش دارایی: '+((j.fund_snapshot||{}).as_of_date||'—')+' · NAV لحظه‌ای ETF: '+(j.current_etf_nav_status==='ok'?'دریافت شد':'در دسترس نیست')+' · مقادیر netAsset و ترکیب پرتفوی عین فیلدهای منبع‌اند؛ واحد/تعریف آن‌ها باید جداگانه تأیید شود.';
  const snap=j.fund_snapshot||{};
  const portfolio=[['سهام',snap.portfolio_stock],['اوراق بدهی',snap.portfolio_bond],['سپرده',snap.portfolio_deposit],['وجه نقد',snap.portfolio_cash],['سایر',snap.portfolio_other],['پنج دارایی برتر',snap.portfolio_five_best],['تعداد واحدها',snap.units],['اندازه صندوق',snap.fund_size]];
  const pb=document.getElementById('fundPortfolioRows');pb.replaceChildren();
