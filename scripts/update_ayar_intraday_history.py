@@ -1,5 +1,6 @@
 import json
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from datetime import datetime
 from zoneinfo import ZoneInfo
@@ -13,8 +14,11 @@ DATA_DIR = Path("data")
 CACHE_DIR = DATA_DIR / "intraday"
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
 HISTORY_FILE = DATA_DIR / "ayar_daily_history.json"
-LOOKBACK_DAYS = 230
+LOOKBACK_DAYS = 260
 REFRESH_LATEST_DAYS = 3
+MAX_WORKERS = 5
+REQUEST_TIMEOUT = (10, 25)
+MAX_ATTEMPTS = 2
 
 session = requests.Session()
 session.headers.update({
@@ -25,7 +29,7 @@ session.headers.update({
 
 
 def get_json(url):
-    response = session.get(url, timeout=(20, 90))
+    response = session.get(url, timeout=REQUEST_TIMEOUT)
     response.raise_for_status()
     return response.json()
 
@@ -142,29 +146,39 @@ def main():
     reused = 0
     failed = []
 
-    for daily in selected:
+    # Fetch missing/expired days concurrently; a slow TSETMC response must not
+    # block the entire history rebuild for hours.
+    def process_day(daily):
         date = str(daily["date"])
         path = CACHE_DIR / f"ayar_{date}.json"
         if path.exists() and date not in refresh_dates:
-            cached = json.loads(path.read_text(encoding="utf-8"))
-            if cached.get("validated") is True:
-                reused += 1
-                continue
+            try:
+                cached = json.loads(path.read_text(encoding="utf-8"))
+                if cached.get("validated") is True:
+                    return ("reused", date, None)
+            except Exception:
+                pass
         last_error = None
-        for attempt in range(3):
+        for attempt in range(MAX_ATTEMPTS):
             try:
                 download_day(daily)
-                fetched += 1
-                last_error = None
-                break
+                return ("fetched", date, None)
             except Exception as error:
                 last_error = str(error)
-                time.sleep(1.0 * (attempt + 1))
-        if last_error is not None:
-            # Keep the day explicitly excluded: never build candles from
-            # data that failed reconciliation against official daily stats.
-            failed.append({"date": date, "error": last_error})
-        time.sleep(0.15)
+                if attempt + 1 < MAX_ATTEMPTS:
+                    time.sleep(0.5 * (attempt + 1))
+        return ("failed", date, last_error)
+
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
+        futures = [pool.submit(process_day, daily) for daily in selected]
+        for future in as_completed(futures):
+            status, date, error = future.result()
+            if status == "fetched":
+                fetched += 1
+            elif status == "reused":
+                reused += 1
+            else:
+                failed.append({"date": date, "error": error})
 
     valid_days = 0
     valid_1h = 0
@@ -179,6 +193,9 @@ def main():
     summary = {
         "status": "success" if valid_1h >= 200 and valid_4h >= 200 else "insufficient_validated_history",
         "lookback_trading_days": len(selected),
+        "max_workers": MAX_WORKERS,
+        "request_timeout_seconds": REQUEST_TIMEOUT[1],
+        "max_attempts": MAX_ATTEMPTS,
         "downloaded_or_refreshed": fetched,
         "cached_reused": reused,
         "failed_days_excluded": failed,
