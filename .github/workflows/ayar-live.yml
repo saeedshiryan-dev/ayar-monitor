@@ -2,6 +2,11 @@ name: Refresh Ayar Live Quote
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - 'scripts/ayar_market_status.py'
+      - 'scripts/fetch_ayar_live.py'
+      - '.github/workflows/ayar-live.yml'
   schedule:
     # GitHub scheduled workflows use UTC; run every 5 minutes.
     - cron: "*/5 * * * *"
