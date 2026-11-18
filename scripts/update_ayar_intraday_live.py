@@ -93,6 +93,31 @@ def main():
         unique[number] = row
 
     rows = sorted(unique.values(), key=lambda x: (x["hEven"], x["nTran"]))
+    quote_trade_count = None
+    live_quote_file = Path("data/ayar_live.json")
+    if live_quote_file.exists():
+        try:
+            quote_trade_count = int(json.loads(live_quote_file.read_text(encoding="utf-8")).get("tsetmc_quote_trade_count") or 0) or None
+        except (OSError, ValueError, TypeError):
+            quote_trade_count = None
+    trade_count_difference = (
+        quote_trade_count - len(rows) if quote_trade_count is not None else None
+    )
+    count_reconciled = (
+        trade_count_difference == 0 if trade_count_difference is not None else None
+    )
+    result.update({
+        "quote_trade_count": quote_trade_count,
+        "trade_count_difference": trade_count_difference,
+        "count_reconciled": count_reconciled,
+        "quality_note_fa": (
+            "تعداد معاملات endpoint با آمار snapshot رسمی برابر است."
+            if count_reconciled is True else
+            "تعداد معاملات endpoint با آمار رسمی برابر نیست؛ کندل‌ها موقت‌اند و باید با احتیاط تفسیر شوند."
+            if count_reconciled is False else
+            "امکان تطبیق تعداد معاملات با snapshot رسمی وجود نداشت."
+        ),
+    })
     if not rows:
         result["reason"] = "هنوز معامله قابل استفاده‌ای از API معاملات زنده دریافت نشد"
     else:
