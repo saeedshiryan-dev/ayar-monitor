@@ -135,9 +135,51 @@ def main():
     if not history:
         raise ValueError("رکورد تاریخ‌دار در تاریخچه NAV صندوق وجود ندارد")
 
-    # Preserve provider order and source rows; do not sort or interpolate provider data.
+    # Fund detail Stats can lag the live ETF NAV endpoint. Add the separately
+    # timestamped ETF NAV snapshot, without mixing it with stale aggregate assets.
+    current_etf = None
+    etf_error = None
+    try:
+        etf_payload = get_json(f"{BASE}/Fund/GetETFByInsCode/{INS_CODE}")
+        etf_value = etf_payload.get("etf")
+        if isinstance(etf_value, list):
+            etf_rows = [x for x in etf_value if isinstance(x, dict)]
+            current_etf = max(etf_rows, key=lambda x: (as_number(get_field(x, "deven")) or 0,
+                                                        as_number(get_field(x, "hEven")) or 0)) if etf_rows else None
+        elif isinstance(etf_value, dict):
+            current_etf = etf_value
+    except Exception as exc:
+        etf_error = str(exc)[:300]
+
+    if isinstance(current_etf, dict):
+        raw_date = get_field(current_etf, "deven", "dEven")
+        red = as_number(get_field(current_etf, "pRedTran"))
+        sub = as_number(get_field(current_etf, "pSubTran"))
+        if raw_date and red and red > 0:
+            date_digits = str(int(float(raw_date)))
+            if len(date_digits) == 8:
+                current_date = f"{date_digits[0:4]}-{date_digits[4:6]}-{date_digits[6:8]}"
+                raw_time = as_number(get_field(current_etf, "hEven"))
+                time_text = None
+                if raw_time is not None:
+                    time_digits = f"{int(raw_time):06d}"
+                    time_text = f"{time_digits[0:2]}:{time_digits[2:4]}:{time_digits[4:6]}"
+                current_row = {
+                    "date": current_date + (("T" + time_text) if time_text else ""),
+                    "redemption_nav": red,
+                    "subscription_nav": sub,
+                    "statistical_nav": None,
+                    "net_asset_value": None,
+                    "source_record": current_etf,
+                    "record_source": "TSETMC Fund/GetETFByInsCode",
+                }
+                if not any(row["date"][:10] == current_date for row in history):
+                    history.append(current_row)
+
+    # Preserve provider rows; choose latest by timestamp, not provider list order.
     dated = [row["date"] for row in history]
     latest_record = max(history, key=lambda row: row["date"])
+    detail_as_of = get_field(detail, "recordDate")
     output = {
         "symbol": "عیار",
         "insCode": INS_CODE,
@@ -157,7 +199,7 @@ def main():
         "history": history,
         "latest_record": latest_record,
         "fund_snapshot": {
-            "net_asset_value": as_number(get_field(detail, "netAsset")),
+            "as_of_date": detail_as_of,\n            "net_asset_value": as_number(get_field(detail, "netAsset")),
             "units": as_number(get_field(detail, "units")),
             "fund_size": as_number(get_field(detail, "fundSize")),
             "portfolio_stock": get_field(detail, "portfolioStock"),
@@ -184,10 +226,10 @@ def main():
         "registration_number": reg_no,
         "history_count": len(history),
         "first_date": dated[0],
-        "last_date": latest_record["date"],
+        "last_date": latest_record["date"],\n        "current_etf_nav_status": "ok" if current_etf and any(row.get("record_source") == "TSETMC Fund/GetETFByInsCode" for row in history) else "unavailable",\n        "current_etf_nav_error": etf_error,
         "latest_record": output["latest_record"],
         "fund_snapshot": output["fund_snapshot"],
-        "output": str(OUT),
+        "output": str(OUT),\n        "current_etf_nav_status": output["current_etf_nav_status"],
     }, ensure_ascii=False, indent=2))
 
 if __name__ == "__main__":
