@@ -53,6 +53,7 @@ button.active{background:#d5a84e;color:#172033;border-color:#d5a84e;font-weight:
 <div class="metrics">
 <div class="metric"><span>ارزش کل دارایی‌ها</span><b id="codalAum">—</b></div>
 <div class="metric"><span>NAV ابطال گزارش‌شده</span><b id="codalNav">—</b></div>
+<div class="metric"><span>NAV صدور گزارش‌شده</span><b id="codalNavSubscription">—</b></div>
 <div class="metric"><span>تعداد واحدها</span><b id="codalUnits">—</b></div>
 <div class="metric"><span>تاریخ گزارش پرتفوی</span><b id="codalReportDate">—</b></div>
 </div>
@@ -154,6 +155,7 @@ function drawCodalPortfolio(j){
  const fmtV=v=>v==null?'—':Number(v).toLocaleString('en-US',{maximumFractionDigits:2});
  document.getElementById('codalAum').textContent=snap.aum_hamt==null?'—':fmtV(snap.aum_hamt)+' همت';
  document.getElementById('codalNav').textContent=snap.nav_redemption_toman==null?'—':fmtV(snap.nav_redemption_toman)+' تومان';
+ document.getElementById('codalNavSubscription').textContent=snap.nav_subscription_toman==null?'—':fmtV(snap.nav_subscription_toman)+' تومان';
  document.getElementById('codalUnits').textContent=fmtV(snap.units);
  document.getElementById('codalReportDate').textContent=report.period_end_jalali||'—';
  const status=document.getElementById('codalPortfolioStatus');
@@ -178,7 +180,7 @@ function drawCodalPortfolio(j){
   status.textContent='منبع جایگزین · غیررسمی';
   const composition=snap.composition||[];
   const total=snap.composition_reported_total_percent;
-  info.textContent='گزارش رسمی قابل دریافت نبود؛ این ارقام از چشم بورس هستند. تاریخ NAV: '+(snap.nav_report_date||'—')+' · تاریخ ترکیب دارایی: '+(snap.composition_report_date||'—')+' · جمع درصدهای گزارش‌شده: '+(total==null?'—':fmtV(total)+'٪')+' · '+(snap.composition_complete?'ترکیب کامل':'ترکیب ناقص؛ مانده به هیچ طبقه‌ای نسبت داده نشده است');
+  info.textContent='گزارش رسمی قابل دریافت نبود؛ این ارقام از چشم بورس هستند. تاریخ به‌روزرسانی صفحه: '+(snap.page_updated_date||'—')+' · تاریخ NAV: '+(snap.nav_report_date||'—')+' · تاریخ ترکیب دارایی: '+(snap.composition_report_date||'—')+' · جمع درصدهای گزارش‌شده: '+(total==null?'—':fmtV(total)+'٪')+' · '+(snap.composition_complete?'ترکیب کامل':'ترکیب ناقص؛ مانده به هیچ طبقه‌ای نسبت داده نشده است');
   const table=document.createElement('table');table.className='booktable';
   const head=document.createElement('tr');['طبقه دارایی','درصد گزارش‌شده'].forEach(v=>{const th=document.createElement('th');th.textContent=v;head.appendChild(th);});table.appendChild(head);
   composition.forEach(item=>{const tr=document.createElement('tr');[item.name,item.percent==null?'—':fmtV(item.percent)+'٪'].forEach(v=>{const td=document.createElement('td');td.textContent=String(v);tr.appendChild(td);});table.appendChild(tr);});
