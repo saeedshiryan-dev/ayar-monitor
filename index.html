@@ -123,7 +123,7 @@ function drawFundHistory(j){
  document.getElementById('fundHistoryUpdated').textContent='دریافت: '+(j.retrieved_at||'—').replace('T',' ').slice(0,19);
  const body=document.getElementById('fundHistoryRows');
  body.replaceChildren();
- history.slice(-15).reverse().forEach(r=>{
+ [...history].sort((a,b)=>String(a.date).localeCompare(String(b.date))).slice(-15).reverse().forEach(r=>{
   const tr=document.createElement('tr');
   [fmtDate(r.date),fmtRaw(r.redemption_nav),fmtRaw(r.subscription_nav),fmtRaw(r.statistical_nav),fmtRaw(r.net_asset_value)].forEach(v=>{
    const td=document.createElement('td');td.textContent=v;tr.appendChild(td);
