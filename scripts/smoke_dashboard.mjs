@@ -31,6 +31,15 @@ try {
     hasChart: typeof Chart !== "undefined" &&
       Boolean(Chart.getChart(document.querySelector("#priceChart"))),
     hasNavPanel: Boolean(document.querySelector("#navRedemption")),
+    liveLast: document.querySelector("#liveLast")?.textContent?.trim(),
+    liveClose: document.querySelector("#liveClose")?.textContent?.trim(),
+    liveTime: document.querySelector("#liveTime")?.textContent?.trim(),
+    navRedemption: document.querySelector("#navRedemption")?.textContent?.trim(),
+    navSubscription: document.querySelector("#navSubscription")?.textContent?.trim(),
+    navPremium: document.querySelector("#navPremium")?.textContent?.trim(),
+    navPublishedAt: document.querySelector("#navPublishedAt")?.textContent?.trim(),
+    bookStatus: document.querySelector("#bookStatus")?.textContent?.trim(),
+    bookUpdated: document.querySelector("#bookUpdated")?.textContent?.trim(),
   }));
 
   await page.locator('.tf[data-tf="4h"]').click();
@@ -39,6 +48,10 @@ try {
 
   if (!initial.title.includes("داشبورد")) throw new Error("Unexpected page title");
   if (!initial.hasNavPanel) throw new Error("NAV panel did not render");
+  for (const key of ["liveLast", "liveClose", "liveTime", "navRedemption", "navSubscription", "navPremium", "navPublishedAt"]) {
+    if (!initial[key] || initial[key] === "—") throw new Error("Live quote/NAV field did not render: " + key);
+  }
+  if (initial.bookStatus !== "دریافت شد") throw new Error("Order book was not loaded: " + initial.bookStatus);
   if (!fourHourActive) throw new Error("4-hour timeframe control did not respond");
   if (pageErrors.length) throw new Error("Browser JavaScript errors: " + pageErrors.join(" | "));
 
