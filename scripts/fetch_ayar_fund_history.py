@@ -133,7 +133,9 @@ def main():
     history = [normalize_stat(row) for row in stats]
     history = [row for row in history if row["date"]]
     if not history:
-        raise ValueError("رکورد تاریخ‌دار در تاریخچه NAV صندوق وجود ندارد")
+        raise ValueError("رکورد تاریخ‌دار در تاریخچه NAV صندوق وجود ندارد؛ " +
+                         "detail_keys=" + json.dumps(list(detail.keys()) if isinstance(detail, dict) else type(detail).__name__, ensure_ascii=False) +
+                         " stats_first=" + json.dumps(stats[0] if stats else None, ensure_ascii=False)[:5000])
 
     # Preserve provider order and source rows; do not sort or interpolate provider data.
     dated = [row["date"] for row in history]
