@@ -11,6 +11,17 @@ from io import BytesIO
 
 SYMBOL = "عیار"
 BASE = "https://search.codal.ir/api/search/v2/q"
+# Last report link independently cross-checked from Codal's disclosure listing.
+# Keep it as an explicit dated fallback; never label it as a newly fetched report.
+FALLBACK_REPORT = {
+    "title": "صورت وضعیت پورتفوی صندوق سرمایه گذاری دوره ۱ ماهه منتهی به ۱۴۰۵/۰۷/۳۰",
+    "period_end_jalali": "1405/07/30",
+    "publish_date": "1405/08/03",
+    "tracing_no": None,
+    "company_name": "صندوق طلای عیار مفید",
+    "excel_url": "https://excel.codal.ir/service/Excel/GetAll/ufnsMFNlCf60hOOObOOO9l4CQQQaQQQQ8w%3D%3D/0",
+    "attachment_url": "https://www.codal.ir/Reports/Attachment.aspx?LetterSerial=ufnsMFNlCf60hOOObOOO9l4CQQQaQQQQ8w%3D%3D",
+}
 OUT = Path("data/ayar_codal_portfolio.json")
 OUT.parent.mkdir(parents=True, exist_ok=True)
 HEADERS = {
@@ -73,32 +84,50 @@ def main():
         "Childs": "false", "Mains": "true", "Publisher": "false",
         "TracingNo": -1, "search": "true",
     }
-    response = session.get(BASE, params=params, timeout=(20, 60))
-    response.raise_for_status()
-    letters = parse_letters(response)
-    if not letters:
-        raise RuntimeError("پاسخ جستجوی کدال فاقد گزارش است")
+    report = None
+    report_date = None
+    title = None
+    search_error = None
+    for attempt in range(2):
+        try:
+            response = session.get(BASE, params=params, timeout=(8, 25))
+            response.raise_for_status()
+            letters = parse_letters(response)
+            matches = []
+            for item in letters:
+                candidate_title = norm(item.get("Title") or item.get("title"))
+                normalized_title = candidate_title.replace("ي", "ی").replace("ك", "ک")
+                if "صورت وضعیت پورتفوی صندوق سرمایه گذاری" in normalized_title or "صورت وضعیت پرتفوی صندوق سرمایه گذاری" in normalized_title:
+                    candidate_date = parse_jalali_from_title(candidate_title)
+                    if candidate_date:
+                        matches.append((candidate_date, item, candidate_title))
+            if matches:
+                report_date, report, title = max(matches, key=lambda x: x[0])
+                break
+            search_error = "گزارش ماهانه پرتفوی در نتایج جستجوی کدال پیدا نشد"
+        except Exception as exc:
+            search_error = f"{type(exc).__name__}: {exc}"
+    if report is None:
+        report = {
+            "ExcelUrl": FALLBACK_REPORT["excel_url"],
+            "AttachmentUrl": FALLBACK_REPORT["attachment_url"],
+            "TracingNo": FALLBACK_REPORT["tracing_no"],
+            "CompanyName": FALLBACK_REPORT["company_name"],
+            "PublishDateTime": FALLBACK_REPORT["publish_date"],
+        }
+        report_date = FALLBACK_REPORT["period_end_jalali"]
+        title = FALLBACK_REPORT["title"]
+        report_source = "Codal official Excel service; dated fallback report"
+    else:
+        report_source = "Codal official search API + Excel service"
 
-    matches = []
-    for item in letters:
-        title = norm(item.get("Title") or item.get("title"))
-        normalized_title = title.replace("ي", "ی").replace("ك", "ک")
-        if "صورت وضعیت پورتفوی صندوق سرمایه گذاری" in normalized_title or "صورت وضعیت پرتفوی صندوق سرمایه گذاری" in normalized_title:
-            report_date = parse_jalali_from_title(title)
-            if report_date:
-                matches.append((report_date, item, title))
-    if not matches:
-        titles = [norm(x.get("Title") or x.get("title")) for x in letters[:15]]
-        raise RuntimeError("گزارش ماهانه پرتفوی در نتایج کدال پیدا نشد؛ عناوین: " + json.dumps(titles, ensure_ascii=False))
-
-    report_date, report, title = max(matches, key=lambda x: x[0])
     excel_url = report.get("ExcelUrl") or report.get("excelUrl")
     attachment_url = report.get("AttachmentUrl") or report.get("attachmentUrl")
     if not excel_url:
         raise RuntimeError("کدال برای آخرین گزارش پرتفوی لینک ExcelUrl ارائه نکرد")
 
     download_url = urljoin("https://www.codal.ir/", excel_url)
-    book_response = session.get(download_url, timeout=(20, 90))
+    book_response = session.get(download_url, timeout=(15, 90))
     book_response.raise_for_status()
     content = book_response.content
     if not content.startswith(b"PK"):
@@ -125,7 +154,8 @@ def main():
     output = {
         "status": "ok",
         "symbol": SYMBOL,
-        "source": "Codal official search API + Excel service",
+        "source": report_source,
+        "search_api_error": search_error,
         "retrieved_at": datetime.now().astimezone().isoformat(),
         "report": {
             "title": title,
@@ -135,6 +165,7 @@ def main():
             "company_name": report.get("CompanyName") or report.get("companyName"),
             "excel_url": download_url,
             "attachment_url": urljoin("https://www.codal.ir/", attachment_url) if attachment_url else None,
+            "is_fallback_report": report_source.endswith("dated fallback report"),
         },
         "workbook": {
             "filename": "Codal Ayar monthly portfolio report",
