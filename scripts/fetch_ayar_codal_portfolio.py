@@ -99,20 +99,38 @@ def save_output(output):
 
 def bourseeye_fallback(session, codal_error):
     url = "https://bourseeye.com/funds/1521/صندوق-طلای-عیار-مفید"
-    response = session.get(url, timeout=(10, 35))
-    response.raise_for_status()
-    parser = VisibleText()
-    parser.feed(response.text)
-    text = norm(" ".join(parser.parts))
-    redemption = extract_number(r"NAV ابطال\s+([0-9۰-۹٠-٩٬,٫.]+)\s*تومان", text)
-    aum = extract_number(r"ارزش کل دارایی‌ها\s+([0-9۰-۹٠-٩٬,٫.]+)\s*همت", text)
-    units = extract_number(r"تعداد واحدها\s+([0-9۰-۹٠-٩٬,٫.]+)", text)
-    stock_commodity = extract_number(r"سهام و گواهی سپرده کالایی\s+([0-9۰-۹٠-٩٬,٫.]+)\s*[%٪]", text)
-    fixed_income = extract_number(r"اوراق با درآمد ثابت\s+([0-9۰-۹٠-٩٬,٫.]+)\s*[%٪]", text)
-    if redemption is None and aum is None and units is None:
-        raise RuntimeError("Codal unavailable and Bourseeye fallback did not contain a usable snapshot")
-    nav_date = re.search(r"NAV بر پایه گزارش\s+([^؛]+)", text)
-    composition_date = re.search(r"بر پایه گزارش\s+([^؛]+)", text[text.find("ترکیب دارایی‌ها"):] if "ترکیب دارایی‌ها" in text else "")
+    page_error = None
+    text = ""
+    try:
+        response = session.get(url, timeout=(5, 12))
+        response.raise_for_status()
+        parser = VisibleText()
+        parser.feed(response.text)
+        text = norm(" ".join(parser.parts))
+    except Exception as exc:
+        page_error = f"{type(exc).__name__}: {exc}"
+
+    redemption = extract_number(r"NAV ابطال\\s+([0-9۰-۹٠-٩٬,٫.]+)\\s*تومان", text)
+    subscription = extract_number(r"NAV صدور\\s+([0-9۰-۹٠-٩٬,٫.]+)\\s*تومان", text)
+    aum = extract_number(r"ارزش کل دارایی‌ها\\s+([0-9۰-۹٠-٩٬,٫.]+)\\s*همت", text)
+    units = extract_number(r"تعداد واحدها\\s+([0-9۰-۹٠-٩٬,٫.]+)", text)
+    stock_commodity = extract_number(r"سهام و گواهی سپرده کالایی\\s+([0-9۰-۹٠-٩٬,٫.]+)\\s*[%٪]", text)
+    fixed_income = extract_number(r"اوراق با درآمد ثابت\\s+([0-9۰-۹٠-٩٬,٫.]+)\\s*[%٪]", text)
+    nav_date = re.search(r"NAV بر پایه گزارش\\s+([^؛]+)", text)
+    composition_date = re.search(r"بر پایه گزارش\\s+([^؛]+)", text[text.find("ترکیب دارایی‌ها"):] if "ترکیب دارایی‌ها" in text else "")
+
+    # Dated, manually verified fallback from the public Bourseeye page as of 1405/08/26.
+    # Do not present this as a live fetch or as an official Codal workbook.
+    static_used = redemption is None and aum is None and units is None
+    if static_used:
+        redemption, subscription = 67048, 67353
+        aum, units = 360.0, 5364853896
+        stock_commodity, fixed_income = 0.69, 0.22
+        nav_date_text, composition_date_text = "۲۳ آبان ۱۴۰۵", "۲۴ آبان ۱۴۰۵"
+    else:
+        nav_date_text = nav_date.group(1).strip() if nav_date else None
+        composition_date_text = composition_date.group(1).strip() if composition_date else None
+
     composition = [
         {"name": "سهام و گواهی سپرده کالایی", "percent": stock_commodity},
         {"name": "اوراق با درآمد ثابت", "percent": fixed_income},
@@ -124,7 +142,22 @@ def bourseeye_fallback(session, codal_error):
         "symbol": SYMBOL,
         "source": "Bourseeye secondary snapshot; Codal official endpoints unreachable from GitHub Actions",
         "official_source_error": codal_error,
+        "secondary_page_error": page_error,
         "retrieved_at": datetime.now().astimezone().isoformat(),
+        "secondary_snapshot": {
+            "page_url": url,
+            "page_updated_date": "1405/08/26",
+            "nav_redemption_toman": redemption,
+            "nav_subscription_toman": subscription,
+            "nav_report_date": nav_date_text,
+            "aum_hamt": aum,
+            "units": int(units) if units is not None else None,
+            "composition_report_date": composition_date_text,
+            "composition": composition,
+            "composition_reported_total_percent": round(total, 4) if total is not None else None,
+            "composition_complete": bool(total is not None and abs(total - 100) < 0.1),
+            "static_fallback_used": static_used,
+        },
         "report": {
             "title": FALLBACK_REPORT["title"],
             "period_end_jalali": FALLBACK_REPORT["period_end_jalali"],
@@ -134,20 +167,10 @@ def bourseeye_fallback(session, codal_error):
             "excel_url": FALLBACK_REPORT["excel_url"],
             "is_fallback_report": True,
         },
-        "secondary_snapshot": {
-            "page_url": url,
-            "nav_redemption_toman": redemption,
-            "nav_report_date": nav_date.group(1).strip() if nav_date else None,
-            "aum_hamt": aum,
-            "units": int(units) if units is not None else None,
-            "composition_report_date": composition_date.group(1).strip() if composition_date else None,
-            "composition": composition,
-            "composition_reported_total_percent": round(total, 4) if total is not None else None,
-            "composition_complete": bool(total is not None and abs(total - 100) < 0.1),
-        },
         "notes_fa": [
             "داده‌های ترکیب دارایی در این مسیر پشتیبان از منبع ثانویه‌اند، نه فایل اصلی کدال.",
-            "درصدهای گزارش‌شده کامل نیستند مگر آنکه جمع آن‌ها به ۱۰۰ درصد برسد؛ مانده به هیچ طبقه‌ای نسبت داده نشده است.",
+            "درصدهای منتشرشده فقط ۰٫۹۱٪ را پوشش می‌دهند؛ بنابراین ترکیب ناقص است و مانده به هیچ طبقه‌ای نسبت داده نشده است.",
+            "در صورت استفاده از fallback ثابت، تاریخ صفحه منبع ۲۶ آبان ۱۴۰۵ است و ارقام NAV/ترکیب به تاریخ‌های جداگانه خود تعلق دارند.",
             "لینک گزارش رسمی کدال برای بررسی و دریافت مستقیم نگهداری شده است.",
         ],
     }
@@ -156,6 +179,7 @@ def bourseeye_fallback(session, codal_error):
         "status": output["status"],
         "source": output["source"],
         "official_source_error": codal_error,
+        "secondary_page_error": page_error,
         "report": output["report"],
         "secondary_snapshot": output["secondary_snapshot"],
         "output": str(OUT),
