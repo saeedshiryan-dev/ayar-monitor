@@ -103,10 +103,13 @@ def main():
     candidates = []
     for item in funds:
         name = get_field(item, "mfName", "FundName", "fundName", "name")
-        if name and TARGET_NAME in norm(name):
+        if name and norm(name) == TARGET_NAME:
             reg_no = get_field(item, "regNo", "RegistrationNumber", "registrationNumber")
             if reg_no is not None:
-                candidates.append((str(reg_no), str(name), item))
+                parsed_reg_no = as_number(reg_no)
+                if parsed_reg_no is None or int(parsed_reg_no) <= 0:
+                    raise ValueError(f"شماره ثبت نامعتبر برای صندوق {name}: {reg_no}")
+                candidates.append((str(int(parsed_reg_no)), str(name), item))
 
     unique = {item[0]: item for item in candidates}
     if len(unique) != 1:
