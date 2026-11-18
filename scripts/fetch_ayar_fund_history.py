@@ -78,7 +78,7 @@ def find_stats(node):
     return None
 
 def date_value(row):
-    value = get_field(row, "UpdateGregorianDate", "dEven", "date", "updateDate")
+    value = get_field(row, "UpdateGregorianDate", "recordDate", "dEven", "date", "updateDate")
     if value is None:
         return None
     return str(value)
@@ -86,10 +86,10 @@ def date_value(row):
 def normalize_stat(row):
     return {
         "date": date_value(row),
-        "redemption_nav": as_number(get_field(row, "RedemptionNAV", "pRedTran")),
-        "subscription_nav": as_number(get_field(row, "SubscriptionNAV", "pSubTran")),
-        "statistical_nav": as_number(get_field(row, "StatisticalNAV", "pClosing", "iClose")),
-        "total_nav": as_number(get_field(row, "TotalNAV")),
+        "redemption_nav": as_number(get_field(row, "RedemptionNAV", "navRed", "pRedTran")),
+        "subscription_nav": as_number(get_field(row, "SubscriptionNAV", "navSub", "pSubTran")),
+        "statistical_nav": as_number(get_field(row, "StatisticalNAV", "navStat", "pClosing", "iClose")),
+        "net_asset_value": as_number(get_field(row, "netAsset", "TotalNAV")),
         "source_record": row,
     }
 
@@ -133,9 +133,7 @@ def main():
     history = [normalize_stat(row) for row in stats]
     history = [row for row in history if row["date"]]
     if not history:
-        raise ValueError("رکورد تاریخ‌دار در تاریخچه NAV صندوق وجود ندارد؛ " +
-                         "detail_keys=" + json.dumps(list(detail.keys()) if isinstance(detail, dict) else type(detail).__name__, ensure_ascii=False) +
-                         " stats_first=" + json.dumps(stats[0] if stats else None, ensure_ascii=False)[:5000])
+        raise ValueError("رکورد تاریخ‌دار در تاریخچه NAV صندوق وجود ندارد")
 
     # Preserve provider order and source rows; do not sort or interpolate provider data.
     dated = [row["date"] for row in history]
@@ -157,10 +155,21 @@ def main():
         "last_date_in_source_order": dated[-1],
         "history": history,
         "latest_record": history[-1],
+        "fund_snapshot": {
+            "net_asset_value": as_number(get_field(detail, "netAsset")),
+            "units": as_number(get_field(detail, "units")),
+            "fund_size": as_number(get_field(detail, "fundSize")),
+            "portfolio_stock": get_field(detail, "portfolioStock"),
+            "portfolio_bond": get_field(detail, "portfolioBond"),
+            "portfolio_deposit": get_field(detail, "portfolioDeposit"),
+            "portfolio_cash": get_field(detail, "portfolioCash"),
+            "portfolio_other": get_field(detail, "portfolioOther"),
+            "portfolio_five_best": get_field(detail, "portfolioFiveBest"),
+        },
         "detail_metadata": detail if isinstance(detail, dict) else {"provider_detail": detail},
         "data_notes_fa": [
             "تاریخچه و مقادیر فقط از پاسخ رسمی TSETMC نگهداری شده‌اند؛ ردیف‌های نامعتبر حذف نشده‌اند مگر فاقد تاریخ باشند.",
-            "total_nav عین فیلد TotalNAV منبع است؛ تا زمان تأیید واحد و تعریف دقیق، نباید با NAV هر واحد یا ارزش بازار جمع/مقایسه شود.",
+            "net_asset_value عین فیلد netAsset منبع است؛ واحد آن در خروجی خام TSETMC حفظ شده و با NAV هر واحد یکی نیست.",
             "source_record و detail_metadata برای ممیزی و حفظ فیلدهای خام منبع نگهداری می‌شوند."
         ],
     }
@@ -176,6 +185,7 @@ def main():
         "first_date": dated[0],
         "last_date": dated[-1],
         "latest_record": output["latest_record"],
+        "fund_snapshot": output["fund_snapshot"],
         "output": str(OUT),
     }, ensure_ascii=False, indent=2))
 
