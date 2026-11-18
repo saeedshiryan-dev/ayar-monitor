@@ -2,6 +2,9 @@ name: Dashboard Browser Smoke Test
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/dashboard-smoke.yml'
   workflow_run:
     workflows: ["Deploy Ayar Dashboard"]
     types: [completed]
