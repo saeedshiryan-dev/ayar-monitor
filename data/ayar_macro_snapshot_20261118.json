@@ -1,0 +1,45 @@
+{
+  "symbol": "عیار",
+  "snapshot_date_gregorian": "2026-11-18",
+  "snapshot_date_jalali": "1405/08/27",
+  "retrieved_at": "2026-11-18T22:49:00+03:30",
+  "purpose": "dated_external_macro_context_for_fundamental_analysis",
+  "data_quality_note": "این فایل snapshot تاریخی و منبع‌دار است؛ قیمت‌ها هم‌زمان نیستند و نباید به‌عنوان قیمت لحظه‌ای واحد تلقی شوند.",
+  "gold_spot": {
+    "instrument": "XAUUSD spot",
+    "value_usd_per_troy_ounce": 3736.06,
+    "observation": "Reuters گزارش کرده طلا در معاملات چهارشنبه ۱۸ نوامبر تا ۳۷۳۶٫۰۶ دلار افت کرده و کف ۱۴ ماهه ثبت کرده است.",
+    "observation_type": "reported_intraday_low",
+    "source_name": "Reuters",
+    "source_url": "https://www.reuters.com/world/india/gold-slides-over-one-year-low-firm-dollar-us-rate-outlook-2026-11-18/",
+    "source_date": "2026-11-18",
+    "confidence": "high_for_reported_intraday_low"
+  },
+  "usd_irr_free_market": {
+    "instrument": "USD/IRR free market",
+    "value_toman_per_usd": 267100,
+    "observation_time_local": "20:10",
+    "observation_date_jalali": "1405/08/27",
+    "observation": "نرخ فروش دلار آزاد تهران؛ منبع هشدار داده که ممکن است قیمت‌ها بیش از ۱۵ دقیقه از بازار فاصله داشته باشند.",
+    "source_name": "Alanchand",
+    "source_url": "https://alanchand.com/currencies-price",
+    "source_date": "2026-11-18",
+    "confidence": "medium_secondary_market_quote"
+  },
+  "macro_drivers": {
+    "near_term_gold_pressure": [
+      "تقویت دلار آمریکا",
+      "افزایش بازده اوراق خزانه‌داری آمریکا",
+      "بالا رفتن انتظارات نرخ بهره فدرال رزرو"
+    ],
+    "source_name": "Reuters",
+    "source_url": "https://www.reuters.com/world/india/gold-slides-over-one-year-low-firm-dollar-us-rate-outlook-2026-11-18/",
+    "source_date": "2026-11-18"
+  },
+  "analysis_rules": [
+    "برای ارزش‌گذاری تقریبی طلای ریالی، اونس و دلار آزاد باید به‌صورت هم‌زمان و با زمان ثبت مشخص استفاده شوند.",
+    "قیمت دلار آزاد ثانویه است و جایگزین نرخ رسمی یا نرخ معاملاتی قابل اجرا نیست.",
+    "کف روزانه اونس نباید به‌جای آخرین قیمت پایانی یا قیمت لحظه‌ای استفاده شود.",
+    "برای سنجش حباب عیار، NAV رسمی TSETMC و قیمت بازار صندوق با زمان‌های متناظر مقایسه شوند."
+  ]
+}
