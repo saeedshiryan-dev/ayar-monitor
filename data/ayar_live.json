@@ -3,13 +3,13 @@
   "insCode": "34144395039913458",
   "source": "TSETMC",
   "source_api": "cdn.tsetmc.com/api",
-  "retrieved_at": "2026-11-18T11:55:09.562943+03:30",
+  "retrieved_at": "2026-11-18T12:56:47.243343+03:30",
   "timezone": "Asia/Tehran",
   "market": {
-    "status": "before_market",
-    "label_fa": "قبل از شروع معاملات",
+    "status": "open",
+    "label_fa": "ساعت معاملات (مشروط به تعطیل نبودن رسمی بازار)",
     "timezone": "Asia/Tehran",
-    "checked_at": "2026-11-18T11:55:09.562943+03:30",
+    "checked_at": "2026-11-18T12:56:47.243343+03:30",
     "scheduled_open": "12:00",
     "scheduled_close": "18:00",
     "calendar_note": "تقویم تعطیلات رسمی و اطلاعیه‌های استثنایی باید جداگانه کنترل شود."
