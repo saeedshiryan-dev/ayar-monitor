@@ -51,7 +51,7 @@ button.active{background:#d5a84e;color:#172033;border-color:#d5a84e;font-weight:
 <div style="overflow-x:auto;margin-top:10px"><table class="booktable"><thead><tr><th>بخش پرتفوی</th><th>مقدار خام گزارش‌شده TSETMC</th></tr></thead><tbody id="fundPortfolioRows"><tr><td colspan="2">در انتظار داده رسمی</td></tr></tbody></table></div></section>
 <section class="panel" id="codalPortfolioPanel"><div class="panelhead"><h2>گزارش ترکیب دارایی صندوق</h2><span id="codalPortfolioStatus" class="muted">در انتظار دریافت گزارش</span></div>
 <div class="metrics">
-<div class="metric"><span>ارزش کل دارایی‌ها</span><b id="codalAum">—</b></div>
+<div class="metric"><span>ارزش دارایی‌های فهرست‌شده</span><b id="codalAum">—</b></div>
 <div class="metric"><span>NAV ابطال گزارش‌شده</span><b id="codalNav">—</b></div>
 <div class="metric"><span>NAV صدور گزارش‌شده</span><b id="codalNavSubscription">—</b></div>
 <div class="metric"><span>تعداد واحدها</span><b id="codalUnits">—</b></div>
@@ -162,6 +162,33 @@ function drawCodalPortfolio(j){
  const status=document.getElementById('codalPortfolioStatus');
  const info=document.getElementById('codalPortfolioInfo');
  const target=document.getElementById('codalPortfolioTables');target.replaceChildren();
+ if(j.status==='official_report_uploaded'){
+  const a=j.asset_summary||{}, p=j.monthly_performance||{};
+  status.textContent='گزارش عملکرد بارگذاری‌شده · مهر ۱۴۰۵';
+  document.getElementById('codalAum').textContent=a.listed_assets_value_toman==null?'—':fmtV(a.listed_assets_value_toman/1e12)+' همت';
+  document.getElementById('codalNav').textContent='در فایل نیست';
+  document.getElementById('codalNavSubscription').textContent='در فایل نیست';
+  document.getElementById('codalUnits').textContent='در فایل نیست';
+  document.getElementById('codalReportDate').textContent=(report.period_end_jalali||'—');
+  info.textContent=(report.title||'گزارش عملکرد')+' · دوره: '+(report.report_period||'—')+' · منبع: فایل Excel بارگذاری‌شده · جمع درصد طبقات استخراج‌شده: '+fmtV(a.reported_percent_sum)+'٪ · مانده نامشخص: '+fmtV(a.unaccounted_percent)+'٪';
+  const makeTable=(headers,rows)=>{
+   const table=document.createElement('table');table.className='booktable';
+   const hr=document.createElement('tr');headers.forEach(v=>{const th=document.createElement('th');th.textContent=v;hr.appendChild(th);});table.appendChild(hr);
+   rows.forEach(row=>{const tr=document.createElement('tr');row.forEach(v=>{const td=document.createElement('td');td.textContent=v==null?'—':String(v);tr.appendChild(td);});table.appendChild(tr);});
+   target.appendChild(table);
+  };
+  const heading1=document.createElement('div');heading1.className='foot';heading1.textContent='ترکیب دارایی در پایان مهر ۱۴۰۵';target.appendChild(heading1);
+  makeTable(['طبقه دارایی','ارزش بازار (تومان)','درصد از کل دارایی‌ها'],(a.categories||[]).map(x=>[x.name,fmtV(x.market_value_toman),fmtV(x.percent)+'٪']));
+  const warning=document.createElement('div');warning.className='foot';warning.textContent=a.completeness_note||'';target.appendChild(warning);
+  const heading2=document.createElement('div');heading2.className='foot';heading2.style.marginTop='12px';heading2.textContent='درآمد حسابداری شناسایی‌شده طی مهر ۱۴۰۵';target.appendChild(heading2);
+  const total=document.createElement('div');total.className='metric';total.style.margin='8px 0';total.innerHTML='<span>جمع درآمد شناسایی‌شده</span><b>'+fmtV(p.total_accounting_income_toman)+' تومان</b>';target.appendChild(total);
+  makeTable(['منبع درآمد','مبلغ (تومان)','سهم از کل درآمد'],(p.components||[]).map(x=>[x.name,fmtV(x.amount_toman),fmtV(x.percent)+'٪']));
+  const detail=(p.components||[]).find(x=>x.detail);
+  if(detail?.detail?.length){const h=document.createElement('div');h.className='foot';h.textContent='جزئیات تغییر ارزش دارایی‌های اصلی';target.appendChild(h);makeTable(['دارایی','تغییر ارزش (تومان)'],detail.detail.map(x=>[x.name,fmtV(x.amount_toman)]));}
+  const note=document.createElement('div');note.className='foot';note.textContent=p.interpretation||'';target.appendChild(note);
+  const source=document.createElement('div');source.className='foot';source.textContent='فایل مبنا: '+(report.source_file||'—')+' · ارقام فایل اصلی ریال بوده و برای نمایش به تومان تبدیل شده‌اند.';target.appendChild(source);
+  return;
+ }
  if(j.status==='ok'&&j.workbook?.sheets){
   status.textContent='گزارش رسمی Excel کدال';
   info.textContent=(report.title||'گزارش پرتفوی')+' · تاریخ انتشار: '+(report.publish_date||'—')+' · زمان دریافت: '+(j.retrieved_at||'—');
