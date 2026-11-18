@@ -95,5 +95,37 @@
     "درصدها از ستون «درصد به کل دارایی‌ها» در برگه‌های پرتفوی خوانده شده‌اند.",
     "جمع درصدهای ردیف‌های قابل استخراج ۹۹٫۹۳۵۸٪ است؛ مانده ۰٫۰۶۴۲٪ نامشخص باقی گذاشته شده است.",
     "درآمد شناسایی‌شده مهر عمدتاً ناشی از تغییر ارزش دارایی‌هاست و به‌تنهایی بازده NAV واحدها را نشان نمی‌دهد."
-  ]
+  ],
+  "secondary_snapshot": {
+    "page_url": "https://bourseeye.com/funds/1521/صندوق-طلای-عیار-مفید",
+    "page_updated_date": null,
+    "nav_redemption_toman": 67048.0,
+    "nav_subscription_toman": 67353.0,
+    "nav_report_date": "۲۳ آبان ۱۴۰۵",
+    "aum_hamt": 360.0,
+    "units": 5364853896,
+    "composition_report_date": "۲۴ آبان ۱۴۰۵",
+    "composition": [
+      {
+        "name": "ترکیب دارایی‌های صندوق عیار سهام و گواهی سپرده کالایی",
+        "percent": 0.69
+      },
+      {
+        "name": "اوراق با درآمد ثابت",
+        "percent": 0.22
+      },
+      {
+        "name": "پنج سهم بزرگ",
+        "percent": 0.0
+      }
+    ],
+    "composition_categories_count": 3,
+    "composition_reported_total_percent": 0.91,
+    "composition_complete": false,
+    "composition_missing_percent": 99.09,
+    "static_fallback_used": false
+  },
+  "secondary_source_status": "partial_secondary",
+  "secondary_checked_at": "2026-11-18T16:31:38.177090+00:00",
+  "official_source_error": "Codal search failed: ConnectTimeout: HTTPSConnectionPool(host='search.codal.ir', port=443): Max retries exceeded with url: /api/search/v2/q?PageNumber=1&PageSize=50&Symbol=%D8%B9%DB%8C%D8%A7%D8%B1&Category=3&LetterType=-1&Length=-1&Audited=true&NotAudited=true&Consolidatable=true&NotConsolidatable=true&Childs=false&Mains=true&Publisher=false&TracingNo=-1&search=true (Caused by ConnectTimeoutError(<HTTPSConnection(host='search.codal.ir', port=443) at 0x72b5df40a240>, 'Connection to search.codal.ir timed out. (connect timeout=8)')); Excel download failed: ConnectTimeout: HTTPSConnectionPool(host='excel.codal.ir', port=443): Max retries exceeded with url: /service/Excel/GetAll/ufnsMFNlCf60hOOObOOO9l4CQQQaQQQQ8w%3D%3D/0 (Caused by ConnectTimeoutError(<HTTPSConnection(host='excel.codal.ir', port=443) at 0x72b5df1026f0>, 'Connection to excel.codal.ir timed out. (connect timeout=10)'))"
 }
