@@ -153,7 +153,7 @@ def main():
         nav["error"] = etf_error or "NAV ابطال معتبر از دو فیلد رسمی TSETMC دریافت نشد"
 
     # حباب/تخفیف با آخرین NAV ابطال رسمی منتشرشده محاسبه می‌شود؛ زمان NAV جداگانه نمایش داده می‌شود.
-    comparison_price = live_price or (official_last if official_last > 0 else None)
+    comparison_price = live_price or (quote_last if quote_last > 0 else None)
     if nav["redemption"] and comparison_price:
         nav["market_price_basis"] = "live_price" if live_price else "last_official_price"
         nav["premium_discount_percent"] = round(
