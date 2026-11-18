@@ -141,6 +141,27 @@ def main():
         all_1h.extend(day.get("candles_1h", []))
         all_4h.extend(day.get("candles_4h", []))
 
+    # Merge today's unfinalized TSETMC trades as explicitly partial candles.
+    live_file = DATA_DIR / "ayar_intraday_live.json"
+    live_meta = {"status": "not_available"}
+    if live_file.exists():
+        live = json.loads(live_file.read_text(encoding="utf-8"))
+        live_meta = {
+            "status": live.get("status", "unknown"),
+            "date": live.get("date"),
+            "retrieved_at": live.get("retrieved_at"),
+            "trade_count": live.get("trade_count", 0),
+            "error": live.get("error"),
+        }
+        if live.get("status") == "ok":
+            def merge_live(base, incoming):
+                by_key = {(x["date"], x["start"]): x for x in base}
+                for candle in incoming:
+                    by_key[(candle["date"], candle["start"])] = candle
+                return sorted(by_key.values(), key=lambda x: (x["date"], x["start"]))
+            all_1h = merge_live(all_1h, live.get("candles_1h", []))
+            all_4h = merge_live(all_4h, live.get("candles_4h", []))
+
     result = {
         "symbol": "عیار",
         "source": "TSETMC",
@@ -151,6 +172,7 @@ def main():
             "daily_trade_reconciliation": "Each cached day passed trade-count, volume, low and high checks",
             "cached_days": len(files),
             "minimum_candles_per_timeframe": 200,
+            "live_intraday_overlay": live_meta,
         },
         "timeframes": {
             "1h": build_timeframe(all_1h, "1h"),
