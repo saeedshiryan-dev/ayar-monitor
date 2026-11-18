@@ -2,7 +2,7 @@
   "symbol": "عیار",
   "source": "TSETMC",
   "timezone": "Asia/Tehran",
-  "calculated_at": "2026-11-18T13:47:20.398125+03:30",
+  "calculated_at": "2026-11-18T13:48:30.998809+03:30",
   "method": "EMA seeded by SMA; RSI Wilder; MACD 12-26-9; volume SMA20",
   "validation": {
     "daily_trade_reconciliation": "Each cached day passed trade-count, volume, low and high checks",
@@ -11,8 +11,12 @@
     "live_intraday_overlay": {
       "status": "ok",
       "date": "20261118",
-      "retrieved_at": "2026-11-18T13:46:18.371766+03:30",
+      "retrieved_at": "2026-11-18T13:48:14.357619+03:30",
       "trade_count": 32967,
+      "quote_trade_count": 33188,
+      "trade_count_difference": 221,
+      "count_reconciled": false,
+      "quality_note_fa": "تعداد معاملات endpoint با آمار رسمی برابر نیست؛ کندل‌ها موقت‌اند و باید با احتیاط تفسیر شوند.",
       "error": null
     }
   },

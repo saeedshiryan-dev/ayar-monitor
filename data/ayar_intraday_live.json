@@ -3,7 +3,7 @@
   "source": "TSETMC GetTrade",
   "date": "20261118",
   "timezone": "Asia/Tehran",
-  "retrieved_at": "2026-11-18T13:46:18.371766+03:30",
+  "retrieved_at": "2026-11-18T13:48:14.357619+03:30",
   "status": "ok",
   "trade_count": 32967,
   "candles_1h": [
@@ -53,8 +53,8 @@
     }
   ],
   "note_fa": "کندل‌های موقت از endpoint معاملات زنده TSETMC؛ آمار نهایی روز نیست.",
-  "quote_trade_count": 33002,
-  "trade_count_difference": 35,
+  "quote_trade_count": 33188,
+  "trade_count_difference": 221,
   "count_reconciled": false,
   "quality_note_fa": "تعداد معاملات endpoint با آمار رسمی برابر نیست؛ کندل‌ها موقت‌اند و باید با احتیاط تفسیر شوند.",
   "first_trade_time": "120002",
