@@ -56,7 +56,7 @@ def main():
         "date": date, "timezone": "Asia/Tehran",
         "retrieved_at": now.isoformat(), "status": "not_available",
         "trade_count": 0, "candles_1h": [], "candles_4h": [],
-        "note_fa": "کندل‌های موقت از معاملات ثبت‌شده امروز؛ آمار نهایی روز نیست.",
+        "note_fa": "کندل‌های موقت از endpoint معاملات زنده TSETMC؛ آمار نهایی روز نیست.",
     }
 
     if market.get("status") != "open":
@@ -65,7 +65,7 @@ def main():
         print(json.dumps(result, ensure_ascii=False))
         return
 
-    url = f"{BASE}/Trade/GetTradeHistory/{INS_CODE}/{date}/false"
+    url = f"{BASE}/Trade/GetTrade/{INS_CODE}"
     payload = get_json(url)
     raw = payload.get("tradeHistory")
     if not isinstance(raw, list):
