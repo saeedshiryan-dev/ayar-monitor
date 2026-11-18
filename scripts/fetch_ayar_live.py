@@ -1,4 +1,5 @@
 import json
+import time
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -21,15 +22,26 @@ session.headers.update({
 })
 
 def get_json(url):
-    response = session.get(url, timeout=(15, 45))
-    response.raise_for_status()
-    try:
-        data = response.json()
-    except ValueError as exc:
-        raise ValueError(f"پاسخ غیر JSON از TSETMC: {url}") from exc
-    if not isinstance(data, (dict, list)):
-        raise ValueError(f"ساختار پاسخ نامعتبر از TSETMC: {url}")
-    return data
+    last_error = None
+    for attempt in range(4):
+        try:
+            response = session.get(url, timeout=(15, 45))
+            if response.status_code in (429, 500, 502, 503, 504):
+                response.raise_for_status()
+            response.raise_for_status()
+            try:
+                data = response.json()
+            except ValueError as exc:
+                raise ValueError(f"پاسخ غیر JSON از TSETMC: {url}") from exc
+            if not isinstance(data, (dict, list)):
+                raise ValueError(f"ساختار پاسخ نامعتبر از TSETMC: {url}")
+            return data
+        except requests.RequestException as error:
+            last_error = error
+            if attempt == 3:
+                break
+            time.sleep(2 ** attempt)
+    raise last_error
 
 def unwrap(payload, key):
     value = payload.get(key) if isinstance(payload, dict) else None
