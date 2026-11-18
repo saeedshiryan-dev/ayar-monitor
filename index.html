@@ -39,6 +39,15 @@ button.active{background:#d5a84e;color:#172033;border-color:#d5a84e;font-weight:
 <div class="metric"><span>حباب / تخفیف نسبت به NAV ابطال</span><b id="navPremium">—</b></div>
 <div class="metric"><span>تاریخ و ساعت انتشار NAV</span><b id="navPublishedAt">—</b></div>
 </div><div id="navQuality" class="foot">NAV رسمی از TSETMC؛ ارقام ریال به تومان تبدیل می‌شوند. تاریخ NAV مستقل از زمان دریافت قیمت نمایش داده می‌شود.</div></section>
+<section class="panel"><div class="panelhead"><h2>تاریخچه NAV و ارزش خالص کل صندوق</h2><span id="fundHistoryUpdated" class="muted">در انتظار داده رسمی</span></div>
+<div class="metrics">
+<div class="metric"><span>آخرین NAV ابطال تاریخی</span><b id="fundLatestRedemption">—</b></div>
+<div class="metric"><span>آخرین NAV صدور تاریخی</span><b id="fundLatestSubscription">—</b></div>
+<div class="metric"><span>آخرین TotalNAV منبع</span><b id="fundLatestTotalNav">—</b></div>
+<div class="metric"><span>تعداد رکوردهای تاریخی</span><b id="fundHistoryCount">—</b></div>
+</div>
+<div style="overflow-x:auto;margin-top:12px"><table class="booktable"><thead><tr><th>تاریخ منبع</th><th>NAV ابطال</th><th>NAV صدور</th><th>NAV آماری</th><th>TotalNAV</th></tr></thead><tbody id="fundHistoryRows"><tr><td colspan="5">در انتظار دریافت داده</td></tr></tbody></table></div>
+<div id="fundHistoryNote" class="foot">تاریخچه از جزئیات رسمی صندوق در TSETMC دریافت می‌شود. TotalNAV عین فیلد منبع است و تا تأیید واحد/تعریف آن، معادل دارایی نقد یا ارزش بازار تلقی نمی‌شود.</div></section>
 <section class="panel"><div class="panelhead"><h2>نمودار قیمت و میانگین‌های متحرک</h2><span class="muted">نمایش ۱۲۰ کندل آخر</span></div><div class="chartbox"><canvas id="priceChart"></canvas></div></section>
 <section class="panel"><div class="panelhead"><h2>وضعیت اندیکاتورها</h2><span class="muted">مقادیر آخرین کندل</span></div><div class="metrics" id="metrics"></div></section>
 <section class="panel"><div class="panelhead"><h2>RSI و MACD</h2><span class="muted">تاریخچه کندل‌ها</span></div><div class="smallchart"><canvas id="rsiChart"></canvas></div><div class="smallchart" style="margin-top:14px"><canvas id="macdChart"></canvas></div></section>
@@ -47,7 +56,7 @@ button.active{background:#d5a84e;color:#172033;border-color:#d5a84e;font-weight:
 </main>
 <script>
 const DATA_URL='https://raw.githubusercontent.com/saeedshiryan-dev/ayar-monitor/main/data/ayar_intraday_indicators.json';
-const LIVE_URL='https://raw.githubusercontent.com/saeedshiryan-dev/ayar-monitor/main/data/ayar_live.json';
+const LIVE_URL='https://raw.githubusercontent.com/saeedshiryan-dev/ayar-monitor/main/data/ayar_live.json';\nconst FUND_HISTORY_URL='https://raw.githubusercontent.com/saeedshiryan-dev/ayar-monitor/main/data/ayar_fund_history.json';
 let data=null,tf='1h',charts={};
 const fmt=n=>n==null||!Number.isFinite(Number(n))?'—':Number(n).toLocaleString('en-US',{maximumFractionDigits:2});
 const faDate=s=>s? s.slice(6,8)+'/'+s.slice(4,6)+'/'+s.slice(0,4):'—';
@@ -100,6 +109,40 @@ function drawNav(j){
  const cross=n.cross_check_status==='different_snapshot_values'?' · اختلاف دو snapshot ثبت شده؛ مقدار ETF مرجع است.':n.error?' · '+n.error:'';
  document.getElementById('navQuality').textContent=status+' · زمان دریافت: '+(n.retrieved_at||j.retrieved_at||'—')+' · واحد منبع: ریال'+cross;
 }
+
+function drawFundHistory(j){
+ const history=Array.isArray(j.history)?j.history:[];
+ const fmtRaw=v=>v==null||!Number.isFinite(Number(v))?'—':Number(v).toLocaleString('en-US',{maximumFractionDigits:2});
+ const fmtDate=v=>{const s=String(v||'');if(/^\\d{8}$/.test(s))return s.slice(0,4)+'/'+s.slice(4,6)+'/'+s.slice(6,8);return s||'—';};
+ const latest=j.latest_record||history[history.length-1]||{};
+ document.getElementById('fundLatestRedemption').textContent=fmtRaw(latest.redemption_nav);
+ document.getElementById('fundLatestSubscription').textContent=fmtRaw(latest.subscription_nav);
+ document.getElementById('fundLatestTotalNav').textContent=fmtRaw(latest.total_nav);
+ document.getElementById('fundHistoryCount').textContent=fmtRaw(j.history_count??history.length);
+ document.getElementById('fundHistoryUpdated').textContent='دریافت: '+(j.retrieved_at||'—').replace('T',' ').slice(0,19);
+ const body=document.getElementById('fundHistoryRows');
+ body.replaceChildren();
+ history.slice(-15).reverse().forEach(r=>{
+  const tr=document.createElement('tr');
+  [fmtDate(r.date),fmtRaw(r.redemption_nav),fmtRaw(r.subscription_nav),fmtRaw(r.statistical_nav),fmtRaw(r.total_nav)].forEach(v=>{
+   const td=document.createElement('td');td.textContent=v;tr.appendChild(td);
+  });
+  body.appendChild(tr);
+ });
+ if(!history.length){const tr=document.createElement('tr');const td=document.createElement('td');td.colSpan=5;td.textContent='تاریخچه معتبر موجود نیست';tr.appendChild(td);body.appendChild(tr);}
+ const fund=j.fund||{};
+ document.getElementById('fundHistoryNote').textContent=(fund.name||'صندوق عیار')+' · شناسه ثبت: '+(fund.registration_number||'—')+' · منبع: '+(j.source||'TSETMC')+' · TotalNAV عین فیلد منبع است؛ واحد/تعریف تجمیعی آن باید جداگانه تأیید شود.';
+}
+async function loadFundHistory(){
+ const stamp=document.getElementById('fundHistoryUpdated');
+ try{
+  const r=await fetch(FUND_HISTORY_URL+'?v='+Date.now(),{cache:'no-store'});
+  if(!r.ok)throw Error('HTTP '+r.status);
+  const j=await r.json();
+  if(j.status!=='ok'||!Array.isArray(j.history))throw Error('ساختار تاریخچه صندوق معتبر نیست');
+  drawFundHistory(j);
+ }catch(e){stamp.textContent='دریافت تاریخچه ناموفق: '+e.message;}
+}
 function drawOrderbook(j){
  const fmtToman=n=>n==null||!Number.isFinite(Number(n))?'—':(Number(n)/10).toLocaleString('en-US',{maximumFractionDigits:1});
  document.getElementById('liveLast').textContent=fmtToman(j.last_trade_price);
@@ -116,9 +159,9 @@ function drawOrderbook(j){
 }
 async function load(){const n=document.getElementById('notice');n.textContent='در حال دریافت داده از مخزن…';try{const res=await fetch(DATA_URL+'?v='+Date.now(),{cache:'no-store'});if(!res.ok)throw Error('HTTP '+res.status);const j=await res.json();if(!j.timeframes||!j.timeframes['1h']?.candles?.length||!j.timeframes['4h']?.candles?.length)throw Error('ساختار فایل داده معتبر نیست');data=j;draw();}catch(e){n.innerHTML='<span class="bad">دریافت داده ناموفق بود: '+e.message+'</span> · کمی بعد دوباره تلاش کن.';} try{const lr=await fetch(LIVE_URL+'?v='+Date.now(),{cache:'no-store'});if(!lr.ok)throw Error('HTTP '+lr.status);drawOrderbook(await lr.json());}catch(le){document.getElementById('bookStatus').textContent='خطا در دریافت';document.getElementById('bookUpdated').textContent=le.message;}}
 document.querySelectorAll('.tf').forEach(b=>b.addEventListener('click',()=>{tf=b.dataset.tf;document.querySelectorAll('.tf').forEach(x=>x.classList.toggle('active',x===b));draw();}));
-document.getElementById('refresh').addEventListener('click',load);load();
+document.getElementById('refresh').addEventListener('click',()=>{load();loadFundHistory();});load();loadFundHistory();
 // Refresh the published five-minute feed automatically while the dashboard is open.
-setInterval(()=>{if(!document.hidden)load();},60000);
+setInterval(()=>{if(!document.hidden){load();loadFundHistory();}},60000);
 </script></body></html>).test(navDate)?navDate.slice(0,4)+'/'+navDate.slice(4,6)+'/'+navDate.slice(6,8):(navDate||'—');
  document.getElementById('navPublishedAt').textContent=navDateLabel+(n.published_time?' '+n.published_time:'');
  document.getElementById('navSource').textContent=n.source||'منبع نامشخص';
