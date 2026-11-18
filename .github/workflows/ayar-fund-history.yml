@@ -35,6 +35,47 @@ jobs:
       - name: Install dependency
         run: python -m pip install requests openpyxl
 
+      - name: Test direct Codal download link supplied by user
+        id: codal_direct
+        continue-on-error: true
+        env:
+          CODAL_DIRECT_URL: "https://www.codal.ir/Reports/DownloadFile.aspx?id=05QQQaQQQisuOOObOOOKInhOjqqMY5Uduw%3d%3d"
+        run: |
+          python - <<'PY'
+          import os, requests, hashlib
+          url = os.environ["CODAL_DIRECT_URL"]
+          headers = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/124 Safari/537.36", "Referer": "https://www.codal.ir/"}
+          try:
+              r = requests.get(url, headers=headers, timeout=(20, 90), allow_redirects=True)
+              print("HTTP_STATUS:", r.status_code)
+              print("FINAL_URL:", r.url)
+              print("CONTENT_TYPE:", r.headers.get("Content-Type"))
+              print("CONTENT_DISPOSITION:", r.headers.get("Content-Disposition"))
+              print("BYTES:", len(r.content))
+              print("MAGIC:", repr(r.content[:24]))
+              print("SHA256:", hashlib.sha256(r.content).hexdigest())
+              r.raise_for_status()
+              if len(r.content) < 100:
+                  raise RuntimeError("Response is too small to be a valid report")
+              os.makedirs("codal_direct", exist_ok=True)
+              ext = ".pdf" if r.content.startswith(b"%PDF") else ".xlsx" if r.content.startswith(b"PK") else ".bin"
+              open("codal_direct/user_supplied_report" + ext, "wb").write(r.content)
+              print("DOWNLOAD_RESULT: SUCCESS")
+          except Exception as e:
+              print("DOWNLOAD_RESULT: FAILED")
+              print("ERROR:", type(e).__name__, str(e))
+              raise
+          PY
+
+      - name: Upload direct Codal file if download succeeded
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: codal-direct-download
+          path: codal_direct/
+          if-no-files-found: ignore
+          retention-days: 2
+
       - name: Fetch official Ayar fund NAV history and aggregate NAV data
         run: python scripts/fetch_ayar_fund_history.py
 
