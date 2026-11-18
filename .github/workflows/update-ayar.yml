@@ -13,6 +13,11 @@ on:
 permissions:
   contents: write
 
+# Serialize historical rebuilds with the five-minute live snapshot writer.
+concurrency:
+  group: ayar-live-snapshot-main
+  cancel-in-progress: false
+
 jobs:
   update:
     runs-on: ubuntu-latest
