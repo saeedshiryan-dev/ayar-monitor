@@ -34,19 +34,19 @@ button.active{background:#d5a84e;color:#172033;border-color:#d5a84e;font-weight:
 <div><h3 class="buytitle" style="font-size:14px">۵ سطح برتر خرید</h3><table class="booktable"><thead><tr><th>سطح</th><th>قیمت (تومان)</th><th>حجم</th><th>تعداد سفارش</th></tr></thead><tbody id="buyRows"><tr><td colspan="4">—</td></tr></tbody></table></div>
 <div><h3 class="selltitle" style="font-size:14px">۵ سطح برتر فروش</h3><table class="booktable"><thead><tr><th>سطح</th><th>قیمت (تومان)</th><th>حجم</th><th>تعداد سفارش</th></tr></thead><tbody id="sellRows"><tr><td colspan="4">—</td></tr></tbody></table></div></div><div class="foot">قیمت‌ها از ریال به تومان تبدیل شده‌اند. فقط پنج سطح اول دفتر سفارش نمایش داده می‌شود؛ این داده‌ها کل سفارش‌های بازار نیستند.</div></section><section class="panel"><div class="panelhead"><h2>ارزش خالص دارایی‌ها (NAV) و حباب</h2><span id="navSource" class="muted">دریافت از TSETMC</span></div>
 <div class="metrics">
-<div class="metric"><span>NAV ابطال</span><b id="navRedemption">—</b></div>
-<div class="metric"><span>NAV صدور</span><b id="navSubscription">—</b></div>
+<div class="metric"><span>NAV ابطال (تومان)</span><b id="navRedemption">—</b></div>
+<div class="metric"><span>NAV صدور (تومان)</span><b id="navSubscription">—</b></div>
 <div class="metric"><span>حباب / تخفیف نسبت به NAV ابطال</span><b id="navPremium">—</b></div>
 <div class="metric"><span>تاریخ و ساعت انتشار NAV</span><b id="navPublishedAt">—</b></div>
 </div><div id="navQuality" class="foot">NAV رسمی از TSETMC؛ ارقام ریال به تومان تبدیل می‌شوند. تاریخ NAV مستقل از زمان دریافت قیمت نمایش داده می‌شود.</div></section>
 <section class="panel"><div class="panelhead"><h2>تاریخچه NAV و ارزش خالص کل صندوق</h2><span id="fundHistoryUpdated" class="muted">در انتظار داده رسمی</span></div>
 <div class="metrics">
-<div class="metric"><span>آخرین NAV ابطال تاریخی</span><b id="fundLatestRedemption">—</b></div>
-<div class="metric"><span>آخرین NAV صدور تاریخی</span><b id="fundLatestSubscription">—</b></div>
+<div class="metric"><span>آخرین NAV ابطال تاریخی (تومان)</span><b id="fundLatestRedemption">—</b></div>
+<div class="metric"><span>آخرین NAV صدور تاریخی (تومان)</span><b id="fundLatestSubscription">—</b></div>
 <div class="metric"><span>ارزش خالص کل صندوق (netAsset)</span><b id="fundLatestTotalNav">—</b></div>
 <div class="metric"><span>تعداد رکوردهای تاریخی</span><b id="fundHistoryCount">—</b></div>
 </div>
-<div style="overflow-x:auto;margin-top:12px"><table class="booktable"><thead><tr><th>تاریخ منبع</th><th>NAV ابطال</th><th>NAV صدور</th><th>NAV آماری</th><th>ارزش خالص کل (netAsset)</th></tr></thead><tbody id="fundHistoryRows"><tr><td colspan="5">در انتظار دریافت داده</td></tr></tbody></table></div>
+<div style="overflow-x:auto;margin-top:12px"><table class="booktable"><thead><tr><th>تاریخ منبع</th><th>NAV ابطال (تومان)</th><th>NAV صدور (تومان)</th><th>NAV آماری (تومان)</th><th>ارزش خالص کل (netAsset)</th></tr></thead><tbody id="fundHistoryRows"><tr><td colspan="5">در انتظار دریافت داده</td></tr></tbody></table></div>
 <div id="fundHistoryNote" class="foot">تاریخچه از جزئیات رسمی صندوق در TSETMC دریافت می‌شود. مقادیر تجمیعی و ترکیب پرتفوی عین فیلدهای منبع‌اند و با NAV هر واحد یکی نیستند.</div>
 <div style="overflow-x:auto;margin-top:10px"><table class="booktable"><thead><tr><th>بخش پرتفوی</th><th>مقدار خام گزارش‌شده TSETMC</th></tr></thead><tbody id="fundPortfolioRows"><tr><td colspan="2">در انتظار داده رسمی</td></tr></tbody></table></div></section>
 <section class="panel" id="codalPortfolioPanel"><div class="panelhead"><h2>گزارش ترکیب دارایی صندوق</h2><span id="codalPortfolioStatus" class="muted">در انتظار دریافت گزارش</span></div>
