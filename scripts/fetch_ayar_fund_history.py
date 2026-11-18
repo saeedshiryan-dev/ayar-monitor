@@ -10,7 +10,7 @@ import requests
 BASE = "https://cdn.tsetmc.com/api"
 INS_CODE = "34144395039913458"
 FUND_TYPE = "5"  # TSETMC commodity funds
-TARGET_NAME = "عیار"
+TARGET_NAME = "عیار مفید"
 TEHRAN = ZoneInfo("Asia/Tehran")
 OUT = Path("data/ayar_fund_history.json")
 OUT.parent.mkdir(parents=True, exist_ok=True)
@@ -113,7 +113,7 @@ def main():
         visible = [
             {"name": get_field(x, "mfName", "FundName", "fundName", "name"),
              "registration_number": get_field(x, "regNo", "RegistrationNumber", "registrationNumber")}
-            for x in funds if TARGET_NAME in norm(get_field(x, "mfName", "FundName", "fundName", "name"))
+            for x in funds if norm(get_field(x, "mfName", "FundName", "fundName", "name")) == TARGET_NAME
         ]
         raise ValueError("شناسه ثبت صندوق عیار به‌صورت یکتا از فهرست رسمی پیدا نشد: " +
                          json.dumps(visible, ensure_ascii=False))
