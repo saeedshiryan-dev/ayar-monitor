@@ -227,10 +227,11 @@ def main():
         "registration_number": reg_no,
         "history_count": len(history),
         "first_date": dated[0],
-        "last_date": latest_record["date"],\n        "current_etf_nav_status": "ok" if current_etf and any(row.get("record_source") == "TSETMC Fund/GetETFByInsCode" for row in history) else "unavailable",\n        "current_etf_nav_error": etf_error,
+        "last_date": latest_record["date"],
         "latest_record": output["latest_record"],
         "fund_snapshot": output["fund_snapshot"],
-        "output": str(OUT),\n        "current_etf_nav_status": output["current_etf_nav_status"],
+        "output": str(OUT),
+        "current_etf_nav_status": output["current_etf_nav_status"],
     }, ensure_ascii=False, indent=2))
 
 if __name__ == "__main__":
