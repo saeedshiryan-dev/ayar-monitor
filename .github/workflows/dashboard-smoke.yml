@@ -1,0 +1,42 @@
+name: Dashboard Browser Smoke Test
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'index.html'
+      - 'scripts/smoke_dashboard.mjs'
+      - '.github/workflows/dashboard-smoke.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  browser-smoke:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Install Playwright
+        run: |
+          npm install --no-save playwright
+          npx playwright install --with-deps chromium
+
+      - name: Wait for GitHub Pages and test the live dashboard
+        run: |
+          mkdir -p artifacts
+          node scripts/smoke_dashboard.mjs
+
+      - name: Upload browser screenshot
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ayar-dashboard-browser-test
+          path: artifacts/
+          if-no-files-found: ignore
