@@ -3,13 +3,13 @@
   "insCode": "34144395039913458",
   "source": "TSETMC",
   "source_api": "cdn.tsetmc.com/api",
-  "retrieved_at": "2026-11-18T16:59:50.709711+03:30",
+  "retrieved_at": "2026-11-18T18:52:22.006547+03:30",
   "timezone": "Asia/Tehran",
   "market": {
-    "status": "open",
-    "label_fa": "ساعت معاملات پیوسته",
+    "status": "closed",
+    "label_fa": "پایان ساعت معاملات",
     "timezone": "Asia/Tehran",
-    "checked_at": "2026-11-18T16:59:50.709711+03:30",
+    "checked_at": "2026-11-18T18:52:22.006547+03:30",
     "scheduled_pre_open": "11:45",
     "scheduled_open": "12:00",
     "scheduled_close": "18:00",
@@ -17,90 +17,90 @@
   },
   "session_date": "20261118",
   "today_has_trade": true,
-  "live_price": 654517,
+  "live_price": 655602,
   "live_price_unit": "ریال",
-  "closing_price": 654593,
-  "last_trade_price": 654517,
-  "last_trade_time": "16:49:50",
+  "closing_price": 654752,
+  "last_trade_price": 655602,
+  "last_trade_time": "17:59:59",
   "last_trade_volume": null,
-  "official_daily_last_price": 654517,
+  "official_daily_last_price": 655602,
   "tsetmc_quote_date": "20261118",
-  "tsetmc_quote_trade_count": 53859,
-  "trade_endpoint_rows": 53859,
-  "trade_endpoint_error": null,
+  "tsetmc_quote_trade_count": 61228,
+  "trade_endpoint_rows": 0,
+  "trade_endpoint_error": "502 Server Error: Bad Gateway for url: https://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
   "orderbook": {
     "status": "ok",
     "source": "TSETMC BestLimits",
-    "retrieved_at": "2026-11-18T16:59:50.709711+03:30",
+    "retrieved_at": "2026-11-18T18:52:22.006547+03:30",
     "unit": "ریال",
     "buy": [
       {
         "level": 1,
-        "price": 654517,
-        "volume": 88496,
-        "orders": 1
-      },
-      {
-        "level": 2,
-        "price": 654510,
-        "volume": 18,
+        "price": 655602,
+        "volume": 5007,
         "orders": 2
       },
       {
-        "level": 3,
-        "price": 654509,
-        "volume": 2179,
-        "orders": 8
-      },
-      {
-        "level": 4,
-        "price": 654506,
-        "volume": 415,
+        "level": 2,
+        "price": 655601,
+        "volume": 7910,
         "orders": 1
       },
       {
+        "level": 3,
+        "price": 655600,
+        "volume": 202,
+        "orders": 3
+      },
+      {
+        "level": 4,
+        "price": 655500,
+        "volume": 113,
+        "orders": 5
+      },
+      {
         "level": 5,
-        "price": 654505,
-        "volume": 3131,
-        "orders": 6
+        "price": 655009,
+        "volume": 50,
+        "orders": 1
       }
     ],
     "sell": [
       {
         "level": 1,
-        "price": 654550,
-        "volume": 94,
-        "orders": 3
+        "price": 655700,
+        "volume": 3000,
+        "orders": 1
       },
       {
         "level": 2,
-        "price": 654555,
-        "volume": 4675,
-        "orders": 6
+        "price": 655750,
+        "volume": 20337,
+        "orders": 1
       },
       {
         "level": 3,
-        "price": 654576,
-        "volume": 403,
-        "orders": 2
+        "price": 655770,
+        "volume": 10251,
+        "orders": 4
       },
       {
         "level": 4,
-        "price": 654580,
-        "volume": 1248,
-        "orders": 3
+        "price": 655772,
+        "volume": 80,
+        "orders": 1
       },
       {
         "level": 5,
-        "price": 654583,
-        "volume": 10,
-        "orders": 1
+        "price": 655777,
+        "volume": 21700,
+        "orders": 3
       }
     ],
-    "buy_total_volume": 94239,
-    "sell_total_volume": 6430,
-    "buy_total_orders": 18,
-    "sell_total_orders": 15,
+    "buy_total_volume": 13282,
+    "sell_total_volume": 55368,
+    "buy_total_orders": 12,
+    "sell_total_orders": 10,
     "note_fa": "۵ سطح برتر دفتر سفارش از TSETMC دریافت شد؛ قیمت‌ها ریال هستند.",
     "error": null
   },
@@ -108,13 +108,13 @@
     "status": "ok",
     "source": "TSETMC Fund/GetETFByInsCode",
     "unit": "ریال",
-    "redemption": 661433,
-    "subscription": 664439,
+    "redemption": 663527,
+    "subscription": 666542,
     "published_date": "20261118",
-    "published_time": "16:58:10",
-    "retrieved_at": "2026-11-18T16:59:50.709711+03:30",
+    "published_time": "17:58:01",
+    "retrieved_at": "2026-11-18T18:52:22.006547+03:30",
     "market_price_basis": "live_price",
-    "premium_discount_percent": -1.0456,
+    "premium_discount_percent": -1.1944,
     "cross_check_status": "quote_nav_unavailable",
     "error": null
   },
