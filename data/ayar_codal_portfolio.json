@@ -2,12 +2,12 @@
   "status": "partial_secondary",
   "symbol": "عیار",
   "source": "Bourseeye secondary snapshot; Codal official endpoints unreachable from GitHub Actions",
-  "official_source_error": "ConnectTimeout: HTTPSConnectionPool(host='search.codal.ir', port=443): Max retries exceeded with url: /api/search/v2/q?PageNumber=1&PageSize=50&Symbol=%D8%B9%DB%8C%D8%A7%D8%B1&Category=3&LetterType=-1&Length=-1&Audited=true&NotAudited=true&Consolidatable=true&NotConsolidatable=true&Childs=false&Mains=true&Publisher=false&TracingNo=-1&search=true (Caused by ConnectTimeoutError(<HTTPSConnection(host='search.codal.ir', port=443) at 0x774ead2ebce0>, 'Connection to search.codal.ir timed out. (connect timeout=8)'))",
+  "official_source_error": "ConnectTimeout: HTTPSConnectionPool(host='search.codal.ir', port=443): Max retries exceeded with url: /api/search/v2/q?PageNumber=1&PageSize=50&Symbol=%D8%B9%DB%8C%D8%A7%D8%B1&Category=3&LetterType=-1&Length=-1&Audited=true&NotAudited=true&Consolidatable=true&NotConsolidatable=true&Childs=false&Mains=true&Publisher=false&TracingNo=-1&search=true (Caused by ConnectTimeoutError(<HTTPSConnection(host='search.codal.ir', port=443) at 0x7a24b39500b0>, 'Connection to search.codal.ir timed out. (connect timeout=8)'))",
   "secondary_page_error": null,
-  "retrieved_at": "2026-11-18T11:28:34.990603+00:00",
+  "retrieved_at": "2026-11-18T11:40:48.995904+00:00",
   "secondary_snapshot": {
     "page_url": "https://bourseeye.com/funds/1521/صندوق-طلای-عیار-مفید",
-    "page_updated_date": "1405/08/26",
+    "page_updated_date": null,
     "nav_redemption_toman": 67048.0,
     "nav_subscription_toman": 67353.0,
     "nav_report_date": "۲۳ آبان ۱۴۰۵",
@@ -16,16 +16,22 @@
     "composition_report_date": "۲۴ آبان ۱۴۰۵",
     "composition": [
       {
-        "name": "سهام و گواهی سپرده کالایی",
+        "name": "ترکیب دارایی‌های صندوق عیار سهام و گواهی سپرده کالایی",
         "percent": 0.69
       },
       {
         "name": "اوراق با درآمد ثابت",
         "percent": 0.22
+      },
+      {
+        "name": "پنج سهم بزرگ",
+        "percent": 0.0
       }
     ],
+    "composition_categories_count": 3,
     "composition_reported_total_percent": 0.91,
     "composition_complete": false,
+    "composition_missing_percent": 99.09,
     "static_fallback_used": false
   },
   "report": {
@@ -39,7 +45,7 @@
   },
   "notes_fa": [
     "داده‌های ترکیب دارایی در این مسیر پشتیبان از منبع ثانویه‌اند، نه فایل اصلی کدال.",
-    "درصدهای منتشرشده فقط ۰٫۹۱٪ را پوشش می‌دهند؛ بنابراین ترکیب ناقص است و مانده به هیچ طبقه‌ای نسبت داده نشده است.",
+    "فقط طبقه‌هایی که صریحاً در بخش ترکیب دارایی منبع نمایش داده شده‌اند استخراج می‌شوند؛ مانده هرگز به‌صورت حدسی به طبقه‌ای نسبت داده نمی‌شود.",
     "در صورت استفاده از fallback ثابت، تاریخ صفحه منبع ۲۶ آبان ۱۴۰۵ است و ارقام NAV/ترکیب به تاریخ‌های جداگانه خود تعلق دارند.",
     "لینک گزارش رسمی کدال برای بررسی و دریافت مستقیم نگهداری شده است."
   ]
