@@ -51,6 +51,12 @@ try {
     navPublishedAt: document.querySelector("#navPublishedAt")?.textContent?.trim(),
     bookStatus: document.querySelector("#bookStatus")?.textContent?.trim(),
     bookUpdated: document.querySelector("#bookUpdated")?.textContent?.trim(),
+    fundLatestRedemption: document.querySelector("#fundLatestRedemption")?.textContent?.trim(),
+    fundLatestSubscription: document.querySelector("#fundLatestSubscription")?.textContent?.trim(),
+    historyNavHeader: document.querySelector("#fundHistoryRows")?.parentElement?.querySelector("thead")?.textContent?.trim(),
+    portfolioTableCount: document.querySelectorAll("#codalPortfolioTables table").length,
+    portfolioAssetRows: document.querySelector("#codalPortfolioTables table tbody")?.querySelectorAll("tr").length ??
+      document.querySelector("#codalPortfolioTables table")?.querySelectorAll("tr").length ?? 0,
   }));
 
   await page.locator('.tf[data-tf="4h"]').click();
@@ -63,10 +69,32 @@ try {
     if (!initial[key] || initial[key] === "—") throw new Error("Live quote/NAV field did not render: " + key);
   }
   if (initial.bookStatus !== "دریافت شد") throw new Error("Order book was not loaded: " + initial.bookStatus);
+  if (!initial.fundLatestRedemption || initial.fundLatestRedemption === "—" ||
+      !initial.fundLatestSubscription || initial.fundLatestSubscription === "—") {
+    throw new Error("Historical NAV values did not render");
+  }
+  if (!initial.historyNavHeader?.includes("تومان")) throw new Error("Historical NAV table unit is not explicit");
+  if (initial.portfolioTableCount < 2 || initial.portfolioAssetRows < 5) {
+    throw new Error("Uploaded Codal portfolio tables did not render completely");
+  }
   if (!fourHourActive) throw new Error("4-hour timeframe control did not respond");
+
+  // Verify the published page also fits a narrow mobile viewport.
+  await page.setViewportSize({ width: 390, height: 844 });
+  await page.reload({ waitUntil: "domcontentloaded", timeout: 120000 });
+  await page.waitForFunction(() => document.querySelector("#liveLast")?.textContent?.trim() &&
+    document.querySelector("#codalPortfolioStatus")?.textContent?.trim() &&
+    document.querySelector("#fundLatestRedemption")?.textContent?.trim() !== "—", { timeout: 120000 });
+  const mobile = await page.evaluate(() => ({
+    viewportWidth: window.innerWidth,
+    documentWidth: document.documentElement.scrollWidth,
+    portfolioTables: document.querySelectorAll("#codalPortfolioTables table").length,
+    noHorizontalPageOverflow: document.documentElement.scrollWidth <= window.innerWidth + 2,
+  }));
+  if (!mobile.noHorizontalPageOverflow) throw new Error("Mobile page has horizontal overflow: " + JSON.stringify(mobile));
   if (pageErrors.length) throw new Error("Browser JavaScript errors: " + pageErrors.join(" | "));
 
-  console.log(JSON.stringify({ ok: true, url, initial, fourHourActive, pageErrors }, null, 2));
+  console.log(JSON.stringify({ ok: true, url, initial, fourHourActive, mobile, pageErrors }, null, 2));
 } finally {
   await browser.close();
 }
