@@ -87,7 +87,9 @@ function draw(){
    ?' · <span class="warn">هشدار: اختلاف '+fmt(liveQuality.trade_count_difference)+' معامله با آمار رسمی</span>'
    :liveQuality.status==='ok'&&liveQuality.count_reconciled===true
    ?' · <span class="good">تعداد معاملات با آمار رسمی تطبیق دارد</span>':'';
- document.getElementById('notice').innerHTML='آخرین کندل: <b>'+last.datetime+'</b> · '+(partial?'<span class="warn">کندل ناقص / در حال تشکیل</span>':'<span class="good">کندل کامل</span>')+' · '+data.validation.cached_days+' روز معاملاتی اعتبارسنجی‌شده'+qualityNote;
+ const historyNote=tf==='4h'&&last.EMA200==null
+   ?' · <span class="warn">EMA200 چهار‌ساعته به ۲۰۰ کندل کامل نیاز دارد؛ فعلاً '+fmt(t.candle_count)+' کندل معتبر موجود است</span>':'';
+ document.getElementById('notice').innerHTML='آخرین کندل: <b>'+last.datetime+'</b> · '+(partial?'<span class="warn">کندل ناقص / در حال تشکیل</span>':'<span class="good">کندل کامل</span>')+' · '+data.validation.cached_days+' روز معاملاتی اعتبارسنجی‌شده'+qualityNote+historyNote;
  document.getElementById('updated').textContent='آخرین محاسبه: '+data.calculated_at.replace('T',' ').slice(0,19);
  const keys=['EMA20','EMA50','EMA200','MACD','MACD_signal','MACD_histogram','Volume_SMA20','Volume_Ratio'];
  const labels=['EMA 20','EMA 50','EMA 200','MACD','سیگنال MACD','هیستوگرام MACD','میانگین حجم ۲۰','نسبت حجم'];
