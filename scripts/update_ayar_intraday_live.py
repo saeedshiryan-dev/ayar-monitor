@@ -67,9 +67,9 @@ def main():
 
     url = f"{BASE}/Trade/GetTrade/{INS_CODE}"
     payload = get_json(url)
-    raw = payload.get("tradeHistory")
+    raw = payload.get("trade") or payload.get("tradeHistory")
     if not isinstance(raw, list):
-        raise ValueError("آرایه tradeHistory در پاسخ TSETMC موجود نیست")
+        raise ValueError("آرایه trade در پاسخ GetTrade TSETMC موجود نیست")
 
     unique = {}
     for item in raw:
