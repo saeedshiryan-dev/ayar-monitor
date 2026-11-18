@@ -137,6 +137,7 @@ def main():
 
     # Preserve provider order and source rows; do not sort or interpolate provider data.
     dated = [row["date"] for row in history]
+    latest_record = max(history, key=lambda row: row["date"])
     output = {
         "symbol": "عیار",
         "insCode": INS_CODE,
@@ -154,7 +155,7 @@ def main():
         "first_date_in_source_order": dated[0],
         "last_date_in_source_order": dated[-1],
         "history": history,
-        "latest_record": history[-1],
+        "latest_record": latest_record,
         "fund_snapshot": {
             "net_asset_value": as_number(get_field(detail, "netAsset")),
             "units": as_number(get_field(detail, "units")),
@@ -183,7 +184,7 @@ def main():
         "registration_number": reg_no,
         "history_count": len(history),
         "first_date": dated[0],
-        "last_date": dated[-1],
+        "last_date": latest_record["date"],
         "latest_record": output["latest_record"],
         "fund_snapshot": output["fund_snapshot"],
         "output": str(OUT),
