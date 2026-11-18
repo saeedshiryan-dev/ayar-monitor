@@ -1,0 +1,27 @@
+{
+  "symbol": "عیار",
+  "insCode": "34144395039913458",
+  "source": "TSETMC",
+  "source_api": "cdn.tsetmc.com/api",
+  "retrieved_at": "2026-11-18T10:43:45.494801+03:30",
+  "timezone": "Asia/Tehran",
+  "market": {
+    "status": "before_market",
+    "label_fa": "قبل از شروع معاملات",
+    "timezone": "Asia/Tehran",
+    "checked_at": "2026-11-18T10:43:45.494801+03:30",
+    "scheduled_open": "12:00",
+    "scheduled_close": "18:00",
+    "calendar_note": "تقویم تعطیلات رسمی و اطلاعیه‌های استثنایی باید جداگانه کنترل شود."
+  },
+  "session_date": "20261117",
+  "today_has_trade": false,
+  "live_price": null,
+  "live_price_unit": "ریال",
+  "closing_price": 663847,
+  "last_trade_price": 662301,
+  "last_trade_time": null,
+  "last_trade_volume": null,
+  "official_daily_last_price": 662301,
+  "price_note_fa": "امروز معامله‌ای در پاسخ TSETMC ثبت نشده؛ قیمت لحظه‌ای اعلام نمی‌شود و فقط آخرین جلسه گزارش می‌شود."
+}
