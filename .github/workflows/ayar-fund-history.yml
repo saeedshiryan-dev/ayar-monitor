@@ -39,6 +39,8 @@ jobs:
         run: python scripts/fetch_ayar_fund_history.py
 
       - name: Fetch latest official Ayar monthly portfolio report from Codal
+        env:
+          CODAL_HTTP_PROXY: ${{ secrets.CODAL_HTTP_PROXY }}
         run: python scripts/fetch_ayar_codal_portfolio.py
 
       - name: Save validated fund and Codal portfolio snapshots
