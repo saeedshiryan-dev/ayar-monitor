@@ -27,9 +27,13 @@ try {
     return price && price !== "—" && history && history !== "—" &&
       portfolio && !portfolio.includes("در انتظار") &&
       liveLast && liveLast !== "—" && liveClose && liveClose !== "—" &&
-      liveTime && liveTime !== "—" && navRedemption && navRedemption !== "—" &&
+      navRedemption && navRedemption !== "—" &&
       navSubscription && navSubscription !== "—" && navPublishedAt &&
-      navPublishedAt !== "—" && bookStatus === "دریافت شد";
+      navPublishedAt !== "—" && bookStatus === "دریافت شد" &&
+      document.querySelector("#liveTime")?.textContent?.trim() !== "—" &&
+      document.querySelector("#macroStatus")?.textContent?.trim() === "دریافت موفق · نر‌خ‌آرا" &&
+      document.querySelector("#macroUsd")?.textContent?.trim() !== "—" &&
+      document.querySelector("#macroXau")?.textContent?.trim() !== "—";
   }, { timeout: 120000 });
 
   const initial = await page.evaluate(() => ({
@@ -45,6 +49,9 @@ try {
     liveLast: document.querySelector("#liveLast")?.textContent?.trim(),
     liveClose: document.querySelector("#liveClose")?.textContent?.trim(),
     liveTime: document.querySelector("#liveTime")?.textContent?.trim(),
+    macroStatus: document.querySelector("#macroStatus")?.textContent?.trim(),
+    macroUsd: document.querySelector("#macroUsd")?.textContent?.trim(),
+    macroXau: document.querySelector("#macroXau")?.textContent?.trim(),
     navRedemption: document.querySelector("#navRedemption")?.textContent?.trim(),
     navSubscription: document.querySelector("#navSubscription")?.textContent?.trim(),
     navPremium: document.querySelector("#navPremium")?.textContent?.trim(),
@@ -65,10 +72,11 @@ try {
 
   if (!initial.title.includes("داشبورد")) throw new Error("Unexpected page title");
   if (!initial.hasNavPanel) throw new Error("NAV panel did not render");
-  for (const key of ["liveLast", "liveClose", "liveTime", "navRedemption", "navSubscription", "navPremium", "navPublishedAt"]) {
+  for (const key of ["liveLast", "liveClose", "liveTime", "navRedemption", "navSubscription", "navPremium", "navPublishedAt", "macroUsd", "macroXau"]) {
     if (!initial[key] || initial[key] === "—") throw new Error("Live quote/NAV field did not render: " + key);
   }
   if (initial.bookStatus !== "دریافت شد") throw new Error("Order book was not loaded: " + initial.bookStatus);
+  if (initial.macroStatus !== "دریافت موفق · نر‌خ‌آرا") throw new Error("Macro quotes are missing or stale: " + initial.macroStatus);
   if (!initial.fundLatestRedemption || initial.fundLatestRedemption === "—" ||
       !initial.fundLatestSubscription || initial.fundLatestSubscription === "—") {
     throw new Error("Historical NAV values did not render");
