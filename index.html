@@ -32,7 +32,14 @@ button.active{background:#d5a84e;color:#172033;border-color:#d5a84e;font-weight:
 <div class="metrics"><div class="metric"><span>آخرین معامله</span><b id="liveLast">—</b></div><div class="metric"><span>قیمت پایانی</span><b id="liveClose">—</b></div><div class="metric"><span>زمان آخرین معامله</span><b id="liveTime">—</b></div><div class="metric"><span>وضعیت دفتر سفارش</span><b id="bookStatus">—</b></div></div>
 <div id="bookTotals" class="booksummary"></div><div class="bookgrid">
 <div><h3 class="buytitle" style="font-size:14px">۵ سطح برتر خرید</h3><table class="booktable"><thead><tr><th>سطح</th><th>قیمت (تومان)</th><th>حجم</th><th>تعداد سفارش</th></tr></thead><tbody id="buyRows"><tr><td colspan="4">—</td></tr></tbody></table></div>
-<div><h3 class="selltitle" style="font-size:14px">۵ سطح برتر فروش</h3><table class="booktable"><thead><tr><th>سطح</th><th>قیمت (تومان)</th><th>حجم</th><th>تعداد سفارش</th></tr></thead><tbody id="sellRows"><tr><td colspan="4">—</td></tr></tbody></table></div></div><div class="foot">قیمت‌ها از ریال به تومان تبدیل شده‌اند. فقط پنج سطح اول دفتر سفارش نمایش داده می‌شود؛ این داده‌ها کل سفارش‌های بازار نیستند.</div></section><section class="panel"><div class="panelhead"><h2>نمودار قیمت و میانگین‌های متحرک</h2><span class="muted">نمایش ۱۲۰ کندل آخر</span></div><div class="chartbox"><canvas id="priceChart"></canvas></div></section>
+<div><h3 class="selltitle" style="font-size:14px">۵ سطح برتر فروش</h3><table class="booktable"><thead><tr><th>سطح</th><th>قیمت (تومان)</th><th>حجم</th><th>تعداد سفارش</th></tr></thead><tbody id="sellRows"><tr><td colspan="4">—</td></tr></tbody></table></div></div><div class="foot">قیمت‌ها از ریال به تومان تبدیل شده‌اند. فقط پنج سطح اول دفتر سفارش نمایش داده می‌شود؛ این داده‌ها کل سفارش‌های بازار نیستند.</div></section><section class="panel"><div class="panelhead"><h2>ارزش خالص دارایی‌ها (NAV) و حباب</h2><span id="navSource" class="muted">دریافت از TSETMC</span></div>
+<div class="metrics">
+<div class="metric"><span>NAV ابطال</span><b id="navRedemption">—</b></div>
+<div class="metric"><span>NAV صدور</span><b id="navSubscription">—</b></div>
+<div class="metric"><span>حباب / تخفیف نسبت به NAV ابطال</span><b id="navPremium">—</b></div>
+<div class="metric"><span>تاریخ و ساعت انتشار NAV</span><b id="navPublishedAt">—</b></div>
+</div><div id="navQuality" class="foot">NAV رسمی از TSETMC؛ ارقام ریال به تومان تبدیل می‌شوند. تاریخ NAV مستقل از زمان دریافت قیمت نمایش داده می‌شود.</div></section>
+<section class="panel"><div class="panelhead"><h2>نمودار قیمت و میانگین‌های متحرک</h2><span class="muted">نمایش ۱۲۰ کندل آخر</span></div><div class="chartbox"><canvas id="priceChart"></canvas></div></section>
 <section class="panel"><div class="panelhead"><h2>وضعیت اندیکاتورها</h2><span class="muted">مقادیر آخرین کندل</span></div><div class="metrics" id="metrics"></div></section>
 <section class="panel"><div class="panelhead"><h2>RSI و MACD</h2><span class="muted">تاریخچه کندل‌ها</span></div><div class="smallchart"><canvas id="rsiChart"></canvas></div><div class="smallchart" style="margin-top:14px"><canvas id="macdChart"></canvas></div></section>
 <section class="panel"><h2>جمع‌بندی تکنیکال خودکار</h2><div id="signal" class="signal" style="margin-top:10px">—</div><div class="foot">این جمع‌بندی صرفاً قواعد ساده اندیکاتوری است و توصیه قطعی خرید یا فروش نیست. کندل ناقص ۴ساعته با برچسب مشخص می‌شود. هیچ داده‌ای در این صفحه ساخته یا تخمین زده نمی‌شود.</div></section>
@@ -78,11 +85,25 @@ function draw(){
  msg+=' نسبت حجم '+fmt(last.Volume_Ratio)+' برابر میانگین است.';
  document.getElementById('signal').textContent=msg;
 }
+function drawNav(j){
+ const n=j.nav||{};
+ const fmtToman=n=>n==null||!Number.isFinite(Number(n))?'—':(Number(n)/10).toLocaleString('en-US',{maximumFractionDigits:2});
+ document.getElementById('navRedemption').textContent=fmtToman(n.redemption);
+ document.getElementById('navSubscription').textContent=fmtToman(n.subscription);
+ const p=n.premium_discount_percent;
+ document.getElementById('navPremium').textContent=p==null?'—':(Number(p)>0?'+':'')+Number(p).toFixed(2)+'٪';
+ document.getElementById('navPublishedAt').textContent=(n.published_date||'—')+(n.published_time?' '+n.published_time:'');
+ document.getElementById('navSource').textContent=n.source||'منبع نامشخص';
+ const status=n.status==='ok'?'NAV رسمی دریافت شد':n.status==='fallback_quote_snapshot'?'NAV از snapshot قیمت TSETMC':'NAV در دسترس نیست';
+ const cross=n.cross_check_status==='different_snapshot_values'?' · اختلاف دو snapshot ثبت شده؛ مقدار ETF مرجع است.':n.error?' · '+n.error:'';
+ document.getElementById('navQuality').textContent=status+' · زمان دریافت: '+(n.retrieved_at||j.retrieved_at||'—')+' · واحد منبع: ریال'+cross;
+}
 function drawOrderbook(j){
  const fmtToman=n=>n==null||!Number.isFinite(Number(n))?'—':(Number(n)/10).toLocaleString('en-US',{maximumFractionDigits:1});
  document.getElementById('liveLast').textContent=fmtToman(j.last_trade_price);
  document.getElementById('liveClose').textContent=fmtToman(j.closing_price);
  document.getElementById('liveTime').textContent=j.last_trade_time||'—';
+ drawNav(j);
  document.getElementById('bookUpdated').textContent='به‌روزرسانی: '+(j.orderbook?.retrieved_at||j.retrieved_at||'—').replace('T',' ').slice(0,19);
  const b=j.orderbook||{};
  document.getElementById('bookStatus').textContent=b.status==='ok'?'دریافت شد':b.status==='empty'?'بدون سفارش فعال':'ناموفق';
