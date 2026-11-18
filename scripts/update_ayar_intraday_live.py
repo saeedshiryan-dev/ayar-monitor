@@ -1,6 +1,6 @@
 import json
 import time
-from datetime import datetime, time
+from datetime import datetime, time as datetime_time
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -21,9 +21,9 @@ SESSION.headers.update({
 
 def get_json(url):
     last_error = None
-    for attempt in range(4):
+    for attempt in range(2):
         try:
-            response = SESSION.get(url, timeout=(15, 45))
+            response = SESSION.get(url, timeout=(10, 25))
             if response.status_code in (429, 500, 502, 503, 504):
                 response.raise_for_status()
             response.raise_for_status()
@@ -33,7 +33,7 @@ def get_json(url):
             return payload
         except requests.RequestException as error:
             last_error = error
-            if attempt == 3:
+            if attempt == 1:
                 break
             time.sleep(2 ** attempt)
     raise last_error
@@ -42,7 +42,7 @@ def get_json(url):
 def make_candle(rows, date, start, end, now):
     if not rows:
         return None
-    end_time = time(end, 0) if end < 18 else time(18, 0)
+    end_time = datetime_time(end, 0) if end < 18 else datetime_time(18, 0)
     return {
         "date": date,
         "start": f"{start:02d}:00",
