@@ -3,196 +3,83 @@ from pathlib import Path
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-TEHRAN = ZoneInfo("Asia/Tehran")
-DATA_DIR = Path("data")
-CACHE_DIR = DATA_DIR / "intraday"
-OUTPUT_FILE = DATA_DIR / "ayar_intraday_indicators.json"
+TEHRAN=ZoneInfo("Asia/Tehran")
+DATA=Path("data")
+CACHE=DATA/"intraday"
+OUT=DATA/"ayar_intraday_indicators.json"
 
+def ema(v,p):
+    if len(v)<p: return [None]*len(v)
+    a=2/(p+1); out=[None]*(p-1); x=sum(v[:p])/p; out.append(x)
+    for n in v[p:]:
+        x=(n-x)*a+x; out.append(x)
+    return out
 
-def ema(values, period):
-    if len(values) < period:
-        raise ValueError(f"داده کافی برای EMA{period}: {len(values)}")
-    alpha = 2 / (period + 1)
-    result = [None] * (period - 1)
-    current = sum(values[:period]) / period
-    result.append(current)
-    for value in values[period:]:
-        current = (value - current) * alpha + current
-        result.append(current)
-    return result
+def rsi(v,p=14):
+    if len(v)<=p: return [None]*len(v)
+    d=[v[i]-v[i-1] for i in range(1,len(v))]
+    g=[max(x,0) for x in d]; l=[max(-x,0) for x in d]
+    ag=sum(g[:p])/p; al=sum(l[:p])/p
+    def val(a,b): return (100.0 if a>0 else 50.0) if b==0 else 100-100/(1+a/b)
+    out=[None]*p+[val(ag,al)]
+    for i in range(p,len(g)):
+        ag=(ag*(p-1)+g[i])/p; al=(al*(p-1)+l[i])/p; out.append(val(ag,al))
+    return out
 
+def sma(v,p):
+    return [None]*(p-1)+[sum(v[i-p+1:i+1])/p for i in range(p-1,len(v))]
 
-def rsi(values, period=14):
-    if len(values) <= period:
-        raise ValueError("داده کافی برای RSI14 وجود ندارد")
-    changes = [values[i] - values[i - 1] for i in range(1, len(values))]
-    gains = [max(x, 0) for x in changes]
-    losses = [max(-x, 0) for x in changes]
-    avg_gain = sum(gains[:period]) / period
-    avg_loss = sum(losses[:period]) / period
-
-    def value(gain, loss):
-        if loss == 0:
-            return 100.0 if gain > 0 else 50.0
-        rs = gain / loss
-        return 100 - 100 / (1 + rs)
-
-    result = [None] * period
-    result.append(value(avg_gain, avg_loss))
-    for i in range(period, len(gains)):
-        avg_gain = (avg_gain * (period - 1) + gains[i]) / period
-        avg_loss = (avg_loss * (period - 1) + losses[i]) / period
-        result.append(value(avg_gain, avg_loss))
-    return result
-
-
-def sma(values, period):
-    result = [None] * (period - 1)
-    for i in range(period - 1, len(values)):
-        result.append(sum(values[i - period + 1:i + 1]) / period)
-    return result
-
-
-def build_timeframe(candles, timeframe):
-    candles.sort(key=lambda x: (x["date"], x["start"]))
-    if len(candles) < 200:
-        raise ValueError(f"برای {timeframe} فقط {len(candles)} کندل موجود است؛ حداقل ۲۰۰ لازم است")
-
-    dates = [x["date"] + " " + x["start"] for x in candles]
-    closes = [float(x["close"]) for x in candles]
-    volumes = [int(x["volume"]) for x in candles]
-
-    ema20 = ema(closes, 20)
-    ema50 = ema(closes, 50)
-    ema200 = ema(closes, 200)
-    rsi14 = rsi(closes, 14)
-    ema12 = ema(closes, 12)
-    ema26 = ema(closes, 26)
-
-    macd = [
-        None if fast is None or slow is None else fast - slow
-        for fast, slow in zip(ema12, ema26)
-    ]
-    valid_macd = [x for x in macd if x is not None]
-    signal_valid = ema(valid_macd, 9)
-    signal = [None] * (len(macd) - len(signal_valid)) + signal_valid
-    histogram = [
-        None if line is None or sig is None else line - sig
-        for line, sig in zip(macd, signal)
-    ]
-    vol_sma = sma(volumes, 20)
-    vol_ratio = [
-        None if avg in (None, 0) else volume / avg
-        for volume, avg in zip(volumes, vol_sma)
-    ]
-
-    def rounded(values, digits=2):
-        return [None if x is None else round(x, digits) for x in values]
-
-    latest = {
-        "datetime": dates[-1],
-        "open": candles[-1]["open"],
-        "high": candles[-1]["high"],
-        "low": candles[-1]["low"],
-        "close": closes[-1],
-        "volume": volumes[-1],
-        "trades": candles[-1]["trades"],
-        "partial": candles[-1].get("partial", False),
-        "EMA20": round(ema20[-1], 2),
-        "EMA50": round(ema50[-1], 2),
-        "EMA200": round(ema200[-1], 2),
-        "RSI14": round(rsi14[-1], 2),
-        "MACD": round(macd[-1], 2),
-        "MACD_signal": round(signal[-1], 2),
-        "MACD_histogram": round(histogram[-1], 2),
-        "Volume_SMA20": round(vol_sma[-1], 2),
-        "Volume_Ratio": round(vol_ratio[-1], 3) if vol_ratio[-1] is not None else None,
-    }
-    return {
-        "candle_count": len(candles),
-        "first_candle": dates[0],
-        "last_candle": dates[-1],
-        "latest": latest,
-        "candles": candles,
-        "indicators": {
-            "EMA20": rounded(ema20),
-            "EMA50": rounded(ema50),
-            "EMA200": rounded(ema200),
-            "RSI14": rounded(rsi14),
-            "MACD": rounded(macd),
-            "MACD_signal": rounded(signal),
-            "MACD_histogram": rounded(histogram),
-            "Volume": volumes,
-            "Volume_SMA20": rounded(vol_sma),
-            "Volume_Ratio": rounded(vol_ratio, 3),
-        },
-    }
-
+def build(cs,tf):
+    cs=sorted(cs,key=lambda x:(x["date"],x["start"]))
+    if not cs: raise ValueError(f"No candles for {tf}")
+    dates=[x["date"]+" "+x["start"] for x in cs]
+    c=[float(x["close"]) for x in cs]; vol=[int(x["volume"]) for x in cs]
+    e20,e50,e200=ema(c,20),ema(c,50),ema(c,200); r=rsi(c)
+    e12,e26=ema(c,12),ema(c,26)
+    m=[None if a is None or b is None else a-b for a,b in zip(e12,e26)]
+    vm=[x for x in m if x is not None]; sv=ema(vm,9)
+    sig=[None]*(len(m)-len(sv))+sv
+    hist=[None if a is None or b is None else a-b for a,b in zip(m,sig)]
+    vs=sma(vol,20); vr=[None if a in (None,0) else b/a for a,b in zip(vs,vol)]
+    def rnd(a,d=2): return [None if x is None else round(x,d) for x in a]
+    def last(a,d=2): return None if a[-1] is None else round(a[-1],d)
+    latest={"datetime":dates[-1],"open":cs[-1]["open"],"high":cs[-1]["high"],
+      "low":cs[-1]["low"],"close":c[-1],"volume":vol[-1],"trades":cs[-1]["trades"],
+      "partial":cs[-1].get("partial",False),"EMA20":last(e20),"EMA50":last(e50),
+      "EMA200":last(e200),"EMA200_status":"ok" if e200[-1] is not None else "insufficient_history",
+      "RSI14":last(r),"MACD":last(m),"MACD_signal":last(sig),"MACD_histogram":last(hist),
+      "Volume_SMA20":last(vs),"Volume_Ratio":last(vr,3)}
+    return {"candle_count":len(cs),"first_candle":dates[0],"last_candle":dates[-1],
+      "latest":latest,"candles":cs,"indicators":{"EMA20":rnd(e20),"EMA50":rnd(e50),
+      "EMA200":rnd(e200),"RSI14":rnd(r),"MACD":rnd(m),"MACD_signal":rnd(sig),
+      "MACD_histogram":rnd(hist),"Volume":vol,"Volume_SMA20":rnd(vs),"Volume_Ratio":rnd(vr,3)}}
 
 def main():
-    if not CACHE_DIR.exists():
-        raise FileNotFoundError("پوشه تاریخچه درون‌روزی پیدا نشد")
-    all_1h, all_4h = [], []
-    files = sorted(CACHE_DIR.glob("ayar_*.json"))
-    for path in files:
-        day = json.loads(path.read_text(encoding="utf-8"))
-        if day.get("validated") is not True:
-            raise ValueError(f"فایل اعتبارسنجی‌نشده: {path.name}")
-        all_1h.extend(day.get("candles_1h", []))
-        all_4h.extend(day.get("candles_4h", []))
-
-    # Merge today's unfinalized TSETMC trades as explicitly partial candles.
-    live_file = DATA_DIR / "ayar_intraday_live.json"
-    live_meta = {"status": "not_available"}
-    if live_file.exists():
-        live = json.loads(live_file.read_text(encoding="utf-8"))
-        live_meta = {
-            "status": live.get("status", "unknown"),
-            "date": live.get("date"),
-            "retrieved_at": live.get("retrieved_at"),
-            "trade_count": live.get("trade_count", 0),
-            "quote_trade_count": live.get("quote_trade_count"),
-            "trade_count_difference": live.get("trade_count_difference"),
-            "count_reconciled": live.get("count_reconciled"),
-            "quality_note_fa": live.get("quality_note_fa"),
-            "error": live.get("error"),
-        }
-        if live.get("status") == "ok":
-            def merge_live(base, incoming):
-                by_key = {(x["date"], x["start"]): x for x in base}
-                for candle in incoming:
-                    by_key[(candle["date"], candle["start"])] = candle
-                return sorted(by_key.values(), key=lambda x: (x["date"], x["start"]))
-            all_1h = merge_live(all_1h, live.get("candles_1h", []))
-            all_4h = merge_live(all_4h, live.get("candles_4h", []))
-
-    result = {
-        "symbol": "عیار",
-        "source": "TSETMC",
-        "timezone": "Asia/Tehran",
-        "calculated_at": datetime.now(TEHRAN).isoformat(),
-        "method": "EMA seeded by SMA; RSI Wilder; MACD 12-26-9; volume SMA20",
-        "validation": {
-            "daily_trade_reconciliation": "Each cached day passed trade-count, volume, low and high checks",
-            "cached_days": len(files),
-            "minimum_candles_per_timeframe": 200,
-            "live_intraday_overlay": live_meta,
-        },
-        "timeframes": {
-            "1h": build_timeframe(all_1h, "1h"),
-            "4h": build_timeframe(all_4h, "4h"),
-        },
-    }
-    temp = OUTPUT_FILE.with_suffix(".tmp")
-    temp.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
-    temp.replace(OUTPUT_FILE)
-    print("SUCCESS:", OUTPUT_FILE)
-    print(json.dumps({
-        "cached_days": len(files),
-        "1h": result["timeframes"]["1h"]["latest"],
-        "4h": result["timeframes"]["4h"]["latest"],
-    }, ensure_ascii=False, indent=2))
-
-
-if __name__ == "__main__":
-    main()
+    if not CACHE.exists(): raise FileNotFoundError("Intraday cache missing")
+    h1=[]; h4=[]; files=sorted(CACHE.glob("ayar_*.json"))
+    for p in files:
+        d=json.loads(p.read_text(encoding="utf-8"))
+        if d.get("validated") is not True: raise ValueError(f"Unvalidated cache: {p.name}")
+        h1.extend(d.get("candles_1h",[])); h4.extend(d.get("candles_4h",[]))
+    live_path=DATA/"ayar_intraday_live.json"; meta={"status":"not_available"}
+    if live_path.exists():
+        live=json.loads(live_path.read_text(encoding="utf-8"))
+        meta={k:live.get(k) for k in ("status","date","retrieved_at","trade_count",
+          "quote_trade_count","quote_retrieved_at","observed_trade_count_delta",
+          "count_reconciliation_status","quality_note_fa","error")}
+        if live.get("status")=="ok":
+            def merge(base,new):
+                d={(x["date"],x["start"]):x for x in base}
+                for x in new: d[(x["date"],x["start"])]=x
+                return sorted(d.values(),key=lambda x:(x["date"],x["start"]))
+            h1=merge(h1,live.get("candles_1h",[])); h4=merge(h4,live.get("candles_4h",[]))
+    result={"symbol":"عیار","source":"TSETMC","timezone":"Asia/Tehran",
+      "calculated_at":datetime.now(TEHRAN).isoformat(),
+      "method":"EMA seeded by SMA; RSI Wilder; MACD 12-26-9; volume SMA20",
+      "validation":{"cached_days":len(files),"minimum_candles_for_EMA200":200,
+        "live_intraday_overlay":meta,
+        "four_hour_candle_policy":"Only complete 12:00-16:00 four-hour buckets; exclude 16:00-18:00 two-hour remainder."},
+      "timeframes":{"1h":build(h1,"1h"),"4h":build(h4,"4h")}}
+    tmp=OUT.with_suffix(".tmp"); tmp.write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding="utf-8"); tmp.replace(OUT)
+    print(json.dumps({k:{"count":v["candle_count"],"latest":v["latest"]} for k,v in result["timeframes"].items()},ensure_ascii=False,indent=2))
+if __name__=="__main__": main()
