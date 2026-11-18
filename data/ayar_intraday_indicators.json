@@ -2,47 +2,49 @@
   "symbol": "عیار",
   "source": "TSETMC",
   "timezone": "Asia/Tehran",
-  "calculated_at": "2026-11-18T13:58:25.843542+03:30",
+  "calculated_at": "2026-11-18T14:06:08.550463+03:30",
   "method": "EMA seeded by SMA; RSI Wilder; MACD 12-26-9; volume SMA20",
   "validation": {
-    "daily_trade_reconciliation": "Each cached day passed trade-count, volume, low and high checks",
     "cached_days": 115,
-    "minimum_candles_per_timeframe": 200,
+    "minimum_candles_for_EMA200": 200,
     "live_intraday_overlay": {
       "status": "ok",
       "date": "20261118",
-      "retrieved_at": "2026-11-18T13:58:23.540533+03:30",
-      "trade_count": 34861,
-      "quote_trade_count": 34890,
-      "trade_count_difference": 29,
-      "count_reconciled": false,
+      "retrieved_at": "2026-11-18T14:05:36.453020+03:30",
+      "trade_count": 35506,
+      "quote_trade_count": 35601,
+      "quote_retrieved_at": null,
+      "observed_trade_count_delta": null,
+      "count_reconciliation_status": null,
       "quality_note_fa": "تعداد معاملات endpoint با آمار رسمی برابر نیست؛ کندل‌ها موقت‌اند و باید با احتیاط تفسیر شوند.",
       "error": null
-    }
+    },
+    "four_hour_candle_policy": "Only complete 12:00-16:00 four-hour buckets; exclude 16:00-18:00 two-hour remainder."
   },
   "timeframes": {
     "1h": {
-      "candle_count": 645,
+      "candle_count": 646,
       "first_candle": "20260504 12:00",
-      "last_candle": "20261118 13:00",
+      "last_candle": "20261118 14:00",
       "latest": {
-        "datetime": "20261118 13:00",
-        "open": 655556,
-        "high": 657700,
-        "low": 655556,
-        "close": 655840.0,
-        "volume": 6172847,
-        "trades": 8141,
+        "datetime": "20261118 14:00",
+        "open": 655738,
+        "high": 655750,
+        "low": 655625,
+        "close": 655700.0,
+        "volume": 148258,
+        "trades": 344,
         "partial": true,
-        "EMA20": 663045.99,
-        "EMA50": 669614.84,
-        "EMA200": 675001.44,
-        "RSI14": 32.27,
-        "MACD": -2706.58,
-        "MACD_signal": -2351.55,
-        "MACD_histogram": -355.04,
-        "Volume_SMA20": 9037374.85,
-        "Volume_Ratio": 0.683
+        "EMA20": 662338.62,
+        "EMA50": 669065.77,
+        "EMA200": 674808.5,
+        "EMA200_status": "ok",
+        "RSI14": 31.97,
+        "MACD": -2974.16,
+        "MACD_signal": -2477.22,
+        "MACD_histogram": -496.94,
+        "Volume_SMA20": 7805806.75,
+        "Volume_Ratio": 0.019
       },
       "candles": [
         {
@@ -8425,10 +8427,24 @@
           "timestamp": "20261118T13:00:00+03:30",
           "open": 655556,
           "high": 657700,
-          "low": 655556,
-          "close": 655840,
-          "volume": 6172847,
-          "trades": 8141,
+          "low": 655555,
+          "close": 655750,
+          "volume": 6348934,
+          "trades": 8442,
+          "partial": false,
+          "provisional": true
+        },
+        {
+          "date": "20261118",
+          "start": "14:00",
+          "end": "15:00",
+          "timestamp": "20261118T14:00:00+03:30",
+          "open": 655738,
+          "high": 655750,
+          "low": 655625,
+          "close": 655700,
+          "volume": 148258,
+          "trades": 344,
           "partial": true,
           "provisional": true
         }
@@ -9079,7 +9095,8 @@
           664922.55,
           664672.88,
           663804.51,
-          663045.99
+          663037.42,
+          662338.62
         ],
         "EMA50": [
           null,
@@ -9726,7 +9743,8 @@
           671119.73,
           670773.9,
           670177.08,
-          669614.84
+          669611.31,
+          669065.77
         ],
         "EMA200": [
           null,
@@ -10373,7 +10391,8 @@
           675522.96,
           675391.39,
           675194.02,
-          675001.44
+          675000.54,
+          674808.5
         ],
         "RSI14": [
           null,
@@ -11020,7 +11039,8 @@
           45.05,
           41.66,
           31.52,
-          32.27
+          32.04,
+          31.97
         ],
         "MACD": [
           null,
@@ -11667,7 +11687,8 @@
           -1818.86,
           -1824.92,
           -2347.02,
-          -2706.58
+          -2713.76,
+          -2974.16
         ],
         "MACD_signal": [
           null,
@@ -12314,7 +12335,8 @@
           -2345.93,
           -2241.73,
           -2262.79,
-          -2351.55
+          -2352.98,
+          -2477.22
         ],
         "MACD_histogram": [
           null,
@@ -12961,7 +12983,8 @@
           527.07,
           416.81,
           -84.23,
-          -355.04
+          -360.78,
+          -496.94
         ],
         "Volume": [
           74868634,
@@ -13608,7 +13631,8 @@
           3041750,
           6797969,
           20891383,
-          6172847
+          6348934,
+          148258
         ],
         "Volume_SMA20": [
           null,
@@ -14255,7 +14279,8 @@
           8493348.5,
           8516192.45,
           9233971.85,
-          9037374.85
+          9046179.2,
+          7805806.75
         ],
         "Volume_Ratio": [
           null,
@@ -14902,7 +14927,8 @@
           0.358,
           0.798,
           2.262,
-          0.683
+          0.702,
+          0.019
         ]
       }
     },
@@ -14915,19 +14941,20 @@
         "open": 651900,
         "high": 657700,
         "low": 651550,
-        "close": 655840.0,
-        "volume": 27064230,
-        "trades": 34861,
+        "close": 655700.0,
+        "volume": 27388575,
+        "trades": 35506,
         "partial": true,
-        "EMA20": 671144.35,
-        "EMA50": 678800.8,
-        "EMA200": 595397.83,
-        "RSI14": 31.59,
-        "MACD": -9142.26,
-        "MACD_signal": -9092.39,
-        "MACD_histogram": -49.87,
-        "Volume_SMA20": 30955384.9,
-        "Volume_Ratio": 0.874
+        "EMA20": 671131.01,
+        "EMA50": 678795.31,
+        "EMA200": 595396.44,
+        "EMA200_status": "ok",
+        "RSI14": 31.51,
+        "MACD": -9153.43,
+        "MACD_signal": -9094.62,
+        "MACD_histogram": -58.81,
+        "Volume_SMA20": 30971602.15,
+        "Volume_Ratio": 0.884
       },
       "candles": [
         {
@@ -17889,9 +17916,9 @@
           "open": 651900,
           "high": 657700,
           "low": 651550,
-          "close": 655840,
-          "volume": 27064230,
-          "trades": 34861,
+          "close": 655700,
+          "volume": 27388575,
+          "trades": 35506,
           "partial": true,
           "provisional": true
         }
@@ -18125,7 +18152,7 @@
           674904.6,
           673855.79,
           672755.33,
-          671144.35
+          671131.01
         ],
         "EMA50": [
           null,
@@ -18355,7 +18382,7 @@
           681125.52,
           680449.69,
           679737.98,
-          678800.8
+          678795.31
         ],
         "EMA200": [
           null,
@@ -18585,7 +18612,7 @@
           593410.56,
           594111.87,
           594790.37,
-          595397.83
+          595396.44
         ],
         "RSI14": [
           null,
@@ -18815,7 +18842,7 @@
           35.73,
           36.73,
           35.65,
-          31.59
+          31.51
         ],
         "MACD": [
           null,
@@ -19045,7 +19072,7 @@
           -9361.75,
           -9079.98,
           -8882.67,
-          -9142.26
+          -9153.43
         ],
         "MACD_signal": [
           null,
@@ -19275,7 +19302,7 @@
           -9141.54,
           -9129.23,
           -9079.92,
-          -9092.39
+          -9094.62
         ],
         "MACD_histogram": [
           null,
@@ -19505,7 +19532,7 @@
           -220.21,
           49.25,
           197.25,
-          -49.87
+          -58.81
         ],
         "Volume": [
           175028491,
@@ -19735,7 +19762,7 @@
           8662505,
           24956643,
           9839721,
-          27064230
+          27388575
         ],
         "Volume_SMA20": [
           null,
@@ -19965,7 +19992,7 @@
           33134169.55,
           32542822.5,
           32394866.35,
-          30955384.9
+          30971602.15
         ],
         "Volume_Ratio": [
           null,
@@ -20195,7 +20222,7 @@
           0.261,
           0.767,
           0.304,
-          0.874
+          0.884
         ]
       }
     }
