@@ -14,12 +14,19 @@ on:
 permissions:
   contents: write
 
+# Prevent overlapping scheduled/manual runs from racing to update the snapshot.
+concurrency:
+  group: ayar-live-snapshot-main
+  cancel-in-progress: false
+
 jobs:
   refresh:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Set up Python
         uses: actions/setup-python@v5
@@ -32,10 +39,39 @@ jobs:
       - name: Fetch official TSETMC quote
         run: python scripts/fetch_ayar_live.py
 
-      - name: Save snapshot
+      - name: Save snapshot (retry safely if main advances)
+        shell: bash
         run: |
+          set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/ayar_live.json
-          git diff --cached --quiet || git commit -m "Refresh official Ayar live quote"
-          git push
+
+          snapshot="$(mktemp)"
+          cp data/ayar_live.json "$snapshot"
+          trap 'rm -f "$snapshot"' EXIT
+
+          for attempt in 1 2 3 4 5; do
+            echo "Save attempt $attempt/5"
+            git fetch origin main
+            git reset --hard origin/main
+            cp "$snapshot" data/ayar_live.json
+            git add data/ayar_live.json
+
+            if git diff --cached --quiet; then
+              echo "Snapshot is already up to date."
+              exit 0
+            fi
+
+            git commit -m "Refresh official Ayar live quote"
+
+            if git push origin HEAD:main; then
+              echo "Snapshot pushed successfully."
+              exit 0
+            fi
+
+            echo "Push raced with another update; retrying from latest main."
+            sleep 2
+          done
+
+          echo "Could not push snapshot after 5 attempts."
+          exit 1
