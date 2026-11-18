@@ -182,6 +182,7 @@ function drawCodalPortfolio(j){
   document.getElementById('codalUnits').textContent='در فایل نیست';
   document.getElementById('codalReportDate').textContent=(report.period_end_jalali||'—');
   info.textContent=(report.title||'گزارش عملکرد')+' · دوره: '+(report.report_period||'—')+' · منبع: فایل Excel بارگذاری‌شده · جمع درصد طبقات استخراج‌شده: '+fmtV(a.reported_percent_sum)+'٪ · مانده نامشخص: '+fmtV(a.unaccounted_percent)+'٪';
+  if(j.codal_refresh_attempt){info.textContent+=' · آخرین تلاش دریافت مستقیم کدال: ناموفق ('+(j.codal_refresh_attempt.checked_at||'زمان نامشخص')+')؛ فایل بارگذاری‌شده قبلی حفظ شده است.';}
   const makeTable=(headers,rows)=>{
    const table=document.createElement('table');table.className='booktable';
    const hr=document.createElement('tr');headers.forEach(v=>{const th=document.createElement('th');th.textContent=v;hr.appendChild(th);});table.appendChild(hr);
