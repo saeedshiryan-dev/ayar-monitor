@@ -3,13 +3,13 @@
   "insCode": "34144395039913458",
   "source": "TSETMC",
   "source_api": "cdn.tsetmc.com/api",
-  "retrieved_at": "2026-11-18T13:28:05.064411+03:30",
+  "retrieved_at": "2026-11-18T13:38:00.995342+03:30",
   "timezone": "Asia/Tehran",
   "market": {
     "status": "open",
     "label_fa": "ساعت معاملات پیوسته",
     "timezone": "Asia/Tehran",
-    "checked_at": "2026-11-18T13:28:05.064411+03:30",
+    "checked_at": "2026-11-18T13:38:00.995342+03:30",
     "scheduled_pre_open": "11:45",
     "scheduled_open": "12:00",
     "scheduled_close": "18:00",
@@ -17,90 +17,90 @@
   },
   "session_date": "20261118",
   "today_has_trade": true,
-  "live_price": 656612,
+  "live_price": 656689,
   "live_price_unit": "ریال",
-  "closing_price": 654466,
-  "last_trade_price": 656612,
-  "last_trade_time": "13:28:11",
+  "closing_price": 654511,
+  "last_trade_price": 656689,
+  "last_trade_time": "13:38:26",
   "last_trade_volume": null,
-  "official_daily_last_price": 656612,
+  "official_daily_last_price": 656689,
   "tsetmc_quote_date": "20261118",
-  "tsetmc_quote_trade_count": 30545,
-  "trade_endpoint_rows": 30494,
+  "tsetmc_quote_trade_count": 31582,
+  "trade_endpoint_rows": 31423,
   "trade_endpoint_error": null,
   "orderbook": {
     "status": "ok",
     "source": "TSETMC BestLimits",
-    "retrieved_at": "2026-11-18T13:28:05.064411+03:30",
+    "retrieved_at": "2026-11-18T13:38:00.995342+03:30",
     "unit": "ریال",
     "buy": [
       {
         "level": 1,
-        "price": 656613,
-        "volume": 4731,
-        "orders": 2
-      },
-      {
-        "level": 2,
-        "price": 656612,
-        "volume": 257,
+        "price": 656689,
+        "volume": 42424,
         "orders": 4
       },
       {
+        "level": 2,
+        "price": 656688,
+        "volume": 721,
+        "orders": 2
+      },
+      {
         "level": 3,
-        "price": 656611,
-        "volume": 16217,
-        "orders": 7
+        "price": 656662,
+        "volume": 13408,
+        "orders": 10
       },
       {
         "level": 4,
-        "price": 656610,
-        "volume": 32767,
-        "orders": 3
+        "price": 656661,
+        "volume": 3012,
+        "orders": 7
       },
       {
         "level": 5,
-        "price": 656609,
-        "volume": 36,
-        "orders": 2
+        "price": 656660,
+        "volume": 14874,
+        "orders": 13
       }
     ],
     "sell": [
       {
         "level": 1,
-        "price": 656615,
-        "volume": 10442,
-        "orders": 5
-      },
-      {
-        "level": 2,
-        "price": 656620,
-        "volume": 13851,
-        "orders": 9
-      },
-      {
-        "level": 3,
-        "price": 656621,
-        "volume": 1664,
+        "price": 656700,
+        "volume": 1344,
         "orders": 3
       },
       {
+        "level": 2,
+        "price": 656701,
+        "volume": 2517,
+        "orders": 4
+      },
+      {
+        "level": 3,
+        "price": 656720,
+        "volume": 1600,
+        "orders": 2
+      },
+      {
         "level": 4,
-        "price": 656648,
-        "volume": 4338,
-        "orders": 1
+        "price": 656730,
+        "volume": 1460,
+        "orders": 3
       },
       {
         "level": 5,
-        "price": 656649,
-        "volume": 1388,
-        "orders": 4
+        "price": 656750,
+        "volume": 1567,
+        "orders": 3
       }
     ],
-    "buy_total_volume": 54008,
-    "sell_total_volume": 31683,
-    "buy_total_orders": 18,
-    "sell_total_orders": 22,
+    "buy_total_volume": 74439,
+    "sell_total_volume": 8488,
+    "buy_total_orders": 36,
+    "sell_total_orders": 15,
     "note_fa": "۵ سطح برتر دفتر سفارش از TSETMC دریافت شد؛ قیمت‌ها ریال هستند.",
     "error": null
   },

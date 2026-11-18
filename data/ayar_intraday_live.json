@@ -1,0 +1,13 @@
+{
+  "symbol": "عیار",
+  "source": "TSETMC TradeHistory",
+  "date": "20261118",
+  "timezone": "Asia/Tehran",
+  "retrieved_at": "2026-11-18T13:38:34.021217+03:30",
+  "status": "not_available",
+  "trade_count": 0,
+  "candles_1h": [],
+  "candles_4h": [],
+  "note_fa": "کندل‌های موقت از معاملات ثبت‌شده امروز؛ آمار نهایی روز نیست.",
+  "reason": "هنوز معامله قابل استفاده‌ای از API معاملات امروز دریافت نشد"
+}
