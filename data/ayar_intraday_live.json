@@ -3,9 +3,9 @@
   "source": "TSETMC GetTrade",
   "date": "20261118",
   "timezone": "Asia/Tehran",
-  "retrieved_at": "2026-11-18T14:55:00.518626+03:30",
+  "retrieved_at": "2026-11-18T15:27:19.367598+03:30",
   "status": "ok",
-  "trade_count": 43825,
+  "trade_count": 50024,
   "candles_1h": [
     {
       "date": "20261118",
@@ -42,10 +42,24 @@
       "timestamp": "20261118T14:00:00+03:30",
       "open": 655738,
       "high": 655750,
-      "low": 654160,
-      "close": 654160,
-      "volume": 3620907,
-      "trades": 8663,
+      "low": 654100,
+      "close": 654213,
+      "volume": 4068078,
+      "trades": 9822,
+      "partial": false,
+      "provisional": true
+    },
+    {
+      "date": "20261118",
+      "start": "15:00",
+      "end": "16:00",
+      "timestamp": "20261118T15:00:00+03:30",
+      "open": 654213,
+      "high": 654213,
+      "low": 653607,
+      "close": 653667,
+      "volume": 2092347,
+      "trades": 5040,
       "partial": true,
       "provisional": true
     }
@@ -59,22 +73,22 @@
       "open": 651900,
       "high": 657700,
       "low": 651550,
-      "close": 654160,
-      "volume": 30861224,
-      "trades": 43825,
+      "close": 653667,
+      "volume": 33400742,
+      "trades": 50024,
       "partial": true,
       "provisional": true
     }
   ],
   "note_fa": "کندل‌های موقت از endpoint معاملات زنده TSETMC؛ آمار نهایی روز نیست.",
-  "quote_trade_count": 44350,
-  "quote_retrieved_at": "2026-11-18T14:54:26.458708+03:30",
-  "quote_age_seconds": 34.06,
-  "observed_trade_count_delta": 525,
+  "quote_trade_count": 50131,
+  "quote_retrieved_at": "2026-11-18T15:27:00.434996+03:30",
+  "quote_age_seconds": 18.93,
+  "observed_trade_count_delta": 107,
   "trade_count_difference": null,
   "count_reconciled": null,
   "count_reconciliation_status": "not_comparable_time_gap",
   "quality_note_fa": "snapshot قیمت و معاملات هم‌زمان نیستند؛ اختلاف مشاهده‌شده معیار قطعی کسری معاملات نیست.",
   "first_trade_time": "120002",
-  "last_trade_time": "145235"
+  "last_trade_time": "152559"
 }
