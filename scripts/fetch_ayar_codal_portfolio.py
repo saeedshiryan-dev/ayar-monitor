@@ -138,7 +138,7 @@ def bourseeye_fallback(session, codal_error):
         composition_text = text.split("ترکیب دارایی‌ها", 1)[1].split("مشخصات صندوق", 1)[0]
     composition = []
     seen_names = set()
-    for match in re.finditer(r"([^؛|]{2,100}?)\\s+([0-9۰-۹٠-٩٬,٫.]+)\\s*[%٪]", composition_text):
+    for match in re.finditer(r"([^؛|]{2,100}?)\s+([0-9۰-۹٠-٩٬,٫.]+)\s*[%٪]", composition_text):
         name = norm(match.group(1)).strip(" -*•")
         value = extract_number(r"^([0-9۰-۹٠-٩٬,٫.]+)$", match.group(2))
         if not name or value is None or name in seen_names:
