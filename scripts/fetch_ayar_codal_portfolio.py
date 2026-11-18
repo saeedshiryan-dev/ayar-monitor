@@ -1,11 +1,15 @@
 import json
+import os
 import re
+import time
 import unicodedata
 from datetime import date, datetime
 from pathlib import Path
 from urllib.parse import urljoin
 
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 from openpyxl import load_workbook
 from io import BytesIO
 from html.parser import HTMLParser
@@ -30,6 +34,30 @@ HEADERS = {
     "Accept": "application/json, text/plain, */*",
     "Referer": "https://www.codal.ir/",
 }
+
+def build_session():
+    """Build a resilient Codal client; optional proxy must have an Iranian exit."""
+    session = requests.Session()
+    session.headers.update(HEADERS)
+    proxy = os.getenv("CODAL_HTTP_PROXY") or os.getenv("CODAL_MCP_PROXY")
+    if proxy:
+        session.proxies.update({"http": proxy, "https": proxy})
+    retry = Retry(
+        total=4,
+        connect=4,
+        read=2,
+        status=2,
+        backoff_factor=1.5,
+        status_forcelist=(500, 502, 503, 504),
+        allowed_methods=frozenset(("GET",)),
+        respect_retry_after_header=True,
+        raise_on_status=False,
+    )
+    adapter = HTTPAdapter(max_retries=retry, pool_connections=4, pool_maxsize=4)
+    session.mount("https://", adapter)
+    session.mount("http://", adapter)
+    print("Codal network route: " + ("configured proxy (Iranian exit required)" if proxy else "direct GitHub runner egress; Codal may reject non-Iranian IPs"))
+    return session, bool(proxy)
 
 def norm(value):
     s = unicodedata.normalize("NFKC", str(value or ""))
@@ -93,6 +121,29 @@ def extract_number(pattern, text):
         return None
 
 def save_output(output):
+
+    if used_fallback_report:
+        try:
+            existing = json.loads(OUT.read_text(encoding="utf-8")) if OUT.exists() else {}
+        except Exception:
+            existing = {}
+        if existing.get("status") == "official_report_uploaded":
+            existing["codal_refresh_attempt"] = {
+                "status": "unavailable",
+                "checked_at": output["retrieved_at"],
+                "proxy_configured": proxy_configured,
+                "error": search_error,
+                "fallback_report_not_promoted": True,
+            }
+            save_output(existing)
+            print(json.dumps({
+                "status": existing["status"],
+                "codal_refresh_attempt": existing["codal_refresh_attempt"],
+                "preserved_uploaded_report": True,
+                "output": str(OUT),
+            }, ensure_ascii=False, indent=2))
+            return
+
     temp = OUT.with_suffix(".tmp")
     temp.write_text(json.dumps(output, ensure_ascii=False, indent=2), encoding="utf-8")
     temp.replace(OUT)
@@ -228,39 +279,59 @@ def bourseeye_fallback(session, codal_error):
     return output
 
 def main():
-    session = requests.Session()
-    session.headers.update(HEADERS)
+    session, proxy_configured = build_session()
     params = {
-        "PageNumber": 1, "PageSize": 50, "Symbol": SYMBOL,
+        "PageNumber": 1, "PageSize": 100, "Symbol": SYMBOL,
         "Category": 3, "LetterType": -1, "Length": -1,
         "Audited": "true", "NotAudited": "true",
         "Consolidatable": "true", "NotConsolidatable": "true",
         "Childs": "false", "Mains": "true", "Publisher": "false",
         "TracingNo": -1, "search": "true",
     }
+
     report = None
     report_date = None
     title = None
-    search_error = None
-    for attempt in range(3):
-        try:
-            response = session.get(BASE, params=params, timeout=(20, 45))
-            response.raise_for_status()
-            letters = parse_letters(response)
-            matches = []
-            for item in letters:
-                candidate_title = norm(item.get("Title") or item.get("title"))
-                normalized_title = candidate_title.replace("ي", "ی").replace("ك", "ک")
-                if "صورت وضعیت پورتفوی صندوق سرمایه گذاری" in normalized_title or "صورت وضعیت پرتفوی صندوق سرمایه گذاری" in normalized_title:
-                    candidate_date = parse_jalali_from_title(candidate_title)
-                    if candidate_date:
-                        matches.append((candidate_date, item, candidate_title))
-            if matches:
-                report_date, report, title = max(matches, key=lambda x: x[0])
+    search_errors = []
+    request_count = 0
+    # Search the portfolio-report category first, then broaden to all categories.
+    # Codal may paginate recent disclosures, so inspect up to three pages per pass.
+    for category in (3, -1):
+        for page in range(1, 4):
+            if request_count:
+                time.sleep(2.2)  # be gentle with Codal; rapid calls can trigger HTTP 429/captcha
+            request_count += 1
+            params["Category"] = category
+            params["PageNumber"] = page
+            try:
+                response = session.get(BASE, params=params, timeout=(12, 60))
+                response.raise_for_status()
+                letters = parse_letters(response)
+                matches = []
+                for item in letters:
+                    candidate_title = norm(item.get("Title") or item.get("title"))
+                    normalized_title = candidate_title.replace("ي", "ی").replace("ك", "ک")
+                    if ("صورت وضعیت پورتفوی صندوق سرمایه گذاری" in normalized_title
+                            or "صورت وضعیت پرتفوی صندوق سرمایه گذاری" in normalized_title):
+                        candidate_date = parse_jalali_from_title(candidate_title)
+                        if candidate_date:
+                            matches.append((candidate_date, item, candidate_title))
+                if matches:
+                    report_date, report, title = max(matches, key=lambda x: x[0])
+                    break
+                if not letters or len(letters) < 100:
+                    break
+            except Exception as exc:
+                # Do not print proxy URLs or credentials from exception strings.
+                host_error = f"{type(exc).__name__}: {str(exc).split(' for url:')[0][:220]}"
+                search_errors.append(f"category={category},page={page}: {host_error}")
                 break
-            search_error = "گزارش ماهانه پرتفوی در نتایج جستجوی کدال پیدا نشد"
-        except Exception as exc:
-            search_error = f"{type(exc).__name__}: {exc}"
+        if report is not None:
+            break
+    search_error = "; ".join(search_errors) if search_errors else (
+        "گزارش ماهانه پرتفوی در سه صفحه اخیر کدال پیدا نشد"
+    )
+    used_fallback_report = report is None
     if report is None:
         report = {
             "ExcelUrl": FALLBACK_REPORT["excel_url"],
@@ -282,7 +353,7 @@ def main():
 
     download_url = urljoin("https://www.codal.ir/", excel_url)
     try:
-        book_response = session.get(download_url, timeout=(20, 60))
+        book_response = session.get(download_url, timeout=(15, 90))
         book_response.raise_for_status()
         content = book_response.content
         if not content.startswith(b"PK"):
@@ -315,9 +386,10 @@ def main():
     wb.close()
 
     output = {
-        "status": "ok",
+        "status": "stale_fallback" if used_fallback_report else "ok",
         "symbol": SYMBOL,
         "source": report_source,
+        "proxy_configured": proxy_configured,
         "search_api_error": search_error,
         "retrieved_at": datetime.now().astimezone().isoformat(),
         "report": {
