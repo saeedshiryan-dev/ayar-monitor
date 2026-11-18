@@ -52,15 +52,19 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
-          snapshot="$(mktemp)"
-          cp data/ayar_live.json "$snapshot"
-          trap 'rm -f "$snapshot"' EXIT
+          snapshot_dir="$(mktemp -d)"
+          cp data/ayar_live.json "$snapshot_dir/ayar_live.json"
+          cp data/ayar_intraday_live.json "$snapshot_dir/ayar_intraday_live.json"
+          cp data/ayar_intraday_indicators.json "$snapshot_dir/ayar_intraday_indicators.json"
+          trap 'rm -rf "$snapshot_dir"' EXIT
 
           for attempt in 1 2 3 4 5; do
             echo "Save attempt $attempt/5"
             git fetch origin main
             git reset --hard origin/main
-            cp "$snapshot" data/ayar_live.json
+            cp "$snapshot_dir/ayar_live.json" data/ayar_live.json
+            cp "$snapshot_dir/ayar_intraday_live.json" data/ayar_intraday_live.json
+            cp "$snapshot_dir/ayar_intraday_indicators.json" data/ayar_intraday_indicators.json
             git add data/ayar_live.json data/ayar_intraday_live.json data/ayar_intraday_indicators.json
 
             if git diff --cached --quiet; then
