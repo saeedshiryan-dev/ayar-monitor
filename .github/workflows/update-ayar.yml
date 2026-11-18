@@ -15,7 +15,7 @@ permissions:
 
 # Serialize historical rebuilds with the five-minute live snapshot writer.
 concurrency:
-  group: ayar-live-snapshot-main
+  group: ayar-live-refresh-main
   cancel-in-progress: false
 
 jobs:
