@@ -59,6 +59,11 @@ button.active{background:#d5a84e;color:#172033;border-color:#d5a84e;font-weight:
 </div>
 <div id="codalPortfolioInfo" class="foot">گزارش رسمی کدال در حال دریافت است؛ در صورت اختلال کدال، منبع جایگزین با برچسب جدا نمایش داده می‌شود.</div>
 <div id="codalPortfolioTables" style="overflow-x:auto;margin-top:10px"></div></section>
+<section class="panel" id="macroPanel"><div class="panelhead"><h2>داده‌های بنیادی بازار جهانی و ارز</h2><span id="macroStatus" class="muted">دریافت از الان‌چند</span></div>
+<div class="metrics">
+<div class="metric"><span>دلار آزاد (فروش، تومان)</span><b id="macroUsd">—</b><small id="macroUsdTime" class="muted">—</small></div>
+<div class="metric"><span>اونس جهانی طلا (دلار)</span><b id="macroXau">—</b><small id="macroXauTime" class="muted">—</small></div>
+</div><div id="macroQuality" class="foot">منبع: API الان‌چند · زمان هر مظنه جداگانه کنترل می‌شود؛ داده بیش از ۲۰ دقیقه تازه تلقی نمی‌شود.</div></section>
 <section class="panel"><div class="panelhead"><h2>نمودار قیمت و میانگین‌های متحرک</h2><span class="muted">نمایش ۱۲۰ کندل آخر</span></div><div class="chartbox"><canvas id="priceChart"></canvas></div></section>
 <section class="panel"><div class="panelhead"><h2>وضعیت اندیکاتورها</h2><span class="muted">مقادیر آخرین کندل</span></div><div class="metrics" id="metrics"></div></section>
 <section class="panel"><div class="panelhead"><h2>RSI و MACD</h2><span class="muted">تاریخچه کندل‌ها</span></div><div class="smallchart"><canvas id="rsiChart"></canvas></div><div class="smallchart" style="margin-top:14px"><canvas id="macdChart"></canvas></div></section>
@@ -70,6 +75,7 @@ const DATA_URL='https://raw.githubusercontent.com/saeedshiryan-dev/ayar-monitor/
 const LIVE_URL='https://raw.githubusercontent.com/saeedshiryan-dev/ayar-monitor/main/data/ayar_live.json';
 const FUND_HISTORY_URL='https://raw.githubusercontent.com/saeedshiryan-dev/ayar-monitor/main/data/ayar_fund_history.json';
 const CODAL_PORTFOLIO_URL='https://raw.githubusercontent.com/saeedshiryan-dev/ayar-monitor/main/data/ayar_codal_portfolio.json';
+const MACRO_URL='https://raw.githubusercontent.com/saeedshiryan-dev/ayar-monitor/main/data/ayar_macro_live.json';
 let data=null,tf='1h',charts={};
 const fmt=n=>n==null||!Number.isFinite(Number(n))?'—':Number(n).toLocaleString('en-US',{maximumFractionDigits:2});
 const faDate=s=>s? s.slice(6,8)+'/'+s.slice(4,6)+'/'+s.slice(0,4):'—';
@@ -224,6 +230,35 @@ function drawCodalPortfolio(j){
  status.textContent='داده ترکیب دارایی در دسترس نیست';
  info.textContent=j.error||j.official_source_error||'منبع داده در دسترس نیست';
 }
+function drawMacro(j){
+ const usd=j.status==='ok'?j.usd:(j.last_good||{}).usd;
+ const xau=j.status==='ok'?j.xau:(j.last_good||{}).xau;
+ const fmtPrice=v=>v==null||!Number.isFinite(Number(v))?'—':Number(v).toLocaleString('en-US',{maximumFractionDigits:2});
+ document.getElementById('macroUsd').textContent=usd?fmtPrice(usd.display_price??usd.sell):'—';
+ document.getElementById('macroXau').textContent=xau?fmtPrice(xau.display_price??xau.sell):'—';
+ document.getElementById('macroUsdTime').textContent=usd?'منبع: '+String(usd.updated_at||'—').replace('T',' ').slice(0,19):'بدون مظنه معتبر';
+ document.getElementById('macroXauTime').textContent=xau?'منبع: '+String(xau.updated_at||'—').replace('T',' ').slice(0,19):'بدون مظنه معتبر';
+ const status=document.getElementById('macroStatus');
+ const quality=document.getElementById('macroQuality');
+ if(j.status==='ok'){
+  status.textContent='دریافت موفق · الان‌چند';
+  quality.textContent='دریافت: '+String(j.retrieved_at||'—').replace('T',' ').slice(0,19)+' · دلار و اونس هر دو دارای زمان منبع معتبر و کمتر از ۲۰ دقیقه هستند. واحد دلار: تومان؛ اونس: دلار/اونس تروا.';
+ }else if(j.status==='missing_token'){
+  status.textContent='توکن API تنظیم نشده';
+  quality.textContent=j.error_fa||'برای فعال‌سازی، Secret با نام ALANCHAND_TOKEN در GitHub لازم است.';
+ }else{
+  status.textContent='خطا در دریافت؛ آخرین داده معتبر در صورت وجود نمایش داده شده';
+  quality.textContent=(j.error_fa||'خطای نامشخص')+' · زمان تلاش: '+String(j.retrieved_at||'—').replace('T',' ').slice(0,19);
+ }
+}
+async function loadMacro(){
+ const stamp=document.getElementById('macroStatus');
+ try{
+  const r=await fetch(MACRO_URL+'?v='+Date.now(),{cache:'no-store'});
+  if(!r.ok)throw Error('HTTP '+r.status);
+  drawMacro(await r.json());
+ }catch(e){stamp.textContent='دریافت داده بنیادی ناموفق: '+e.message;}
+}
 async function loadCodalPortfolio(){
  const stamp=document.getElementById('codalPortfolioStatus');
  try{
@@ -259,7 +294,7 @@ function drawOrderbook(j){
 }
 async function load(){const n=document.getElementById('notice');n.textContent='در حال دریافت داده از مخزن…';try{const res=await fetch(DATA_URL+'?v='+Date.now(),{cache:'no-store'});if(!res.ok)throw Error('HTTP '+res.status);const j=await res.json();if(!j.timeframes||!j.timeframes['1h']?.candles?.length||!j.timeframes['4h']?.candles?.length)throw Error('ساختار فایل داده معتبر نیست');data=j;draw();}catch(e){n.innerHTML='<span class="bad">دریافت داده ناموفق بود: '+e.message+'</span> · کمی بعد دوباره تلاش کن.';} try{const lr=await fetch(LIVE_URL+'?v='+Date.now(),{cache:'no-store'});if(!lr.ok)throw Error('HTTP '+lr.status);drawOrderbook(await lr.json());}catch(le){document.getElementById('bookStatus').textContent='خطا در دریافت';document.getElementById('bookUpdated').textContent=le.message;}}
 document.querySelectorAll('.tf').forEach(b=>b.addEventListener('click',()=>{tf=b.dataset.tf;document.querySelectorAll('.tf').forEach(x=>x.classList.toggle('active',x===b));draw();}));
-document.getElementById('refresh').addEventListener('click',()=>{load();loadFundHistory();loadCodalPortfolio();});load();loadFundHistory();loadCodalPortfolio();
+document.getElementById('refresh').addEventListener('click',()=>{load();loadFundHistory();loadCodalPortfolio();loadMacro();});load();loadFundHistory();loadCodalPortfolio();loadMacro();
 // Refresh the published five-minute feed automatically while the dashboard is open.
-setInterval(()=>{if(!document.hidden){load();loadFundHistory();loadCodalPortfolio();}},60000);
+setInterval(()=>{if(!document.hidden){load();loadFundHistory();loadCodalPortfolio();loadMacro();}},60000);
 </script></body></html>
