@@ -57,4 +57,32 @@ jobs:
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add data/
           git diff --cached --quiet || git commit -m "Update Ayar market data"
-          git push
+
+          # The live quote workflow can update data/ while this historical
+          # workflow is running. Rebase our generated data commit on the
+          # latest main and retry the push instead of failing on a race.
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            if ! git rebase -X theirs origin/main; then
+              git rebase --abort
+              echo "Rebase failed on attempt $attempt"
+              sleep $((attempt * 3))
+              continue
+            fi
+
+            if git diff --cached --quiet && git diff --quiet; then
+              echo "No data changes remain after syncing with origin/main"
+              exit 0
+            fi
+
+            if git push origin HEAD:main; then
+              echo "Ayar data pushed successfully on attempt $attempt"
+              exit 0
+            fi
+
+            echo "Push race on attempt $attempt; retrying"
+            sleep $((attempt * 3))
+          done
+
+          echo "Unable to push Ayar data after 5 attempts"
+          exit 1
