@@ -199,7 +199,8 @@ def main():
         "history": history,
         "latest_record": latest_record,
         "fund_snapshot": {
-            "as_of_date": detail_as_of,\n            "net_asset_value": as_number(get_field(detail, "netAsset")),
+            "as_of_date": detail_as_of,
+            "net_asset_value": as_number(get_field(detail, "netAsset")),
             "units": as_number(get_field(detail, "units")),
             "fund_size": as_number(get_field(detail, "fundSize")),
             "portfolio_stock": get_field(detail, "portfolioStock"),
