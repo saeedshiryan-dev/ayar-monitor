@@ -1,8 +1,43 @@
 {
-  "status": "missing_token",
-  "source": "AlanChand API",
-  "retrieved_at": "2026-11-19T00:03:04.953101+03:30",
-  "error_fa": "توکن API تنظیم نشده است؛ Secret با نام ALANCHAND_TOKEN لازم است.",
-  "usd": null,
-  "xau": null
+  "status": "ok",
+  "source": "NerkhAra public API",
+  "source_url": "https://nerkhara.com/en/api/",
+  "retrieved_at": "2026-11-18T20:44:35.952647+00:00",
+  "timezone": "UTC",
+  "refresh_claim_minutes": 10,
+  "max_accepted_age_minutes": 20,
+  "usd": {
+    "symbol": "usd",
+    "name": "دلار آمریکا (بازار آزاد)",
+    "buy": 266315.0,
+    "sell": 266315.0,
+    "display_price": 266315.0,
+    "unit": "تومان به‌ازای هر دلار",
+    "updated_at": "2026-11-18T20:34:43+00:00",
+    "age_seconds": 592,
+    "source_method": "average",
+    "source_count": 2,
+    "change_pct": -0.18,
+    "source_page": "https://nerkhara.com/dollar/"
+  },
+  "xau": {
+    "symbol": "xau",
+    "name": "انس طلا",
+    "buy": 3724.78,
+    "sell": 3724.78,
+    "display_price": 3724.78,
+    "unit": "دلار به‌ازای هر اونس تروا",
+    "updated_at": "2026-11-18T20:34:43+00:00",
+    "age_seconds": 592,
+    "source_method": "lead",
+    "source_count": 1,
+    "change_pct": -3.16,
+    "source_page": "https://nerkhara.com/ons-tala/"
+  },
+  "validation": {
+    "both_quotes_present": true,
+    "both_timestamps_fresh": true,
+    "usd_source_timestamp": "2026-11-18T20:34:43+00:00",
+    "xau_source_timestamp": "2026-11-18T20:34:43+00:00"
+  }
 }
