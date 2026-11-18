@@ -52,7 +52,7 @@ def main():
     date = now.strftime("%Y%m%d")
     market = get_market_status(now)
     result = {
-        "symbol": "عیار", "source": "TSETMC TradeHistory",
+        "symbol": "عیار", "source": "TSETMC GetTrade",
         "date": date, "timezone": "Asia/Tehran",
         "retrieved_at": now.isoformat(), "status": "not_available",
         "trade_count": 0, "candles_1h": [], "candles_4h": [],
@@ -94,7 +94,7 @@ def main():
 
     rows = sorted(unique.values(), key=lambda x: (x["hEven"], x["nTran"]))
     if not rows:
-        result["reason"] = "هنوز معامله قابل استفاده‌ای از API معاملات امروز دریافت نشد"
+        result["reason"] = "هنوز معامله قابل استفاده‌ای از API معاملات زنده دریافت نشد"\n        result["sample_fields"] = sorted(list(raw[0].keys())) if raw and isinstance(raw[0], dict) else []
     else:
         candles_1h = []
         for hour in range(12, 18):
