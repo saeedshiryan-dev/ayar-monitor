@@ -171,9 +171,11 @@ def bourseeye_fallback(session, codal_error):
             "aum_hamt": aum,
             "units": int(units) if units is not None else None,
             "composition_report_date": composition_date_text,
-            "composition": composition,\n            "composition_categories_count": len([x for x in composition if x["percent"] is not None]),
+            "composition": composition,
+            "composition_categories_count": len([x for x in composition if x["percent"] is not None]),
             "composition_reported_total_percent": round(total, 4) if total is not None else None,
-            "composition_complete": bool(total is not None and abs(total - 100) < 0.1),\n            "composition_missing_percent": round(max(0.0, 100.0 - total), 4) if total is not None else None,
+            "composition_complete": bool(total is not None and abs(total - 100) < 0.1),
+            "composition_missing_percent": round(max(0.0, 100.0 - total), 4) if total is not None else None,
             "static_fallback_used": static_used,
         },
         "report": {
