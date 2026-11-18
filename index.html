@@ -49,6 +49,15 @@ button.active{background:#d5a84e;color:#172033;border-color:#d5a84e;font-weight:
 <div style="overflow-x:auto;margin-top:12px"><table class="booktable"><thead><tr><th>تاریخ منبع</th><th>NAV ابطال</th><th>NAV صدور</th><th>NAV آماری</th><th>ارزش خالص کل (netAsset)</th></tr></thead><tbody id="fundHistoryRows"><tr><td colspan="5">در انتظار دریافت داده</td></tr></tbody></table></div>
 <div id="fundHistoryNote" class="foot">تاریخچه از جزئیات رسمی صندوق در TSETMC دریافت می‌شود. مقادیر تجمیعی و ترکیب پرتفوی عین فیلدهای منبع‌اند و با NAV هر واحد یکی نیستند.</div>
 <div style="overflow-x:auto;margin-top:10px"><table class="booktable"><thead><tr><th>بخش پرتفوی</th><th>مقدار خام گزارش‌شده TSETMC</th></tr></thead><tbody id="fundPortfolioRows"><tr><td colspan="2">در انتظار داده رسمی</td></tr></tbody></table></div></section>
+<section class="panel" id="codalPortfolioPanel"><div class="panelhead"><h2>گزارش ترکیب دارایی صندوق</h2><span id="codalPortfolioStatus" class="muted">در انتظار دریافت گزارش</span></div>
+<div class="metrics">
+<div class="metric"><span>ارزش کل دارایی‌ها</span><b id="codalAum">—</b></div>
+<div class="metric"><span>NAV ابطال گزارش‌شده</span><b id="codalNav">—</b></div>
+<div class="metric"><span>تعداد واحدها</span><b id="codalUnits">—</b></div>
+<div class="metric"><span>تاریخ گزارش پرتفوی</span><b id="codalReportDate">—</b></div>
+</div>
+<div id="codalPortfolioInfo" class="foot">گزارش رسمی کدال در حال دریافت است؛ در صورت اختلال کدال، منبع جایگزین با برچسب جدا نمایش داده می‌شود.</div>
+<div id="codalPortfolioTables" style="overflow-x:auto;margin-top:10px"></div></section>
 <section class="panel"><div class="panelhead"><h2>نمودار قیمت و میانگین‌های متحرک</h2><span class="muted">نمایش ۱۲۰ کندل آخر</span></div><div class="chartbox"><canvas id="priceChart"></canvas></div></section>
 <section class="panel"><div class="panelhead"><h2>وضعیت اندیکاتورها</h2><span class="muted">مقادیر آخرین کندل</span></div><div class="metrics" id="metrics"></div></section>
 <section class="panel"><div class="panelhead"><h2>RSI و MACD</h2><span class="muted">تاریخچه کندل‌ها</span></div><div class="smallchart"><canvas id="rsiChart"></canvas></div><div class="smallchart" style="margin-top:14px"><canvas id="macdChart"></canvas></div></section>
@@ -58,6 +67,7 @@ button.active{background:#d5a84e;color:#172033;border-color:#d5a84e;font-weight:
 <script>
 const DATA_URL='https://raw.githubusercontent.com/saeedshiryan-dev/ayar-monitor/main/data/ayar_intraday_indicators.json';
 const LIVE_URL='https://raw.githubusercontent.com/saeedshiryan-dev/ayar-monitor/main/data/ayar_live.json';\nconst FUND_HISTORY_URL='https://raw.githubusercontent.com/saeedshiryan-dev/ayar-monitor/main/data/ayar_fund_history.json';
+const CODAL_PORTFOLIO_URL='https://raw.githubusercontent.com/saeedshiryan-dev/ayar-monitor/main/data/ayar_codal_portfolio.json';
 let data=null,tf='1h',charts={};
 const fmt=n=>n==null||!Number.isFinite(Number(n))?'—':Number(n).toLocaleString('en-US',{maximumFractionDigits:2});
 const faDate=s=>s? s.slice(6,8)+'/'+s.slice(4,6)+'/'+s.slice(0,4):'—';
@@ -138,6 +148,56 @@ function drawFundHistory(j){
  const pb=document.getElementById('fundPortfolioRows');pb.replaceChildren();
  portfolio.forEach(([label,value])=>{const tr=document.createElement('tr');const a=document.createElement('td');a.textContent=label;const b=document.createElement('td');b.textContent=value==null?'—':(typeof value==='object'?JSON.stringify(value):String(value));tr.append(a,b);pb.appendChild(tr);});
 }
+function drawCodalPortfolio(j){
+ const snap=j.secondary_snapshot||{};
+ const report=j.report||{};
+ const fmtV=v=>v==null?'—':Number(v).toLocaleString('en-US',{maximumFractionDigits:2});
+ document.getElementById('codalAum').textContent=snap.aum_hamt==null?'—':fmtV(snap.aum_hamt)+' همت';
+ document.getElementById('codalNav').textContent=snap.nav_redemption_toman==null?'—':fmtV(snap.nav_redemption_toman)+' تومان';
+ document.getElementById('codalUnits').textContent=fmtV(snap.units);
+ document.getElementById('codalReportDate').textContent=report.period_end_jalali||'—';
+ const status=document.getElementById('codalPortfolioStatus');
+ const info=document.getElementById('codalPortfolioInfo');
+ const target=document.getElementById('codalPortfolioTables');target.replaceChildren();
+ if(j.status==='ok'&&j.workbook?.sheets){
+  status.textContent='گزارش رسمی Excel کدال';
+  info.textContent=(report.title||'گزارش پرتفوی')+' · تاریخ انتشار: '+(report.publish_date||'—')+' · زمان دریافت: '+(j.retrieved_at||'—');
+  j.workbook.sheets.forEach(sheet=>{
+   const title=document.createElement('div');title.className='foot';title.textContent='برگه: '+sheet.name;target.appendChild(title);
+   const table=document.createElement('table');table.className='booktable';
+   (sheet.rows||[]).slice(0,80).forEach(row=>{
+    const tr=document.createElement('tr');
+    row.forEach(value=>{const td=document.createElement('td');td.textContent=value==null?'':String(value);tr.appendChild(td);});
+    table.appendChild(tr);
+   });
+   target.appendChild(table);
+  });
+  return;
+ }
+ if(j.status==='partial_secondary'){
+  status.textContent='منبع جایگزین · غیررسمی';
+  const composition=snap.composition||[];
+  const total=snap.composition_reported_total_percent;
+  info.textContent='گزارش رسمی قابل دریافت نبود؛ این ارقام از چشم بورس هستند. تاریخ NAV: '+(snap.nav_report_date||'—')+' · تاریخ ترکیب دارایی: '+(snap.composition_report_date||'—')+' · جمع درصدهای گزارش‌شده: '+(total==null?'—':fmtV(total)+'٪')+' · '+(snap.composition_complete?'ترکیب کامل':'ترکیب ناقص؛ مانده به هیچ طبقه‌ای نسبت داده نشده است');
+  const table=document.createElement('table');table.className='booktable';
+  const head=document.createElement('tr');['طبقه دارایی','درصد گزارش‌شده'].forEach(v=>{const th=document.createElement('th');th.textContent=v;head.appendChild(th);});table.appendChild(head);
+  composition.forEach(item=>{const tr=document.createElement('tr');[item.name,item.percent==null?'—':fmtV(item.percent)+'٪'].forEach(v=>{const td=document.createElement('td');td.textContent=String(v);tr.appendChild(td);});table.appendChild(tr);});
+  target.appendChild(table);
+  const link=document.createElement('a');link.href=report.attachment_url||'https://codal.ir';link.target='_blank';link.rel='noopener';link.textContent='مشاهده گزارش رسمی پرتفوی در کدال';link.style.color='#9fc7ff';target.appendChild(link);
+  return;
+ }
+ status.textContent='داده ترکیب دارایی در دسترس نیست';
+ info.textContent=j.error||j.official_source_error||'منبع داده در دسترس نیست';
+}
+async function loadCodalPortfolio(){
+ const stamp=document.getElementById('codalPortfolioStatus');
+ try{
+  const r=await fetch(CODAL_PORTFOLIO_URL+'?v='+Date.now(),{cache:'no-store'});
+  if(!r.ok)throw Error('HTTP '+r.status);
+  const j=await r.json();
+  drawCodalPortfolio(j);
+ }catch(e){stamp.textContent='دریافت گزارش ناموفق: '+e.message;}
+}
 async function loadFundHistory(){
  const stamp=document.getElementById('fundHistoryUpdated');
  try{
@@ -164,9 +224,9 @@ function drawOrderbook(j){
 }
 async function load(){const n=document.getElementById('notice');n.textContent='در حال دریافت داده از مخزن…';try{const res=await fetch(DATA_URL+'?v='+Date.now(),{cache:'no-store'});if(!res.ok)throw Error('HTTP '+res.status);const j=await res.json();if(!j.timeframes||!j.timeframes['1h']?.candles?.length||!j.timeframes['4h']?.candles?.length)throw Error('ساختار فایل داده معتبر نیست');data=j;draw();}catch(e){n.innerHTML='<span class="bad">دریافت داده ناموفق بود: '+e.message+'</span> · کمی بعد دوباره تلاش کن.';} try{const lr=await fetch(LIVE_URL+'?v='+Date.now(),{cache:'no-store'});if(!lr.ok)throw Error('HTTP '+lr.status);drawOrderbook(await lr.json());}catch(le){document.getElementById('bookStatus').textContent='خطا در دریافت';document.getElementById('bookUpdated').textContent=le.message;}}
 document.querySelectorAll('.tf').forEach(b=>b.addEventListener('click',()=>{tf=b.dataset.tf;document.querySelectorAll('.tf').forEach(x=>x.classList.toggle('active',x===b));draw();}));
-document.getElementById('refresh').addEventListener('click',()=>{load();loadFundHistory();});load();loadFundHistory();
+document.getElementById('refresh').addEventListener('click',()=>{load();loadFundHistory();loadCodalPortfolio();});load();loadFundHistory();loadCodalPortfolio();
 // Refresh the published five-minute feed automatically while the dashboard is open.
-setInterval(()=>{if(!document.hidden){load();loadFundHistory();}},60000);
+setInterval(()=>{if(!document.hidden){load();loadFundHistory();loadCodalPortfolio();}},60000);
 </script></body></html>).test(navDate)?navDate.slice(0,4)+'/'+navDate.slice(4,6)+'/'+navDate.slice(6,8):(navDate||'—');
  document.getElementById('navPublishedAt').textContent=navDateLabel+(n.published_time?' '+n.published_time:'');
  document.getElementById('navSource').textContent=n.source||'منبع نامشخص';
