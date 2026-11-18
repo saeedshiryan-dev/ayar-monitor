@@ -1,4 +1,5 @@
 import json
+import time
 from datetime import datetime, time
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -19,12 +20,23 @@ SESSION.headers.update({
 
 
 def get_json(url):
-    response = SESSION.get(url, timeout=(15, 45))
-    response.raise_for_status()
-    payload = response.json()
-    if not isinstance(payload, dict):
-        raise ValueError("پاسخ API معاملات ساختار معتبر ندارد")
-    return payload
+    last_error = None
+    for attempt in range(4):
+        try:
+            response = SESSION.get(url, timeout=(15, 45))
+            if response.status_code in (429, 500, 502, 503, 504):
+                response.raise_for_status()
+            response.raise_for_status()
+            payload = response.json()
+            if not isinstance(payload, dict):
+                raise ValueError("پاسخ API معاملات ساختار معتبر ندارد")
+            return payload
+        except requests.RequestException as error:
+            last_error = error
+            if attempt == 3:
+                break
+            time.sleep(2 ** attempt)
+    raise last_error
 
 
 def make_candle(rows, date, start, end, now):
@@ -66,7 +78,18 @@ def main():
         return
 
     url = f"{BASE}/Trade/GetTrade/{INS_CODE}"
-    payload = get_json(url)
+    try:
+        payload = get_json(url)
+    except requests.RequestException as error:
+        result["status"] = "not_available"
+        result["reason"] = f"اختلال موقت TSETMC پس از چند تلاش: {str(error)[:250]}"
+        OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+        temp = OUTPUT.with_suffix(".tmp")
+        temp.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+        temp.replace(OUTPUT)
+        print(json.dumps(result, ensure_ascii=False))
+        return
+
     raw = payload.get("trade") or payload.get("tradeHistory")
     if not isinstance(raw, list):
         raise ValueError("آرایه trade در پاسخ GetTrade TSETMC موجود نیست")
