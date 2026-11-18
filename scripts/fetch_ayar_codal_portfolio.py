@@ -267,7 +267,11 @@ def main():
         if not content.startswith(b"PK"):
             raise RuntimeError("خروجی Excel کدال فایل XLSX معتبر نیست: " + book_response.text[:300])
     except Exception as exc:
-        codal_error = search_error or f"{type(exc).__name__}: {exc}"
+        download_error = f"{type(exc).__name__}: {exc}"
+        codal_error = (
+            f"Codal search failed: {search_error}; Excel download failed: {download_error}"
+            if search_error else f"Codal Excel download failed: {download_error}"
+        )
         bourseeye_fallback(session, codal_error)
         return
 
