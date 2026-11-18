@@ -93,7 +93,33 @@ function drawNav(j){
  const p=n.premium_discount_percent;
  document.getElementById('navPremium').textContent=p==null?'—':(Number(p)>0?'+':'')+Number(p).toFixed(2)+'٪';
  const navDate=String(n.published_date||'');
- const navDateLabel=/^\\d{8}$/.test(navDate)?navDate.slice(0,4)+'/'+navDate.slice(4,6)+'/'+navDate.slice(6,8):(navDate||'—');
+ const navDateLabel=new RegExp('^[0-9]{8}?navDate.slice(0,4)+'/'+navDate.slice(4,6)+'/'+navDate.slice(6,8):(navDate||'—');
+ document.getElementById('navPublishedAt').textContent=navDateLabel+(n.published_time?' '+n.published_time:'');
+ document.getElementById('navSource').textContent=n.source||'منبع نامشخص';
+ const status=n.status==='ok'?'NAV رسمی دریافت شد':n.status==='fallback_quote_snapshot'?'NAV از snapshot قیمت TSETMC':'NAV در دسترس نیست';
+ const cross=n.cross_check_status==='different_snapshot_values'?' · اختلاف دو snapshot ثبت شده؛ مقدار ETF مرجع است.':n.error?' · '+n.error:'';
+ document.getElementById('navQuality').textContent=status+' · زمان دریافت: '+(n.retrieved_at||j.retrieved_at||'—')+' · واحد منبع: ریال'+cross;
+}
+function drawOrderbook(j){
+ const fmtToman=n=>n==null||!Number.isFinite(Number(n))?'—':(Number(n)/10).toLocaleString('en-US',{maximumFractionDigits:1});
+ document.getElementById('liveLast').textContent=fmtToman(j.last_trade_price);
+ document.getElementById('liveClose').textContent=fmtToman(j.closing_price);
+ document.getElementById('liveTime').textContent=j.last_trade_time||'—';
+ drawNav(j);
+ document.getElementById('bookUpdated').textContent='به‌روزرسانی: '+(j.orderbook?.retrieved_at||j.retrieved_at||'—').replace('T',' ').slice(0,19);
+ const b=j.orderbook||{};
+ document.getElementById('bookStatus').textContent=b.status==='ok'?'دریافت شد':b.status==='empty'?'بدون سفارش فعال':'ناموفق';
+ document.getElementById('bookTotals').innerHTML='مجموع حجم ۵ سطح خرید: <b>'+fmt(b.buy_total_volume)+'</b> · مجموع حجم ۵ سطح فروش: <b>'+fmt(b.sell_total_volume)+'</b> · تعداد سفارش خرید/فروش: <b>'+fmt(b.buy_total_orders)+' / '+fmt(b.sell_total_orders)+'</b>';
+ const rows=items=>items?.length?items.map(x=>'<tr><td>'+fmt(x.level)+'</td><td>'+fmtToman(x.price)+'</td><td>'+fmt(x.volume)+'</td><td>'+fmt(x.orders)+'</td></tr>').join(''):'<tr><td colspan="4">داده‌ای موجود نیست</td></tr>';
+ document.getElementById('buyRows').innerHTML=rows(b.buy);
+ document.getElementById('sellRows').innerHTML=rows(b.sell);
+}
+async function load(){const n=document.getElementById('notice');n.textContent='در حال دریافت داده از مخزن…';try{const res=await fetch(DATA_URL+'?v='+Date.now(),{cache:'no-store'});if(!res.ok)throw Error('HTTP '+res.status);const j=await res.json();if(!j.timeframes||!j.timeframes['1h']?.candles?.length||!j.timeframes['4h']?.candles?.length)throw Error('ساختار فایل داده معتبر نیست');data=j;draw();}catch(e){n.innerHTML='<span class="bad">دریافت داده ناموفق بود: '+e.message+'</span> · کمی بعد دوباره تلاش کن.';} try{const lr=await fetch(LIVE_URL+'?v='+Date.now(),{cache:'no-store'});if(!lr.ok)throw Error('HTTP '+lr.status);drawOrderbook(await lr.json());}catch(le){document.getElementById('bookStatus').textContent='خطا در دریافت';document.getElementById('bookUpdated').textContent=le.message;}}
+document.querySelectorAll('.tf').forEach(b=>b.addEventListener('click',()=>{tf=b.dataset.tf;document.querySelectorAll('.tf').forEach(x=>x.classList.toggle('active',x===b));draw();}));
+document.getElementById('refresh').addEventListener('click',load);load();
+// Refresh the published five-minute feed automatically while the dashboard is open.
+setInterval(()=>{if(!document.hidden)load();},60000);
+</script></body></html>).test(navDate)?navDate.slice(0,4)+'/'+navDate.slice(4,6)+'/'+navDate.slice(6,8):(navDate||'—');
  document.getElementById('navPublishedAt').textContent=navDateLabel+(n.published_time?' '+n.published_time:'');
  document.getElementById('navSource').textContent=n.source||'منبع نامشخص';
  const status=n.status==='ok'?'NAV رسمی دریافت شد':n.status==='fallback_quote_snapshot'?'NAV از snapshot قیمت TSETMC':'NAV در دسترس نیست';
