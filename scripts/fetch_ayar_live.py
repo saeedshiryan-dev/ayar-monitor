@@ -90,6 +90,76 @@ def main():
     except Exception as exc:
         trade_error = str(exc)[:300]
 
+    # NAV رسمی ETF از endpoint اختصاصی صندوق در TSETMC.
+    # NAV ابطال/صدور بر حسب ریال است؛ تاریخ و ساعت انتشار را جدا نگه می‌داریم.
+    nav = {
+        "status": "unavailable",
+        "source": "TSETMC Fund/GetETFByInsCode",
+        "unit": "ریال",
+        "redemption": None,
+        "subscription": None,
+        "published_date": None,
+        "published_time": None,
+        "retrieved_at": now.isoformat(),
+        "market_price_basis": None,
+        "premium_discount_percent": None,
+        "cross_check_status": "not_available",
+        "error": None,
+    }
+    etf_nav = None
+    etf_error = None
+    try:
+        etf_payload = get_json(f"{BASE}/Fund/GetETFByInsCode/{INS_CODE}")
+        etf_value = unwrap(etf_payload, "etf")
+        if isinstance(etf_value, list):
+            etf_rows = [x for x in etf_value if isinstance(x, dict)]
+            etf_nav = max(etf_rows, key=lambda x: (as_int(x.get("deven")), as_int(x.get("hEven")))) if etf_rows else None
+        elif isinstance(etf_value, dict):
+            etf_nav = etf_value
+        if not isinstance(etf_nav, dict):
+            raise ValueError("فیلد etf در پاسخ TSETMC موجود نیست")
+    except Exception as exc:
+        etf_error = str(exc)[:300]
+
+    nav_redemption = as_int(etf_nav.get("pRedTran")) if etf_nav else 0
+    nav_subscription = as_int(etf_nav.get("pSubTran")) if etf_nav else 0
+    nav_date = as_int(etf_nav.get("deven")) if etf_nav else 0
+    nav_time = as_int(etf_nav.get("hEven")) if etf_nav else 0
+    quote_redemption = as_int(quote.get("pRedTran"))
+    quote_subscription = as_int(quote.get("pSubTran"))
+
+    # Fallback فقط به فیلد NAV همان snapshot رسمی قیمت؛ منبع fallback صریحاً ثبت می‌شود.
+    if nav_redemption > 0:
+        nav["status"] = "ok"
+        nav["redemption"] = nav_redemption
+        nav["subscription"] = nav_subscription or None
+        nav["published_date"] = str(nav_date) if nav_date else quote_date
+        nav["published_time"] = format_time(nav_time) if nav_time else None
+        nav["cross_check_status"] = "matched" if quote_redemption > 0 and quote_redemption == nav_redemption else (
+            "different_snapshot_values" if quote_redemption > 0 else "quote_nav_unavailable"
+        )
+    elif quote_redemption > 0:
+        nav["status"] = "fallback_quote_snapshot"
+        nav["source"] = "TSETMC ClosingPrice/GetClosingPriceInfo.pRedTran"
+        nav["redemption"] = quote_redemption
+        nav["subscription"] = quote_subscription or None
+        nav["published_date"] = quote_date
+        nav["published_time"] = format_time(quote.get("hEven"))
+        nav["cross_check_status"] = "etf_endpoint_unavailable"
+        nav["error"] = etf_error
+    else:
+        nav["status"] = "unavailable"
+        nav["cross_check_status"] = "both_sources_unavailable"
+        nav["error"] = etf_error or "NAV ابطال معتبر از دو فیلد رسمی TSETMC دریافت نشد"
+
+    # حباب/تخفیف با آخرین NAV ابطال رسمی منتشرشده محاسبه می‌شود؛ زمان NAV جداگانه نمایش داده می‌شود.
+    comparison_price = live_price or (official_last if official_last > 0 else None)
+    if nav["redemption"] and comparison_price:
+        nav["market_price_basis"] = "live_price" if live_price else "last_official_price"
+        nav["premium_discount_percent"] = round(
+            (comparison_price / nav["redemption"] - 1) * 100, 4
+        )
+
     # دریافت دفتر سفارش زنده (۵ سطح خرید و فروش) از BestLimits رسمی TSETMC
     orderbook = {
         "status": "unavailable",
@@ -181,6 +251,7 @@ def main():
         "trade_endpoint_rows": len(trade_rows),
         "trade_endpoint_error": trade_error,
         "orderbook": orderbook,
+        "nav": nav,
         "price_note_fa": (
             "قیمت لحظه‌ای از snapshot قیمت TSETMC دریافت شد."
             if live_price is not None else
