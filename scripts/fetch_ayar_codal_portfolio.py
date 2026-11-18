@@ -104,15 +104,15 @@ def bourseeye_fallback(session, codal_error):
     parser = VisibleText()
     parser.feed(response.text)
     text = norm(" ".join(parser.parts))
-    redemption = extract_number(r"NAV ابطال\\s+([0-9۰-۹٠-٩٬,٫.]+)\\s*تومان", text)
-    aum = extract_number(r"ارزش کل دارایی‌ها\\s+([0-9۰-۹٠-٩٬,٫.]+)\\s*همت", text)
-    units = extract_number(r"تعداد واحدها\\s+([0-9۰-۹٠-٩٬,٫.]+)", text)
-    stock_commodity = extract_number(r"سهام و گواهی سپرده کالایی\\s+([0-9۰-۹٠-٩٬,٫.]+)\\s*[%٪]", text)
-    fixed_income = extract_number(r"اوراق با درآمد ثابت\\s+([0-9۰-۹٠-٩٬,٫.]+)\\s*[%٪]", text)
+    redemption = extract_number(r"NAV ابطال\s+([0-9۰-۹٠-٩٬,٫.]+)\s*تومان", text)
+    aum = extract_number(r"ارزش کل دارایی‌ها\s+([0-9۰-۹٠-٩٬,٫.]+)\s*همت", text)
+    units = extract_number(r"تعداد واحدها\s+([0-9۰-۹٠-٩٬,٫.]+)", text)
+    stock_commodity = extract_number(r"سهام و گواهی سپرده کالایی\s+([0-9۰-۹٠-٩٬,٫.]+)\s*[%٪]", text)
+    fixed_income = extract_number(r"اوراق با درآمد ثابت\s+([0-9۰-۹٠-٩٬,٫.]+)\s*[%٪]", text)
     if redemption is None and aum is None and units is None:
         raise RuntimeError("Codal unavailable and Bourseeye fallback did not contain a usable snapshot")
-    nav_date = re.search(r"NAV بر پایه گزارش\\s+([^؛]+)", text)
-    composition_date = re.search(r"بر پایه گزارش\\s+([^؛]+)", text[text.find("ترکیب دارایی‌ها"):] if "ترکیب دارایی‌ها" in text else "")
+    nav_date = re.search(r"NAV بر پایه گزارش\s+([^؛]+)", text)
+    composition_date = re.search(r"بر پایه گزارش\s+([^؛]+)", text[text.find("ترکیب دارایی‌ها"):] if "ترکیب دارایی‌ها" in text else "")
     composition = [
         {"name": "سهام و گواهی سپرده کالایی", "percent": stock_commodity},
         {"name": "اوراق با درآمد ثابت", "percent": fixed_income},
