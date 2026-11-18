@@ -17,8 +17,19 @@ try {
     const price = document.querySelector("#price")?.textContent?.trim();
     const history = document.querySelector("#fundHistoryCount")?.textContent?.trim();
     const portfolio = document.querySelector("#codalPortfolioStatus")?.textContent?.trim();
+    const liveLast = document.querySelector("#liveLast")?.textContent?.trim();
+    const liveClose = document.querySelector("#liveClose")?.textContent?.trim();
+    const liveTime = document.querySelector("#liveTime")?.textContent?.trim();
+    const navRedemption = document.querySelector("#navRedemption")?.textContent?.trim();
+    const navSubscription = document.querySelector("#navSubscription")?.textContent?.trim();
+    const navPublishedAt = document.querySelector("#navPublishedAt")?.textContent?.trim();
+    const bookStatus = document.querySelector("#bookStatus")?.textContent?.trim();
     return price && price !== "—" && history && history !== "—" &&
-      portfolio && !portfolio.includes("در انتظار");
+      portfolio && !portfolio.includes("در انتظار") &&
+      liveLast && liveLast !== "—" && liveClose && liveClose !== "—" &&
+      liveTime && liveTime !== "—" && navRedemption && navRedemption !== "—" &&
+      navSubscription && navSubscription !== "—" && navPublishedAt &&
+      navPublishedAt !== "—" && bookStatus === "دریافت شد";
   }, { timeout: 120000 });
 
   const initial = await page.evaluate(() => ({
