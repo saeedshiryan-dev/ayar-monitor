@@ -96,13 +96,13 @@ def download_day(daily):
             candles_1h.append(candle)
 
     candles_4h = []
-    for start, end in ((12, 16), (16, 18)):
+    for start, end in ((12, 16),):
         selected = [
             x for x in rows
             if start * 10000 <= x["hEven"] < end * 10000
             or (end == 18 and x["hEven"] == 180000)
         ]
-        candle = make_candle(selected, date, start, end, partial=(end - start) < 4)
+        candle = make_candle(selected, date, start, end, partial=False)
         if candle:
             candles_4h.append(candle)
 
