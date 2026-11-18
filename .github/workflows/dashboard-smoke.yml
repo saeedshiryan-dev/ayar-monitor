@@ -5,6 +5,7 @@ on:
   push:
     paths:
       - '.github/workflows/dashboard-smoke.yml'
+      - 'scripts/smoke_dashboard.mjs'
   workflow_run:
     workflows: ["Deploy Ayar Dashboard"]
     types: [completed]
