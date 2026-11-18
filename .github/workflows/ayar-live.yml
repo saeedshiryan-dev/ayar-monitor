@@ -18,7 +18,7 @@ permissions:
 
 # Prevent overlapping scheduled/manual runs from racing to update the snapshot.
 concurrency:
-  group: ayar-live-refresh-main
+  group: ayar-live-snapshot-main
   cancel-in-progress: false
 
 jobs:
