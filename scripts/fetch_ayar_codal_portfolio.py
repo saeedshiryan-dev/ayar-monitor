@@ -194,6 +194,27 @@ def bourseeye_fallback(session, codal_error):
             "لینک گزارش رسمی کدال برای بررسی و دریافت مستقیم نگهداری شده است.",
         ],
     }
+    # Preserve a manually supplied full report when Codal is temporarily unreachable.
+    # A later successful official Codal workbook fetch will still replace it in main().
+    try:
+        existing = json.loads(OUT.read_text(encoding="utf-8")) if OUT.exists() else {}
+    except Exception:
+        existing = {}
+    if existing.get("status") == "official_report_uploaded":
+        existing["secondary_snapshot"] = output["secondary_snapshot"]
+        existing["secondary_source_status"] = output["status"]
+        existing["secondary_checked_at"] = output["retrieved_at"]
+        existing["official_source_error"] = codal_error
+        save_output(existing)
+        print(json.dumps({
+            "status": existing["status"],
+            "secondary_source_status": existing["secondary_source_status"],
+            "preserved_uploaded_report": True,
+            "secondary_snapshot": existing["secondary_snapshot"],
+            "output": str(OUT),
+        }, ensure_ascii=False, indent=2))
+        return existing
+
     save_output(output)
     print(json.dumps({
         "status": output["status"],
