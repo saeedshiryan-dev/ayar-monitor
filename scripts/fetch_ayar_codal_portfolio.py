@@ -110,14 +110,14 @@ def bourseeye_fallback(session, codal_error):
     except Exception as exc:
         page_error = f"{type(exc).__name__}: {exc}"
 
-    redemption = extract_number(r"NAV ابطال\\s+([0-9۰-۹٠-٩٬,٫.]+)\\s*تومان", text)
-    subscription = extract_number(r"NAV صدور\\s+([0-9۰-۹٠-٩٬,٫.]+)\\s*تومان", text)
-    aum = extract_number(r"ارزش کل دارایی‌ها\\s+([0-9۰-۹٠-٩٬,٫.]+)\\s*همت", text)
-    units = extract_number(r"تعداد واحدها\\s+([0-9۰-۹٠-٩٬,٫.]+)", text)
-    stock_commodity = extract_number(r"سهام و گواهی سپرده کالایی\\s+([0-9۰-۹٠-٩٬,٫.]+)\\s*[%٪]", text)
-    fixed_income = extract_number(r"اوراق با درآمد ثابت\\s+([0-9۰-۹٠-٩٬,٫.]+)\\s*[%٪]", text)
-    nav_date = re.search(r"NAV بر پایه گزارش\\s+([^؛]+)", text)
-    composition_date = re.search(r"بر پایه گزارش\\s+([^؛]+)", text[text.find("ترکیب دارایی‌ها"):] if "ترکیب دارایی‌ها" in text else "")
+    redemption = extract_number(r"NAV ابطال\s+([0-9۰-۹٠-٩٬,٫.]+)\s*تومان", text)
+    subscription = extract_number(r"NAV صدور\s+([0-9۰-۹٠-٩٬,٫.]+)\s*تومان", text)
+    aum = extract_number(r"ارزش کل دارایی‌ها\s+([0-9۰-۹٠-٩٬,٫.]+)\s*همت", text)
+    units = extract_number(r"تعداد واحدها\s+([0-9۰-۹٠-٩٬,٫.]+)", text)
+    stock_commodity = extract_number(r"سهام و گواهی سپرده کالایی\s+([0-9۰-۹٠-٩٬,٫.]+)\s*[%٪]", text)
+    fixed_income = extract_number(r"اوراق با درآمد ثابت\s+([0-9۰-۹٠-٩٬,٫.]+)\s*[%٪]", text)
+    nav_date = re.search(r"NAV بر پایه گزارش\s+([^؛]+)", text)
+    composition_date = re.search(r"بر پایه گزارش\s+([^؛]+)", text[text.find("ترکیب دارایی‌ها"):] if "ترکیب دارایی‌ها" in text else "")
 
     # Dated, manually verified fallback from the public Bourseeye page as of 1405/08/26.
     # Do not present this as a live fetch or as an official Codal workbook.
