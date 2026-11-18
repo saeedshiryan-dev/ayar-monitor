@@ -94,28 +94,47 @@ def main():
 
     rows = sorted(unique.values(), key=lambda x: (x["hEven"], x["nTran"]))
     quote_trade_count = None
+    quote_retrieved_at = None
     live_quote_file = Path("data/ayar_live.json")
     if live_quote_file.exists():
         try:
-            quote_trade_count = int(json.loads(live_quote_file.read_text(encoding="utf-8")).get("tsetmc_quote_trade_count") or 0) or None
+            quote_snapshot = json.loads(live_quote_file.read_text(encoding="utf-8"))
+            quote_trade_count = int(quote_snapshot.get("tsetmc_quote_trade_count") or 0) or None
+            quote_retrieved_at = quote_snapshot.get("retrieved_at")
         except (OSError, ValueError, TypeError):
             quote_trade_count = None
-    trade_count_difference = (
-        quote_trade_count - len(rows) if quote_trade_count is not None else None
-    )
-    count_reconciled = (
-        trade_count_difference == 0 if trade_count_difference is not None else None
+            quote_retrieved_at = None
+
+    observed_delta = quote_trade_count - len(rows) if quote_trade_count is not None else None
+    comparable = False
+    quote_age_seconds = None
+    if quote_retrieved_at:
+        try:
+            quote_dt = datetime.fromisoformat(quote_retrieved_at)
+            quote_age_seconds = abs((now - quote_dt).total_seconds())
+            comparable = quote_age_seconds <= 5
+        except ValueError:
+            pass
+    count_reconciled = (observed_delta == 0) if comparable and observed_delta is not None else None
+    reconciliation_status = (
+        "reconciled" if count_reconciled is True else
+        "mismatch" if count_reconciled is False else
+        "not_comparable_time_gap"
     )
     result.update({
         "quote_trade_count": quote_trade_count,
-        "trade_count_difference": trade_count_difference,
+        "quote_retrieved_at": quote_retrieved_at,
+        "quote_age_seconds": round(quote_age_seconds, 2) if quote_age_seconds is not None else None,
+        "observed_trade_count_delta": observed_delta,
+        "trade_count_difference": observed_delta if comparable else None,
         "count_reconciled": count_reconciled,
+        "count_reconciliation_status": reconciliation_status,
         "quality_note_fa": (
-            "تعداد معاملات endpoint با آمار snapshot رسمی برابر است."
+            "تعداد معاملات در دو snapshot هم‌زمان برابر است."
             if count_reconciled is True else
-            "تعداد معاملات endpoint با آمار رسمی برابر نیست؛ کندل‌ها موقت‌اند و باید با احتیاط تفسیر شوند."
+            "دو snapshot حداکثر ۵ ثانیه اختلاف زمانی دارند اما تعداد معاملات برابر نیست."
             if count_reconciled is False else
-            "امکان تطبیق تعداد معاملات با snapshot رسمی وجود نداشت."
+            "snapshot قیمت و معاملات هم‌زمان نیستند؛ اختلاف مشاهده‌شده معیار قطعی کسری معاملات نیست."
         ),
     })
     if not rows:
@@ -129,7 +148,7 @@ def main():
                 candles_1h.append(candle)
 
         candles_4h = []
-        for start, end in ((12, 16), (16, 18)):
+        for start, end in ((12, 16),):
             selected = [x for x in rows if start * 10000 <= x["hEven"] < end * 10000]
             candle = make_candle(selected, date, start, end, now)
             if candle:
