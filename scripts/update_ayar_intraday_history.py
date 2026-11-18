@@ -1,6 +1,7 @@
 import json
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
+from threading import local
 from pathlib import Path
 from datetime import datetime
 from zoneinfo import ZoneInfo
@@ -20,16 +21,22 @@ MAX_WORKERS = 5
 REQUEST_TIMEOUT = (10, 25)
 MAX_ATTEMPTS = 2
 
-session = requests.Session()
-session.headers.update({
-    "User-Agent": "Mozilla/5.0",
-    "Accept": "application/json",
-    "Referer": "https://www.tsetmc.com/",
-})
+thread_local = local()
+
+
+def get_session():
+    if not hasattr(thread_local, "session"):
+        thread_local.session = requests.Session()
+        thread_local.session.headers.update({
+            "User-Agent": "Mozilla/5.0",
+            "Accept": "application/json",
+            "Referer": "https://www.tsetmc.com/",
+        })
+    return thread_local.session
 
 
 def get_json(url):
-    response = session.get(url, timeout=REQUEST_TIMEOUT)
+    response = get_session().get(url, timeout=REQUEST_TIMEOUT)
     response.raise_for_status()
     return response.json()
 
