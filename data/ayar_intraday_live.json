@@ -3,9 +3,9 @@
   "source": "TSETMC GetTrade",
   "date": "20261118",
   "timezone": "Asia/Tehran",
-  "retrieved_at": "2026-11-18T14:34:17.199600+03:30",
+  "retrieved_at": "2026-11-18T14:55:00.518626+03:30",
   "status": "ok",
-  "trade_count": 40344,
+  "trade_count": 43825,
   "candles_1h": [
     {
       "date": "20261118",
@@ -42,10 +42,10 @@
       "timestamp": "20261118T14:00:00+03:30",
       "open": 655738,
       "high": 655750,
-      "low": 654563,
-      "close": 654849,
-      "volume": 2361530,
-      "trades": 5182,
+      "low": 654160,
+      "close": 654160,
+      "volume": 3620907,
+      "trades": 8663,
       "partial": true,
       "provisional": true
     }
@@ -59,22 +59,22 @@
       "open": 651900,
       "high": 657700,
       "low": 651550,
-      "close": 654849,
-      "volume": 29601847,
-      "trades": 40344,
+      "close": 654160,
+      "volume": 30861224,
+      "trades": 43825,
       "partial": true,
       "provisional": true
     }
   ],
   "note_fa": "کندل‌های موقت از endpoint معاملات زنده TSETMC؛ آمار نهایی روز نیست.",
-  "quote_trade_count": 40324,
-  "quote_retrieved_at": "2026-11-18T14:34:13.461190+03:30",
-  "quote_age_seconds": 3.74,
-  "observed_trade_count_delta": -20,
-  "trade_count_difference": -20,
-  "count_reconciled": false,
-  "count_reconciliation_status": "mismatch",
-  "quality_note_fa": "دو snapshot حداکثر ۵ ثانیه اختلاف زمانی دارند اما تعداد معاملات برابر نیست.",
+  "quote_trade_count": 44350,
+  "quote_retrieved_at": "2026-11-18T14:54:26.458708+03:30",
+  "quote_age_seconds": 34.06,
+  "observed_trade_count_delta": 525,
+  "trade_count_difference": null,
+  "count_reconciled": null,
+  "count_reconciliation_status": "not_comparable_time_gap",
+  "quality_note_fa": "snapshot قیمت و معاملات هم‌زمان نیستند؛ اختلاف مشاهده‌شده معیار قطعی کسری معاملات نیست.",
   "first_trade_time": "120002",
-  "last_trade_time": "143417"
+  "last_trade_time": "145235"
 }
