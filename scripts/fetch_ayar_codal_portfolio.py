@@ -131,10 +131,28 @@ def bourseeye_fallback(session, codal_error):
         nav_date_text = nav_date.group(1).strip() if nav_date else None
         composition_date_text = composition_date.group(1).strip() if composition_date else None
 
-    composition = [
-        {"name": "سهام و گواهی سپرده کالایی", "percent": stock_commodity},
-        {"name": "اوراق با درآمد ثابت", "percent": fixed_income},
-    ]
+    # Parse every percentage explicitly shown in the composition section, rather
+    # than hard-coding only the two categories currently visible on the page.
+    composition_text = text
+    if "ترکیب دارایی‌ها" in text:
+        composition_text = text.split("ترکیب دارایی‌ها", 1)[1].split("مشخصات صندوق", 1)[0]
+    composition = []
+    seen_names = set()
+    for match in re.finditer(r"([^؛|]{2,100}?)\\s+([0-9۰-۹٠-٩٬,٫.]+)\\s*[%٪]", composition_text):
+        name = norm(match.group(1)).strip(" -*•")
+        value = extract_number(r"^([0-9۰-۹٠-٩٬,٫.]+)$", match.group(2))
+        if not name or value is None or name in seen_names:
+            continue
+        if len(name) > 80 or any(token in name for token in ("بر پایه گزارش", "NAV", "بازده", "حباب")):
+            continue
+        seen_names.add(name)
+        composition.append({"name": name, "percent": value})
+    # Keep known fields if the page text layout prevents generic extraction.
+    if not composition:
+        composition = [
+            {"name": "سهام و گواهی سپرده کالایی", "percent": stock_commodity},
+            {"name": "اوراق با درآمد ثابت", "percent": fixed_income},
+        ]
     known = [x["percent"] for x in composition if x["percent"] is not None]
     total = sum(known) if known else None
     output = {
@@ -146,16 +164,16 @@ def bourseeye_fallback(session, codal_error):
         "retrieved_at": datetime.now().astimezone().isoformat(),
         "secondary_snapshot": {
             "page_url": url,
-            "page_updated_date": "1405/08/26",
+            "page_updated_date": None,
             "nav_redemption_toman": redemption,
             "nav_subscription_toman": subscription,
             "nav_report_date": nav_date_text,
             "aum_hamt": aum,
             "units": int(units) if units is not None else None,
             "composition_report_date": composition_date_text,
-            "composition": composition,
+            "composition": composition,\n            "composition_categories_count": len([x for x in composition if x["percent"] is not None]),
             "composition_reported_total_percent": round(total, 4) if total is not None else None,
-            "composition_complete": bool(total is not None and abs(total - 100) < 0.1),
+            "composition_complete": bool(total is not None and abs(total - 100) < 0.1),\n            "composition_missing_percent": round(max(0.0, 100.0 - total), 4) if total is not None else None,
             "static_fallback_used": static_used,
         },
         "report": {
@@ -169,7 +187,7 @@ def bourseeye_fallback(session, codal_error):
         },
         "notes_fa": [
             "داده‌های ترکیب دارایی در این مسیر پشتیبان از منبع ثانویه‌اند، نه فایل اصلی کدال.",
-            "درصدهای منتشرشده فقط ۰٫۹۱٪ را پوشش می‌دهند؛ بنابراین ترکیب ناقص است و مانده به هیچ طبقه‌ای نسبت داده نشده است.",
+            "فقط طبقه‌هایی که صریحاً در بخش ترکیب دارایی منبع نمایش داده شده‌اند استخراج می‌شوند؛ مانده هرگز به‌صورت حدسی به طبقه‌ای نسبت داده نمی‌شود.",
             "در صورت استفاده از fallback ثابت، تاریخ صفحه منبع ۲۶ آبان ۱۴۰۵ است و ارقام NAV/ترکیب به تاریخ‌های جداگانه خود تعلق دارند.",
             "لینک گزارش رسمی کدال برای بررسی و دریافت مستقیم نگهداری شده است.",
         ],
