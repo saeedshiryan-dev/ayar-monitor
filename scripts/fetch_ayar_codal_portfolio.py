@@ -8,6 +8,7 @@ from urllib.parse import urljoin
 import requests
 from openpyxl import load_workbook
 from io import BytesIO
+from html.parser import HTMLParser
 
 SYMBOL = "عیار"
 BASE = "https://search.codal.ir/api/search/v2/q"
@@ -73,6 +74,94 @@ def serializable(value):
         return value
     return str(value)
 
+class VisibleText(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.parts = []
+    def handle_data(self, data):
+        if data and data.strip():
+            self.parts.append(data.strip())
+
+def extract_number(pattern, text):
+    match = re.search(pattern, text, re.IGNORECASE)
+    if not match:
+        return None
+    value = ascii_digits(match.group(1)).replace("٬", "").replace(",", "").replace("٫", ".")
+    try:
+        return float(value)
+    except ValueError:
+        return None
+
+def save_output(output):
+    temp = OUT.with_suffix(".tmp")
+    temp.write_text(json.dumps(output, ensure_ascii=False, indent=2), encoding="utf-8")
+    temp.replace(OUT)
+
+def bourseeye_fallback(session, codal_error):
+    url = "https://bourseeye.com/funds/1521/صندوق-طلای-عیار-مفید"
+    response = session.get(url, timeout=(10, 35))
+    response.raise_for_status()
+    parser = VisibleText()
+    parser.feed(response.text)
+    text = norm(" ".join(parser.parts))
+    redemption = extract_number(r"NAV ابطال\\s+([0-9۰-۹٠-٩٬,٫.]+)\\s*تومان", text)
+    aum = extract_number(r"ارزش کل دارایی‌ها\\s+([0-9۰-۹٠-٩٬,٫.]+)\\s*همت", text)
+    units = extract_number(r"تعداد واحدها\\s+([0-9۰-۹٠-٩٬,٫.]+)", text)
+    stock_commodity = extract_number(r"سهام و گواهی سپرده کالایی\\s+([0-9۰-۹٠-٩٬,٫.]+)\\s*[%٪]", text)
+    fixed_income = extract_number(r"اوراق با درآمد ثابت\\s+([0-9۰-۹٠-٩٬,٫.]+)\\s*[%٪]", text)
+    if redemption is None and aum is None and units is None:
+        raise RuntimeError("Codal unavailable and Bourseeye fallback did not contain a usable snapshot")
+    nav_date = re.search(r"NAV بر پایه گزارش\\s+([^؛]+)", text)
+    composition_date = re.search(r"بر پایه گزارش\\s+([^؛]+)", text[text.find("ترکیب دارایی‌ها"):] if "ترکیب دارایی‌ها" in text else "")
+    composition = [
+        {"name": "سهام و گواهی سپرده کالایی", "percent": stock_commodity},
+        {"name": "اوراق با درآمد ثابت", "percent": fixed_income},
+    ]
+    known = [x["percent"] for x in composition if x["percent"] is not None]
+    total = sum(known) if known else None
+    output = {
+        "status": "partial_secondary",
+        "symbol": SYMBOL,
+        "source": "Bourseeye secondary snapshot; Codal official endpoints unreachable from GitHub Actions",
+        "official_source_error": codal_error,
+        "retrieved_at": datetime.now().astimezone().isoformat(),
+        "report": {
+            "title": FALLBACK_REPORT["title"],
+            "period_end_jalali": FALLBACK_REPORT["period_end_jalali"],
+            "publish_date": FALLBACK_REPORT["publish_date"],
+            "company_name": FALLBACK_REPORT["company_name"],
+            "attachment_url": FALLBACK_REPORT["attachment_url"],
+            "excel_url": FALLBACK_REPORT["excel_url"],
+            "is_fallback_report": True,
+        },
+        "secondary_snapshot": {
+            "page_url": url,
+            "nav_redemption_toman": redemption,
+            "nav_report_date": nav_date.group(1).strip() if nav_date else None,
+            "aum_hamt": aum,
+            "units": int(units) if units is not None else None,
+            "composition_report_date": composition_date.group(1).strip() if composition_date else None,
+            "composition": composition,
+            "composition_reported_total_percent": round(total, 4) if total is not None else None,
+            "composition_complete": bool(total is not None and abs(total - 100) < 0.1),
+        },
+        "notes_fa": [
+            "داده‌های ترکیب دارایی در این مسیر پشتیبان از منبع ثانویه‌اند، نه فایل اصلی کدال.",
+            "درصدهای گزارش‌شده کامل نیستند مگر آنکه جمع آن‌ها به ۱۰۰ درصد برسد؛ مانده به هیچ طبقه‌ای نسبت داده نشده است.",
+            "لینک گزارش رسمی کدال برای بررسی و دریافت مستقیم نگهداری شده است.",
+        ],
+    }
+    save_output(output)
+    print(json.dumps({
+        "status": output["status"],
+        "source": output["source"],
+        "official_source_error": codal_error,
+        "report": output["report"],
+        "secondary_snapshot": output["secondary_snapshot"],
+        "output": str(OUT),
+    }, ensure_ascii=False, indent=2))
+    return output
+
 def main():
     session = requests.Session()
     session.headers.update(HEADERS)
@@ -127,11 +216,16 @@ def main():
         raise RuntimeError("کدال برای آخرین گزارش پرتفوی لینک ExcelUrl ارائه نکرد")
 
     download_url = urljoin("https://www.codal.ir/", excel_url)
-    book_response = session.get(download_url, timeout=(15, 90))
-    book_response.raise_for_status()
-    content = book_response.content
-    if not content.startswith(b"PK"):
-        raise RuntimeError("خروجی Excel کدال فایل XLSX معتبر نیست: " + book_response.text[:300])
+    try:
+        book_response = session.get(download_url, timeout=(10, 30))
+        book_response.raise_for_status()
+        content = book_response.content
+        if not content.startswith(b"PK"):
+            raise RuntimeError("خروجی Excel کدال فایل XLSX معتبر نیست: " + book_response.text[:300])
+    except Exception as exc:
+        codal_error = search_error or f"{type(exc).__name__}: {exc}"
+        bourseeye_fallback(session, codal_error)
+        return
 
     wb = load_workbook(BytesIO(content), read_only=True, data_only=True)
     sheets = []
