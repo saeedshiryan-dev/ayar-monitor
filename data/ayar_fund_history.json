@@ -2,7 +2,7 @@
   "symbol": "عیار",
   "insCode": "34144395039913458",
   "source": "TSETMC Fund/GetFunds/5 + Fund/GetFundInDetail",
-  "retrieved_at": "2026-11-18T14:44:05.124692+03:30",
+  "retrieved_at": "2026-11-18T14:56:34.213545+03:30",
   "timezone": "Asia/Tehran",
   "status": "ok",
   "fund": {
@@ -69,7 +69,7 @@
   },
   "history_count": 2315,
   "first_date_in_source_order": "2018-11-13T00:00:00",
-  "last_date_in_source_order": "2026-11-18T14:44:08",
+  "last_date_in_source_order": "2026-11-18T14:56:10",
   "current_etf_nav_status": "ok",
   "current_etf_nav_error": null,
   "history": [
@@ -32470,34 +32470,34 @@
       }
     },
     {
-      "date": "2026-11-18T14:44:08",
-      "redemption_nav": 660816,
-      "subscription_nav": 663819,
+      "date": "2026-11-18T14:56:10",
+      "redemption_nav": 660592,
+      "subscription_nav": 663595,
       "statistical_nav": null,
       "net_asset_value": null,
       "source_record": {
         "insCode": "34144395039913458",
         "deven": 20261118,
-        "hEven": 144408,
-        "pRedTran": 660816.0,
-        "pSubTran": 663819.0,
+        "hEven": 145610,
+        "pRedTran": 660592.0,
+        "pSubTran": 663595.0,
         "iClose": 0
       },
       "record_source": "TSETMC Fund/GetETFByInsCode"
     }
   ],
   "latest_record": {
-    "date": "2026-11-18T14:44:08",
-    "redemption_nav": 660816,
-    "subscription_nav": 663819,
+    "date": "2026-11-18T14:56:10",
+    "redemption_nav": 660592,
+    "subscription_nav": 663595,
     "statistical_nav": null,
     "net_asset_value": null,
     "source_record": {
       "insCode": "34144395039913458",
       "deven": 20261118,
-      "hEven": 144408,
-      "pRedTran": 660816.0,
-      "pSubTran": 663819.0,
+      "hEven": 145610,
+      "pRedTran": 660592.0,
+      "pSubTran": 663595.0,
       "iClose": 0
     },
     "record_source": "TSETMC Fund/GetETFByInsCode"
