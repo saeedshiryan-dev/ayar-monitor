@@ -15,8 +15,8 @@ button.active{background:#d5a84e;color:#172033;border-color:#d5a84e;font-weight:
 .status{margin:12px 0;padding:10px 13px;border-radius:11px;background:#1b2a3c;border:1px solid var(--line);font-size:13px}.good{color:var(--green)}.bad{color:var(--red)}.warn{color:var(--gold)}
 .panel{margin-top:12px}.panelhead{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}.panel h2{font-size:16px;margin:0}.chartbox{height:300px;position:relative}.smallchart{height:180px;position:relative}
 .metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.metric{background:#0f1929;border-radius:10px;padding:9px}.metric b{display:block;font-size:16px;direction:ltr;text-align:right}.metric span{font-size:11px;color:var(--muted)}
-.signal{font-size:14px;padding:12px;border-radius:10px;background:#0f1929}.foot{margin-top:16px;color:var(--muted);font-size:11px}
-@media(max-width:650px){main{padding:13px 10px 30px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.v{font-size:20px}.chartbox{height:250px}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.brand{font-size:18px}}
+.signal{font-size:14px;padding:12px;border-radius:10px;background:#0f1929}.bookgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.booktable{width:100%;border-collapse:collapse;font-size:12px;text-align:center}.booktable th,.booktable td{padding:7px 4px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}.booktable th{color:var(--muted);font-weight:600}.buytitle{color:var(--green)}.selltitle{color:var(--red)}.booksummary{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted);margin:8px 0}.booksummary b{color:var(--txt)}.foot{margin-top:16px;color:var(--muted);font-size:11px}
+@media(max-width:650px){main{padding:13px 10px 30px}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.v{font-size:20px}.chartbox{height:250px}.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.brand{font-size:18px}.bookgrid{grid-template-columns:1fr}}
 </style></head>
 <body><main>
 <header class="top"><div><div class="brand">📈 داشبورد پایش صندوق عیار</div><div class="sub">داده معاملات تأییدشده TSETMC · منطقه زمانی تهران</div></div><div class="toolbar"><button id="refresh">به‌روزرسانی داده</button><a href="https://github.com/saeedshiryan-dev/ayar-monitor/actions" target="_blank" rel="noopener" style="color:#9fc7ff;font-size:12px">وضعیت دریافت داده‌ها ↗</a></div></header>
@@ -28,7 +28,11 @@ button.active{background:#d5a84e;color:#172033;border-color:#d5a84e;font-weight:
 <div class="card"><div class="k">حجم نسبت به میانگین ۲۰</div><div id="vr" class="v">—</div><div class="unit">Volume Ratio</div></div>
 <div class="card"><div class="k">تعداد کندل‌های معتبر</div><div id="count" class="v">—</div><div class="unit">در تایم‌فریم انتخابی</div></div>
 </section>
-<section class="panel"><div class="panelhead"><h2>نمودار قیمت و میانگین‌های متحرک</h2><span class="muted">نمایش ۱۲۰ کندل آخر</span></div><div class="chartbox"><canvas id="priceChart"></canvas></div></section>
+<section class="panel"><div class="panelhead"><h2>تابلوی لحظه‌ای و عمق بازار عیار</h2><span id="bookUpdated" class="muted">در حال دریافت…</span></div>
+<div class="metrics"><div class="metric"><span>آخرین معامله</span><b id="liveLast">—</b></div><div class="metric"><span>قیمت پایانی</span><b id="liveClose">—</b></div><div class="metric"><span>زمان آخرین معامله</span><b id="liveTime">—</b></div><div class="metric"><span>وضعیت دفتر سفارش</span><b id="bookStatus">—</b></div></div>
+<div id="bookTotals" class="booksummary"></div><div class="bookgrid">
+<div><h3 class="buytitle" style="font-size:14px">۵ سطح برتر خرید</h3><table class="booktable"><thead><tr><th>سطح</th><th>قیمت (تومان)</th><th>حجم</th><th>تعداد سفارش</th></tr></thead><tbody id="buyRows"><tr><td colspan="4">—</td></tr></tbody></table></div>
+<div><h3 class="selltitle" style="font-size:14px">۵ سطح برتر فروش</h3><table class="booktable"><thead><tr><th>سطح</th><th>قیمت (تومان)</th><th>حجم</th><th>تعداد سفارش</th></tr></thead><tbody id="sellRows"><tr><td colspan="4">—</td></tr></tbody></table></div></div><div class="foot">قیمت‌ها از ریال به تومان تبدیل شده‌اند. فقط پنج سطح اول دفتر سفارش نمایش داده می‌شود؛ این داده‌ها کل سفارش‌های بازار نیستند.</div></section><section class="panel"><div class="panelhead"><h2>نمودار قیمت و میانگین‌های متحرک</h2><span class="muted">نمایش ۱۲۰ کندل آخر</span></div><div class="chartbox"><canvas id="priceChart"></canvas></div></section>
 <section class="panel"><div class="panelhead"><h2>وضعیت اندیکاتورها</h2><span class="muted">مقادیر آخرین کندل</span></div><div class="metrics" id="metrics"></div></section>
 <section class="panel"><div class="panelhead"><h2>RSI و MACD</h2><span class="muted">تاریخچه کندل‌ها</span></div><div class="smallchart"><canvas id="rsiChart"></canvas></div><div class="smallchart" style="margin-top:14px"><canvas id="macdChart"></canvas></div></section>
 <section class="panel"><h2>جمع‌بندی تکنیکال خودکار</h2><div id="signal" class="signal" style="margin-top:10px">—</div><div class="foot">این جمع‌بندی صرفاً قواعد ساده اندیکاتوری است و توصیه قطعی خرید یا فروش نیست. کندل ناقص ۴ساعته با برچسب مشخص می‌شود. هیچ داده‌ای در این صفحه ساخته یا تخمین زده نمی‌شود.</div></section>
@@ -36,6 +40,7 @@ button.active{background:#d5a84e;color:#172033;border-color:#d5a84e;font-weight:
 </main>
 <script>
 const DATA_URL='https://raw.githubusercontent.com/saeedshiryan-dev/ayar-monitor/main/data/ayar_intraday_indicators.json';
+const LIVE_URL='https://raw.githubusercontent.com/saeedshiryan-dev/ayar-monitor/main/data/ayar_live.json';
 let data=null,tf='1h',charts={};
 const fmt=n=>n==null||!Number.isFinite(Number(n))?'—':Number(n).toLocaleString('en-US',{maximumFractionDigits:2});
 const faDate=s=>s? s.slice(6,8)+'/'+s.slice(4,6)+'/'+s.slice(0,4):'—';
@@ -68,7 +73,20 @@ function draw(){
  msg+=' نسبت حجم '+fmt(last.Volume_Ratio)+' برابر میانگین است.';
  document.getElementById('signal').textContent=msg;
 }
-async function load(){const n=document.getElementById('notice');n.textContent='در حال دریافت داده از مخزن…';try{const res=await fetch(DATA_URL+'?v='+Date.now(),{cache:'no-store'});if(!res.ok)throw Error('HTTP '+res.status);const j=await res.json();if(!j.timeframes||!j.timeframes['1h']?.candles?.length||!j.timeframes['4h']?.candles?.length)throw Error('ساختار فایل داده معتبر نیست');data=j;draw();}catch(e){n.innerHTML='<span class="bad">دریافت داده ناموفق بود: '+e.message+'</span> · کمی بعد دوباره تلاش کن.';}}
+function drawOrderbook(j){
+ const fmtToman=n=>n==null||!Number.isFinite(Number(n))?'—':(Number(n)/10).toLocaleString('en-US',{maximumFractionDigits:1});
+ document.getElementById('liveLast').textContent=fmtToman(j.last_trade_price);
+ document.getElementById('liveClose').textContent=fmtToman(j.closing_price);
+ document.getElementById('liveTime').textContent=j.last_trade_time||'—';
+ document.getElementById('bookUpdated').textContent='به‌روزرسانی: '+(j.orderbook?.retrieved_at||j.retrieved_at||'—').replace('T',' ').slice(0,19);
+ const b=j.orderbook||{};
+ document.getElementById('bookStatus').textContent=b.status==='ok'?'دریافت شد':b.status==='empty'?'بدون سفارش فعال':'ناموفق';
+ document.getElementById('bookTotals').innerHTML='مجموع حجم ۵ سطح خرید: <b>'+fmt(b.buy_total_volume)+'</b> · مجموع حجم ۵ سطح فروش: <b>'+fmt(b.sell_total_volume)+'</b> · تعداد سفارش خرید/فروش: <b>'+fmt(b.buy_total_orders)+' / '+fmt(b.sell_total_orders)+'</b>';
+ const rows=items=>items?.length?items.map(x=>'<tr><td>'+fmt(x.level)+'</td><td>'+fmtToman(x.price)+'</td><td>'+fmt(x.volume)+'</td><td>'+fmt(x.orders)+'</td></tr>').join(''):'<tr><td colspan="4">داده‌ای موجود نیست</td></tr>';
+ document.getElementById('buyRows').innerHTML=rows(b.buy);
+ document.getElementById('sellRows').innerHTML=rows(b.sell);
+}
+async function load(){const n=document.getElementById('notice');n.textContent='در حال دریافت داده از مخزن…';try{const res=await fetch(DATA_URL+'?v='+Date.now(),{cache:'no-store'});if(!res.ok)throw Error('HTTP '+res.status);const j=await res.json();if(!j.timeframes||!j.timeframes['1h']?.candles?.length||!j.timeframes['4h']?.candles?.length)throw Error('ساختار فایل داده معتبر نیست');data=j;draw();}catch(e){n.innerHTML='<span class="bad">دریافت داده ناموفق بود: '+e.message+'</span> · کمی بعد دوباره تلاش کن.';} try{const lr=await fetch(LIVE_URL+'?v='+Date.now(),{cache:'no-store'});if(!lr.ok)throw Error('HTTP '+lr.status);drawOrderbook(await lr.json());}catch(le){document.getElementById('bookStatus').textContent='خطا در دریافت';document.getElementById('bookUpdated').textContent=le.message;}}
 document.querySelectorAll('.tf').forEach(b=>b.addEventListener('click',()=>{tf=b.dataset.tf;document.querySelectorAll('.tf').forEach(x=>x.classList.toggle('active',x===b));draw();}));
 document.getElementById('refresh').addEventListener('click',load);load();
 </script></body></html>
