@@ -242,9 +242,9 @@ def main():
     report_date = None
     title = None
     search_error = None
-    for attempt in range(2):
+    for attempt in range(3):
         try:
-            response = session.get(BASE, params=params, timeout=(8, 25))
+            response = session.get(BASE, params=params, timeout=(20, 45))
             response.raise_for_status()
             letters = parse_letters(response)
             matches = []
@@ -282,7 +282,7 @@ def main():
 
     download_url = urljoin("https://www.codal.ir/", excel_url)
     try:
-        book_response = session.get(download_url, timeout=(10, 30))
+        book_response = session.get(download_url, timeout=(20, 60))
         book_response.raise_for_status()
         content = book_response.content
         if not content.startswith(b"PK"):
