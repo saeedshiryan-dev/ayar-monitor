@@ -1,73 +1,55 @@
 import json
-import os
-from datetime import datetime, timedelta
+from datetime import datetime, timezone
 from pathlib import Path
-from zoneinfo import ZoneInfo
 
 import requests
 
-API = "https://api.alanchand.com/"
-TEHRAN = ZoneInfo("Asia/Tehran")
+BASE = "https://nerkhara.com/api/v1/latest"
 OUT = Path("data/ayar_macro_live.json")
 TIMEOUT = (10, 25)
+MAX_AGE_SECONDS = 20 * 60
 
 
-def now_tehran():
-    return datetime.now(TEHRAN)
-
-
-def parse_time(value):
+def parse_utc(value):
     if not value:
-        raise ValueError("فیلد زمان به‌روزرسانی در پاسخ API وجود ندارد")
+        raise ValueError("زمان به‌روزرسانی منبع موجود نیست")
     parsed = datetime.fromisoformat(str(value).replace("Z", "+00:00"))
     if parsed.tzinfo is None:
-        parsed = parsed.replace(tzinfo=TEHRAN)
-    return parsed.astimezone(TEHRAN)
+        parsed = parsed.replace(tzinfo=timezone.utc)
+    return parsed.astimezone(timezone.utc)
 
 
-def number(item, keys):
-    for key in keys:
-        value = item.get(key)
-        try:
-            value = float(value)
-            if value > 0:
-                return value
-        except (TypeError, ValueError):
-            continue
-    raise ValueError("قیمت معتبر در فیلدهای " + ", ".join(keys) + " پیدا نشد")
-
-
-def fetch_item(token, category, symbol):
-    response = requests.get(
-        API,
-        params={"type": category, "symbols": symbol},
-        headers={"Authorization": f"Bearer {token}", "Accept": "application/json"},
-        timeout=TIMEOUT,
-    )
+def fetch_rate(symbol, expected_unit):
+    response = requests.get(f"{BASE}/{symbol}.json",
+                            headers={"Accept": "application/json"},
+                            timeout=TIMEOUT)
     response.raise_for_status()
     payload = response.json()
-    if not isinstance(payload, dict) or not isinstance(payload.get(symbol), dict):
-        raise ValueError(f"ساختار پاسخ {symbol} معتبر نیست: {str(payload)[:250]}")
-    item = payload[symbol]
-    updated_raw = item.get("updated_at") or item.get("updatedAt") or item.get("as_of")
-    updated = parse_time(updated_raw)
-    age = (now_tehran() - updated).total_seconds()
-    if age < -300:
-        raise ValueError(f"زمان منبع {symbol} بیش از ۵ دقیقه در آینده است")
-    if age > 20 * 60:
-        raise ValueError(f"قیمت {symbol} کهنه است؛ سن داده {int(age / 60)} دقیقه")
+    item = payload.get("item") if isinstance(payload, dict) else None
+    if not isinstance(item, dict) or item.get("id") != symbol:
+        raise ValueError(f"ساختار پاسخ {symbol} معتبر نیست")
+    price = float(item.get("price") or 0)
+    if price <= 0:
+        raise ValueError(f"قیمت {symbol} معتبر نیست")
+    if item.get("unit") != expected_unit:
+        raise ValueError(f"واحد {symbol} غیرمنتظره است: {item.get('unit')}")
+    updated = parse_utc(item.get("updated_utc"))
+    age = (datetime.now(timezone.utc) - updated).total_seconds()
+    if item.get("stale") is True or age < -300 or age > MAX_AGE_SECONDS:
+        raise ValueError(f"داده {symbol} تازه نیست؛ سن داده {int(age / 60)} دقیقه")
     return {
         "symbol": symbol,
-        "name": item.get("name"),
-        "buy": number(item, ["buy", "bid"]),
-        "sell": number(item, ["sell", "ask", "price", "last"]),
+        "name": (item.get("name") or {}).get("fa"),
+        "buy": price,
+        "sell": price,
+        "display_price": price,
+        "unit": "تومان به‌ازای هر دلار" if symbol == "usd" else "دلار به‌ازای هر اونس تروا",
         "updated_at": updated.isoformat(),
         "age_seconds": max(0, int(age)),
-        "raw_source_fields": {
-            key: item.get(key)
-            for key in ("open", "high", "low", "dayChange", "dolar_rate")
-            if key in item
-        },
+        "source_method": item.get("method"),
+        "source_count": item.get("sources"),
+        "change_pct": item.get("change_pct"),
+        "source_page": (item.get("page") or {}).get("fa"),
     }
 
 
@@ -79,40 +61,20 @@ def write(payload):
 
 
 def main():
-    now = now_tehran()
-    token = os.environ.get("ALANCHAND_TOKEN", "").strip()
-    if not token:
-        write({
-            "status": "missing_token",
-            "source": "AlanChand API",
-            "retrieved_at": now.isoformat(),
-            "error_fa": "توکن API تنظیم نشده است؛ Secret با نام ALANCHAND_TOKEN لازم است.",
-            "usd": None,
-            "xau": None,
-        })
-        print("ALANCHAND_TOKEN is not configured; wrote an explicit blocked status.")
-        return
-
+    now = datetime.now(timezone.utc)
     try:
-        usd = fetch_item(token, "currencies", "usd")
-        xau = fetch_item(token, "golds", "usd_xau")
+        usd = fetch_rate("usd", "IRT")
+        xau = fetch_rate("xau", "USD")
         result = {
             "status": "ok",
-            "source": "AlanChand API",
-            "retrieved_at": now_tehran().isoformat(),
-            "timezone": "Asia/Tehran",
-            "refresh_claim_minutes": 5,
+            "source": "NerkhAra public API",
+            "source_url": "https://nerkhara.com/en/api/",
+            "retrieved_at": datetime.now(timezone.utc).isoformat(),
+            "timezone": "UTC",
+            "refresh_claim_minutes": 10,
             "max_accepted_age_minutes": 20,
-            "usd": {
-                **usd,
-                "unit": "تومان به‌ازای هر دلار",
-                "display_price": usd["sell"],
-            },
-            "xau": {
-                **xau,
-                "unit": "دلار به‌ازای هر اونس تروا",
-                "display_price": xau["sell"],
-            },
+            "usd": usd,
+            "xau": xau,
             "validation": {
                 "both_quotes_present": True,
                 "both_timestamps_fresh": True,
@@ -123,17 +85,16 @@ def main():
         write(result)
         print(json.dumps(result, ensure_ascii=False, indent=2))
     except Exception as exc:
-        # Never replace a previous good quote with an invalid/empty response.
         previous = {}
         if OUT.exists():
             try:
                 previous = json.loads(OUT.read_text(encoding="utf-8"))
             except Exception:
-                previous = {}
+                pass
         write({
             "status": "error",
-            "source": "AlanChand API",
-            "retrieved_at": now_tehran().isoformat(),
+            "source": "NerkhAra public API",
+            "retrieved_at": now.isoformat(),
             "error_fa": str(exc)[:500],
             "last_good": previous if previous.get("status") == "ok" else None,
             "usd": None,
