@@ -128,8 +128,11 @@ function drawFundHistory(j){
  const fmtRaw=v=>v==null||!Number.isFinite(Number(v))?'—':Number(v).toLocaleString('en-US',{maximumFractionDigits:2});
  const fmtDate=v=>{const s=String(v||'');if(/^\\d{8}$/.test(s))return s.slice(0,4)+'/'+s.slice(4,6)+'/'+s.slice(6,8);return s||'—';};
  const latest=j.latest_record||history[history.length-1]||{};
- document.getElementById('fundLatestRedemption').textContent=fmtRaw(latest.redemption_nav);
- document.getElementById('fundLatestSubscription').textContent=fmtRaw(latest.subscription_nav);
+ // TSETMC NAV history fields are in rial; display per-unit NAV in toman,
+ // matching the live ETF NAV card above.
+ const fmtNavToman=v=>v==null||!Number.isFinite(Number(v))?'—':(Number(v)/10).toLocaleString('en-US',{maximumFractionDigits:2});
+ document.getElementById('fundLatestRedemption').textContent=fmtNavToman(latest.redemption_nav);
+ document.getElementById('fundLatestSubscription').textContent=fmtNavToman(latest.subscription_nav);
  document.getElementById('fundLatestTotalNav').textContent=fmtRaw(latest.net_asset_value??(j.fund_snapshot||{}).net_asset_value);
  document.getElementById('fundHistoryCount').textContent=fmtRaw(j.history_count??history.length);
  document.getElementById('fundHistoryUpdated').textContent='دریافت: '+(j.retrieved_at||'—').replace('T',' ').slice(0,19);
@@ -137,7 +140,7 @@ function drawFundHistory(j){
  body.replaceChildren();
  [...history].sort((a,b)=>String(a.date).localeCompare(String(b.date))).slice(-15).reverse().forEach(r=>{
   const tr=document.createElement('tr');
-  [fmtDate(r.date),fmtRaw(r.redemption_nav),fmtRaw(r.subscription_nav),fmtRaw(r.statistical_nav),fmtRaw(r.net_asset_value)].forEach(v=>{
+  [fmtDate(r.date),fmtNavToman(r.redemption_nav),fmtNavToman(r.subscription_nav),fmtNavToman(r.statistical_nav),fmtRaw(r.net_asset_value)].forEach(v=>{
    const td=document.createElement('td');td.textContent=v;tr.appendChild(td);
   });
   body.appendChild(tr);
