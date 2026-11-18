@@ -121,29 +121,6 @@ def extract_number(pattern, text):
         return None
 
 def save_output(output):
-
-    if used_fallback_report:
-        try:
-            existing = json.loads(OUT.read_text(encoding="utf-8")) if OUT.exists() else {}
-        except Exception:
-            existing = {}
-        if existing.get("status") == "official_report_uploaded":
-            existing["codal_refresh_attempt"] = {
-                "status": "unavailable",
-                "checked_at": output["retrieved_at"],
-                "proxy_configured": proxy_configured,
-                "error": search_error,
-                "fallback_report_not_promoted": True,
-            }
-            save_output(existing)
-            print(json.dumps({
-                "status": existing["status"],
-                "codal_refresh_attempt": existing["codal_refresh_attempt"],
-                "preserved_uploaded_report": True,
-                "output": str(OUT),
-            }, ensure_ascii=False, indent=2))
-            return
-
     temp = OUT.with_suffix(".tmp")
     temp.write_text(json.dumps(output, ensure_ascii=False, indent=2), encoding="utf-8")
     temp.replace(OUT)
