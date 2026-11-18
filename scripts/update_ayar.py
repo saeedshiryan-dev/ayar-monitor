@@ -1,5 +1,6 @@
 
 import json
+import time
 from pathlib import Path
 from datetime import datetime
 from zoneinfo import ZoneInfo
@@ -21,9 +22,20 @@ session.headers.update({
 
 
 def get_json(url):
-    response = session.get(url, timeout=(20, 120))
-    response.raise_for_status()
-    return response.json()
+    last_error = None
+    for attempt in range(4):
+        try:
+            response = session.get(url, timeout=(20, 120))
+            if response.status_code in (429, 500, 502, 503, 504):
+                response.raise_for_status()
+            response.raise_for_status()
+            return response.json()
+        except requests.RequestException as error:
+            last_error = error
+            if attempt == 3:
+                break
+            time.sleep(2 ** attempt)
+    raise last_error
 
 
 def get_records(data, possible_keys):
@@ -51,7 +63,15 @@ def main():
         f"{INS_CODE}/{day}/false"
     )
 
-    trade_data = get_json(trade_url)
+    try:
+        trade_data = get_json(trade_url)
+    except requests.RequestException as error:
+        # The live-trade endpoint is intermittently unavailable (e.g. HTTP 502).
+        # Do not stop the independent daily-history and indicator refresh steps.
+        print("WARNING: TSETMC intraday trade endpoint unavailable after retries:", error)
+        print("Today's intraday cache was skipped; daily history refresh will continue.")
+        return
+
     trades = get_records(
         trade_data,
         ["tradeHistory"]
