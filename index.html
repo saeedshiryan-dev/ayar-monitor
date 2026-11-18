@@ -240,9 +240,18 @@ function drawMacro(j){
  document.getElementById('macroXauTime').textContent=xau?'منبع: '+String(xau.updated_at||'—').replace('T',' ').slice(0,19):'بدون مظنه معتبر';
  const status=document.getElementById('macroStatus');
  const quality=document.getElementById('macroQuality');
- if(j.status==='ok'){
+ const ageSeconds=quote=>{
+  const stamp=Date.parse(quote?.updated_at||'');
+  return Number.isFinite(stamp)?(Date.now()-stamp)/1000:Infinity;
+ };
+ const usdAge=ageSeconds(usd), xauAge=ageSeconds(xau);
+ const quotesFresh=Boolean(usd&&xau&&usdAge>=-300&&xauAge>=-300&&usdAge<=1200&&xauAge<=1200);
+ if(j.status==='ok'&&quotesFresh){
   status.textContent='دریافت موفق · نر‌خ‌آرا';
-  quality.textContent='دریافت: '+String(j.retrieved_at||'—').replace('T',' ').slice(0,19)+' · دلار و اونس هر دو دارای زمان منبع معتبر و کمتر از ۲۰ دقیقه هستند. واحد دلار: تومان؛ اونس: دلار/اونس تروا.';
+  quality.textContent='دریافت: '+String(j.retrieved_at||'—').replace('T',' ').slice(0,19)+' · زمان هر دو مظنه در لحظه نمایش کمتر از ۲۰ دقیقه است. واحد دلار: تومان؛ اونس: دلار/اونس تروا.';
+ }else if(j.status==='ok'){
+  status.textContent='هشدار: زمان مظنه دلار یا اونس قدیمی است';
+  quality.textContent='آخرین زمان منبع دلار: '+String(usd?.updated_at||'—')+' · اونس: '+String(xau?.updated_at||'—')+' · داده بیش از ۲۰ دقیقه تازه محسوب نمی‌شود.';
  }else if(j.status==='missing_token'){
   status.textContent='منبع عمومی بدون نیاز به توکن';
   quality.textContent=j.error_fa||'قیمت‌ها از API عمومی و بدون کلید دریافت می‌شوند.';
@@ -282,7 +291,7 @@ function drawOrderbook(j){
  const fmtToman=n=>n==null||!Number.isFinite(Number(n))?'—':(Number(n)/10).toLocaleString('en-US',{maximumFractionDigits:1});
  document.getElementById('liveLast').textContent=fmtToman(j.last_trade_price);
  document.getElementById('liveClose').textContent=fmtToman(j.closing_price);
- document.getElementById('liveTime').textContent=j.last_trade_time||'—';
+ document.getElementById('liveTime').textContent=j.last_trade_time||((j.today_has_trade===false)?'در جلسه جاری معامله‌ای ثبت نشده':'زمان معامله در داده منبع ثبت نشده');
  drawNav(j);
  document.getElementById('bookUpdated').textContent='به‌روزرسانی: '+(j.orderbook?.retrieved_at||j.retrieved_at||'—').replace('T',' ').slice(0,19);
  const b=j.orderbook||{};
