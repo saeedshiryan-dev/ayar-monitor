@@ -2,6 +2,9 @@ name: Deploy Ayar Dashboard
 
 on:
   workflow_dispatch:
+  workflow_run:
+    workflows: ["Refresh Ayar Live Quote", "Refresh Ayar Fund NAV History"]
+    types: [completed]
   push:
     paths:
       - 'index.html'
@@ -22,6 +25,7 @@ concurrency:
 
 jobs:
   deploy:
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     runs-on: ubuntu-latest
     environment:
       name: github-pages
