@@ -1,52 +1,99 @@
 {
-  "status": "partial_secondary",
+  "status": "official_report_uploaded",
   "symbol": "عیار",
-  "source": "Bourseeye secondary snapshot; Codal official endpoints unreachable from GitHub Actions",
-  "official_source_error": "Codal search failed: ConnectTimeout: HTTPSConnectionPool(host='search.codal.ir', port=443): Max retries exceeded with url: /api/search/v2/q?PageNumber=1&PageSize=50&Symbol=%D8%B9%DB%8C%D8%A7%D8%B1&Category=3&LetterType=-1&Length=-1&Audited=true&NotAudited=true&Consolidatable=true&NotConsolidatable=true&Childs=false&Mains=true&Publisher=false&TracingNo=-1&search=true (Caused by ConnectTimeoutError(<HTTPSConnection(host='search.codal.ir', port=443) at 0x7a60e4855280>, 'Connection to search.codal.ir timed out. (connect timeout=8)')); Excel download failed: ConnectionError: HTTPSConnectionPool(host='excel.codal.ir', port=443): Max retries exceeded with url: /service/Excel/GetAll/ufnsMFNlCf60hOOObOOO9l4CQQQaQQQQ8w%3D%3D/0 (Caused by NameResolutionError(\"HTTPSConnection(host='excel.codal.ir', port=443): Failed to resolve 'excel.codal.ir' ([Errno -3] Temporary failure in name resolution)\"))",
-  "secondary_page_error": null,
-  "retrieved_at": "2026-11-18T16:27:33.383251+00:00",
-  "secondary_snapshot": {
-    "page_url": "https://bourseeye.com/funds/1521/صندوق-طلای-عیار-مفید",
-    "page_updated_date": null,
-    "nav_redemption_toman": 67048.0,
-    "nav_subscription_toman": 67353.0,
-    "nav_report_date": "۲۳ آبان ۱۴۰۵",
-    "aum_hamt": 360.0,
-    "units": 5364853896,
-    "composition_report_date": "۲۴ آبان ۱۴۰۵",
-    "composition": [
+  "source": "گزارش عملکرد ماهانه بارگذاری‌شده توسط کاربر؛ فایل Excel با عنوان صورت وضعیت پرتفوی و درآمدها",
+  "retrieved_at": "2026-11-18T19:58:00+03:30",
+  "report": {
+    "title": "صورت وضعیت پرتفوی و درآمدهای صندوق سرمایه‌گذاری طلای عیار مفید",
+    "period_start_jalali": "1405/07/01",
+    "period_end_jalali": "1405/07/30",
+    "report_period": "مهر ۱۴۰۵",
+    "source_file": "4-عملکرد_صندوق_عیار_مهر_1405نهایی.xlsx",
+    "source_type": "فایل Excel بارگذاری‌شده در گفتگو",
+    "note": "اعداد ارزش دارایی و درآمد در فایل به ریال هستند؛ در این خروجی برای نمایش به تومان تقسیم بر ۱۰ شده‌اند."
+  },
+  "asset_summary": {
+    "listed_assets_value_rial": 3907030113256579,
+    "listed_assets_value_toman": 390703011325657.9,
+    "categories": [
       {
-        "name": "ترکیب دارایی‌های صندوق عیار سهام و گواهی سپرده کالایی",
-        "percent": 0.69
+        "name": "شمش طلا",
+        "market_value_rial": 3427051408633632,
+        "market_value_toman": 342705140863363.2,
+        "percent": 87.65865305870705
       },
       {
-        "name": "اوراق با درآمد ثابت",
-        "percent": 0.22
+        "name": "گواهی سپرده تمام سکه بهار آزادی طرح جدید",
+        "market_value_rial": 438248632420161,
+        "market_value_toman": 43824863242016.1,
+        "percent": 11.209719447450112
       },
       {
-        "name": "پنج سهم بزرگ",
-        "percent": 0.0
+        "name": "شمش نقره",
+        "market_value_rial": 23884758814058,
+        "market_value_toman": 2388475881405.8,
+        "percent": 0.6109350390828153
+      },
+      {
+        "name": "سلف استاندارد سکه مرکزی (درآمد ثابت/علی‌الحساب)",
+        "market_value_rial": 17808981048023,
+        "market_value_toman": 1780898104802.3,
+        "percent": 0.45552607909087467
+      },
+      {
+        "name": "سپرده بانکی",
+        "market_value_rial": 36332340705,
+        "market_value_toman": 3633234070.5,
+        "percent": 0.0009293248536181528
       }
     ],
-    "composition_categories_count": 3,
-    "composition_reported_total_percent": 0.91,
-    "composition_complete": false,
-    "composition_missing_percent": 99.09,
-    "static_fallback_used": false
+    "reported_percent_sum": 99.93576294918446,
+    "unaccounted_percent": 0.06423705081552988,
+    "completeness_note": "درصد طبقات استخراج‌شده از ستون «درصد به کل دارایی‌ها» جمعاً ۹۹٫۹۳۵۸٪ است. مانده ۰٫۰۶۴۲٪ در فایلِ برگه‌های بررسی‌شده به طبقه مشخصی منتسب نشده و حدس زده نشده است."
   },
-  "report": {
-    "title": "صورت وضعیت پورتفوی صندوق سرمایه گذاری دوره ۱ ماهه منتهی به ۱۴۰۵/۰۷/۳۰",
-    "period_end_jalali": "1405/07/30",
-    "publish_date": "1405/08/03",
-    "company_name": "صندوق طلای عیار مفید",
-    "attachment_url": "https://www.codal.ir/Reports/Attachment.aspx?LetterSerial=ufnsMFNlCf60hOOObOOO9l4CQQQaQQQQ8w%3D%3D",
-    "excel_url": "https://excel.codal.ir/service/Excel/GetAll/ufnsMFNlCf60hOOObOOO9l4CQQQaQQQQ8w%3D%3D/0",
-    "is_fallback_report": true
+  "monthly_performance": {
+    "total_accounting_income_rial": 440103776350682,
+    "total_accounting_income_toman": 44010377635068.2,
+    "components": [
+      {
+        "name": "درآمد سرمایه‌گذاری در شمش طلا، سکه و نقره",
+        "amount_rial": 438333016187332,
+        "amount_toman": 43833301618733.2,
+        "percent": 99.59764940486696,
+        "detail": [
+          {
+            "name": "شمش طلا – تغییر ارزش",
+            "amount_toman": 37910532510399.3
+          },
+          {
+            "name": "گواهی سپرده سکه – تغییر ارزش",
+            "amount_toman": 5960389881745.8
+          },
+          {
+            "name": "شمش نقره – تغییر ارزش (زیان)",
+            "amount_toman": -37620773411.9
+          }
+        ]
+      },
+      {
+        "name": "درآمد سرمایه‌گذاری در اوراق با درآمد ثابت",
+        "amount_rial": 1768322674160,
+        "amount_toman": 176832267416,
+        "percent": 0.4017967509442525
+      },
+      {
+        "name": "سود سپرده بانکی و گواهی سپرده",
+        "amount_rial": 2437489190,
+        "amount_toman": 243748919,
+        "percent": 0.0005538441887982729
+      }
+    ],
+    "interpretation": "طبق برگه درآمدها، تقریباً تمام درآمد شناسایی‌شده مهر از تغییر ارزش دارایی‌ها بوده است؛ بنابراین این عدد را نباید معادل سود نقدی پرداخت‌شده به دارندگان واحد یا بازده دقیق NAV هر واحد دانست."
   },
   "notes_fa": [
-    "داده‌های ترکیب دارایی در این مسیر پشتیبان از منبع ثانویه‌اند، نه فایل اصلی کدال.",
-    "فقط طبقه‌هایی که صریحاً در بخش ترکیب دارایی منبع نمایش داده شده‌اند استخراج می‌شوند؛ مانده هرگز به‌صورت حدسی به طبقه‌ای نسبت داده نمی‌شود.",
-    "در صورت استفاده از fallback ثابت، تاریخ صفحه منبع ۲۶ آبان ۱۴۰۵ است و ارقام NAV/ترکیب به تاریخ‌های جداگانه خود تعلق دارند.",
-    "لینک گزارش رسمی کدال برای بررسی و دریافت مستقیم نگهداری شده است."
+    "این فایل، گزارش عملکرد/صورت وضعیت پرتفوی و درآمدهای مهر ۱۴۰۵ است و داده‌های استخراج‌شده از خود فایل‌اند.",
+    "درصدها از ستون «درصد به کل دارایی‌ها» در برگه‌های پرتفوی خوانده شده‌اند.",
+    "جمع درصدهای ردیف‌های قابل استخراج ۹۹٫۹۳۵۸٪ است؛ مانده ۰٫۰۶۴۲٪ نامشخص باقی گذاشته شده است.",
+    "درآمد شناسایی‌شده مهر عمدتاً ناشی از تغییر ارزش دارایی‌هاست و به‌تنهایی بازده NAV واحدها را نشان نمی‌دهد."
   ]
 }
