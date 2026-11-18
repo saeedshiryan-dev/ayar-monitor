@@ -1,0 +1,8 @@
+{
+  "status": "missing_token",
+  "source": "AlanChand API",
+  "retrieved_at": "2026-11-19T00:03:04.953101+03:30",
+  "error_fa": "توکن API تنظیم نشده است؛ Secret با نام ALANCHAND_TOKEN لازم است.",
+  "usd": null,
+  "xau": null
+}
