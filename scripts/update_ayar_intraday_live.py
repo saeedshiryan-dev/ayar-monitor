@@ -94,7 +94,7 @@ def main():
 
     rows = sorted(unique.values(), key=lambda x: (x["hEven"], x["nTran"]))
     if not rows:
-        result["reason"] = "هنوز معامله قابل استفاده‌ای از API معاملات زنده دریافت نشد"\n        result["sample_fields"] = sorted(list(raw[0].keys())) if raw and isinstance(raw[0], dict) else []
+        result["reason"] = "هنوز معامله قابل استفاده‌ای از API معاملات زنده دریافت نشد"
     else:
         candles_1h = []
         for hour in range(12, 18):
