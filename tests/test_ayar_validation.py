@@ -33,11 +33,12 @@ class AyarValidationTests(unittest.TestCase):
             price *= 1.01 if i % 20 < 10 else 0.99
             history.append({"date": f"2025{i//30+1:02d}{i%30+1:02d}", "close": price, "volume": 1000 + i})
         report = build_report(history)
-        item = report["strategies"]["ema20_50"]["out_of_sample_from_2024"]
+        item = report["strategies"]["ema20_50"]["out_of_sample_from_2024"]["metrics"]
         self.assertIn("max_drawdown_pct", item)
-        self.assertIn("average_trade_return_pct", item)
-        self.assertIn("average_winning_trade_pct", item)
-        self.assertIn("average_losing_trade_pct", item)
+        self.assertIn("net_pnl_toman", item)
+        self.assertIn("profit_factor", item)
+        self.assertIn("average_win_toman", item)
+        self.assertIn("average_loss_toman", item)
 
 
 if __name__ == "__main__":
@@ -53,7 +54,7 @@ class AyarPnlBacktestTests(unittest.TestCase):
             {"date":"20240102","open":1000,"close":1100},
             {"date":"20240103","open":1200,"close":1200},
         ]
-        result = simulate_long_cash(rows, [0,1,0], 0, initial_capital=100000, fee=0, slippage=0)
+        result = simulate_long_cash(rows, [1,0,0], 0, initial_capital=100000, fee=0, slippage=0)
         self.assertEqual(result["trades"][0]["entry_date"], "20240102")
         self.assertEqual(result["trades"][0]["exit_date"], "20240103")
         self.assertEqual(result["trades"][0]["quantity"], 1000)
@@ -67,7 +68,7 @@ class AyarPnlBacktestTests(unittest.TestCase):
             {"date":"20240103","open":1200,"close":1200},
         ]
         free = simulate_long_cash(rows, [0,1,0], 0, initial_capital=100000, fee=0, slippage=0)
-        costly = simulate_long_cash(rows, [0,1,0], 0, initial_capital=100000, fee=0.002, slippage=0.001)
+        costly = simulate_long_cash(rows, [1,0,0], 0, initial_capital=100000, fee=0.002, slippage=0.001)
         self.assertGreater(free["metrics"]["net_pnl_toman"], costly["metrics"]["net_pnl_toman"])
 
     def test_period_starts_in_cash_and_forces_final_exit(self):
