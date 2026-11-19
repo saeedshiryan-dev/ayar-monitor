@@ -1,0 +1,40 @@
+name: Build Ayar Full Intraday Candles
+
+on:
+  push:
+    paths:
+      - 'scripts/build_ayar_intraday_candles.py'
+      - '.github/workflows/build-ayar-intraday.yml'
+      - 'data/ayar_daily_history.json'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: python -m pip install requests
+
+      - name: Download full trade history and validate candles
+        run: python scripts/build_ayar_intraday_candles.py
+
+      - name: Upload validated candle datasets and audit report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ayar-intraday-candles-and-audit
+          path: build/intraday/
+          if-no-files-found: warn
+          retention-days: 30
