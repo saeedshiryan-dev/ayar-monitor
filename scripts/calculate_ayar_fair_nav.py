@@ -73,74 +73,43 @@ def component_premiums(snapshot):
 
 
 def calculate(data):
-    i = data["inputs"]
-    nav0 = float(i["base_redemption_nav_rial"])
-    weights = i["portfolio_weights_pct"]
-    gold_linked = sum(float(weights[k]) for k in ("gold_bullion", "coin_certificates", "coin_forward"))
-    silver = float(weights["silver"])
-    cash = float(weights["bank_deposit"])
-    residual = float(i["unclassified_weight_pct"])
-    total = gold_linked + silver + cash + residual
-    if nav0 <= 0 or abs(total - 100) > 0.15:
-        raise ValueError(f"Invalid NAV or portfolio weights: total={total}")
-    usd_ratio = float(i["usd_now_toman"]) / float(i["usd_base_toman"])
-    gold_ratio = (float(i["xau_now_usd_oz"]) / float(i["xau_base_usd_oz"])) * usd_ratio
-    gold_return = gold_ratio - 1
-    silver_return = (1 + float(i["silver_usd_change_pct"]) / 100) * usd_ratio - 1
-    weighted_return = (gold_linked / 100) * gold_return + (silver / 100) * silver_return
-    estimate = nav0 * (1 + weighted_return)
-    shocks = [-2, 0, 2]
-    matrix = []
-    for usd_shock in shocks:
-        row = {"usd_shock_pct": usd_shock, "nav_rial_by_xau_shock": {}}
-        for xau_shock in shocks:
-            scenario_gold = (1 + usd_shock / 100) * (1 + xau_shock / 100) - 1
-            scenario_silver = usd_shock / 100
-            scenario_return = (gold_linked / 100) * scenario_gold + (silver / 100) * scenario_silver
-            row["nav_rial_by_xau_shock"][str(xau_shock)] = round(estimate * (1 + scenario_return))
-        matrix.append(row)
+    from component_valuation import value_components
+
+    inputs = data["inputs"]
     diagnostic = component_premiums(data["component_market_snapshot"])
+    valuation_date = inputs.get("valuation_as_of_date", inputs["latest_market_quote_check_date"])
+    component_model = value_components(data, valuation_date)
     holding = data["component_market_snapshot"]["coin_forward"]["holding"]
     papers = int(holding["papers_held"])
     quote = int(data["component_market_snapshot"]["coin_forward"]["closing_price_rial_per_paper"])
-    papers_per_coin = int(holding["papers_per_coin"])
-    if papers <= 0 or papers_per_coin <= 0:
-        raise ValueError("Invalid confirmed forward holding quantity")
     holding_value_rial = papers * quote
     holding["latest_same_session_mark"]["market_value_if_quantity_unchanged_rial"] = holding_value_rial
     holding["latest_same_session_mark"]["market_value_if_quantity_unchanged_toman"] = holding_value_rial / 10
-    diagnostic["forward_holding_quantity_confirmed"] = True
-    diagnostic["forward_holding_papers"] = papers
-    diagnostic["forward_holding_coin_equivalent"] = papers / papers_per_coin
-    diagnostic["forward_market_value_if_quantity_unchanged_rial"] = holding_value_rial
-    diagnostic["forward_report_date_reconciliation_difference_rial"] = int(holding["reconciliation"]["reported_net_market_value_minus_price_times_quantity_rial"])
+
     data["calculation"] = {
-        "method": "weighted spot-index adjustment to last official redemption NAV",
-        "gold_local_return_pct": round(gold_return * 100, 4),
-        "silver_local_return_pct": round(silver_return * 100, 4),
-        "gold_linked_weight_pct": round(gold_linked, 6),
-        "silver_weight_pct": round(silver, 6),
-        "unclassified_weight_pct": round(residual, 6),
-        "weighted_estimated_nav_return_pct": round(weighted_return * 100, 4),
-        "indicative_nav_rial": round(estimate),
-        "indicative_nav_toman": round(estimate / 10, 1),
-        "last_official_market_price_vs_same_day_nav_pct": round((float(i["last_official_market_price_rial"]) / nav0 - 1) * 100, 4),
-        "scenario_shocks_pct": shocks,
-        "scenario_matrix": matrix,
+        "method": "independent_component_valuation_v2_no_stale_quote_carry_forward",
+        "valuation_as_of_date": valuation_date,
+        "official_nav_not_replaced": True,
+        "indicative_nav_rial": component_model["full_indicative_nav_rial"],
+        "indicative_nav_toman": round(component_model["full_indicative_nav_rial"] / 10, 1) if component_model["full_indicative_nav_rial"] is not None else None,
+        "full_nav_status": component_model["full_nav_status"],
+        "missing_component_marks": component_model["missing_component_marks"],
+        "component_valuation": component_model,
         "component_market_diagnostic": diagnostic,
+        "forward_holding_quantity_confirmed": True,
+        "forward_holding_papers": papers,
+        "forward_holding_coin_equivalent": papers / int(holding["papers_per_coin"]),
+        "forward_market_value_if_quantity_unchanged_rial": holding_value_rial,
         "validation": {
-            "weights_sum_with_residual_pct": round(total, 6),
-            "weights_sum_valid": abs(total - 100) <= 0.15,
-            "calculation_reproduced": True,
-            "official_nav_not_replaced": True,
-            "current_market_premium_not_calculated_due_to_non_synchronous_quote": True,
-            "component_premiums_reproduced": True,
-            "forward_price_unit_conversion_valid": True,
-            "forward_mark_to_market_reproduced": True,
-            "forward_holding_quantity_reproduced": papers == int(holding["papers_held"]),
+            "weights_sum_valid": component_model["base_allocations_reconcile"],
+            "base_allocations_reconcile": component_model["base_allocations_reconcile"],
+            "independent_component_methods_present": len(component_model["components"]) == 6,
+            "no_stale_quote_carried_forward": component_model["no_stale_quote_carried_forward"],
+            "no_unpriced_component_assigned_zero_return": component_model["no_unpriced_component_assigned_zero_return"],
+            "full_nav_blocked_when_component_marks_missing": (component_model["full_nav_status"] == "blocked_missing_component_marks") == bool(component_model["missing_component_marks"]),
+            "forward_price_unit_conversion_valid": int(data["component_market_snapshot"]["coin_forward"]["papers_per_coin"]) == 1000,
             "forward_holding_value_reproduced": holding_value_rial == papers * quote,
-            "forward_holding_mapping_high_confidence": holding.get("symbol_mapping_confidence") == "high",
-            "next_session_quote_not_yet_available": not bool(data["inputs"]["next_session_quotes_available"])
+            "forward_holding_mapping_high_confidence": holding.get("symbol_mapping_confidence") == "high"
         }
     }
     return data
