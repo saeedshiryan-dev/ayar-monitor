@@ -3,8 +3,10 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 
 from scripts.fetch_ayar_component_quotes import (
+    apply_base_forward_anchor,
     apply_macro_quotes_for_session,
     expected_exchange_session_date,
+    parse_sahmino_api_payload,
     parse_sahmino_quote_text,
 )
 
@@ -22,6 +24,64 @@ class ComponentQuoteParserTests(unittest.TestCase):
         self.assertEqual(quote["date"], "2026-11-18")
         self.assertEqual(quote["price_type"], "daily_close")
         self.assertEqual(quote["volume"], 295607)
+
+
+    def test_sahmino_api_payload_reads_latest_rial_close(self):
+        payload = {
+            "data": {
+                "unit": "rial",
+                "points": [
+                    {"date": "2026-11-17", "close": 2480000, "volume": 200000},
+                    {"date": "2026-11-18", "close": 2485152, "volume": 295607},
+                ],
+            }
+        }
+        quote = parse_sahmino_api_payload(payload, "https://sahmino.com/api/v1/instruments/sske/prices")
+        self.assertEqual(quote["price"], 2485152)
+        self.assertEqual(quote["date"], "2026-11-18")
+        self.assertEqual(quote["unit"], "rial_per_paper")
+
+    def test_base_aske2_anchor_only_applies_to_exact_session(self):
+        data = {
+            "inputs": {"base_nav_date": "2026-11-18"},
+            "component_market_snapshot": {
+                "coin_forward": {
+                    "quote_date": "2026-11-18",
+                    "quote_jalali": "1405/08/27",
+                    "closing_price_rial_per_paper": 2485152,
+                    "source_price_history": "https://sahmino.com/symbol/sske?tab=chart",
+                }
+            },
+        }
+        quotes = {
+            "coin_certificate": {"date": "2026-11-18"},
+            "gold_bar_certificate": {"date": "2026-11-18"},
+            "silver": {"date": "2026-11-18"},
+        }
+        errors = {"coin_forward": "sahmino_api_token_missing"}
+        used = apply_base_forward_anchor(quotes, errors, data, "2026-11-18")
+        self.assertTrue(used)
+        self.assertEqual(quotes["coin_forward"]["price"], 2485152)
+        self.assertEqual(quotes["coin_forward"]["price_type"], "same_session_base_anchor")
+        self.assertIn("coin_forward_refresh_error", errors)
+
+    def test_base_aske2_anchor_is_not_carried_to_future_session(self):
+        data = {
+            "inputs": {"base_nav_date": "2026-11-18"},
+            "component_market_snapshot": {
+                "coin_forward": {
+                    "quote_date": "2026-11-18",
+                    "closing_price_rial_per_paper": 2485152,
+                }
+            },
+        }
+        quotes = {
+            "coin_certificate": {"date": "2026-11-21"},
+            "gold_bar_certificate": {"date": "2026-11-21"},
+            "silver": {"date": "2026-11-21"},
+        }
+        self.assertFalse(apply_base_forward_anchor(quotes, {}, data, "2026-11-21"))
+        self.assertNotIn("coin_forward", quotes)
 
     def test_thursday_uses_wednesday_exchange_session(self):
         now = datetime(2026, 11, 19, 17, 0, tzinfo=ZoneInfo("Asia/Tehran"))
