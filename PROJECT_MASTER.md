@@ -528,3 +528,18 @@
 - چهار جزء شمش، گواهی سکه، نقره و عسکه۲ در مدل قیمت‌گذاری شدند؛ NAV کامل همچنان فقط به دلیل accrual سپرده بانکی و تفکیک مانده 0.064237% مسدود است.
 - اجرای Codal بدون secret پروکسی عمداً از جستجوی مستقیم صرف‌نظر کرد و گزارش رسمی مهر را حفظ کرد؛ گزارش جایگزین قدیمی به‌جای گزارش رسمی ننشست.
 - برای قیمت خودکار عسکه۲ در جلسات آینده، token سهمینو با scope api:prices لازم است؛ برای دریافت مستقیم گزارش‌های رسمی جدید کدال، proxy ایران لازم است.
+
+
+## 8) Statistical validation and backtesting — initial implementation 2026-11-19
+
+- Added `scripts/ayar_validation.py`, `tests/test_ayar_validation.py`, and `validation.html`; linked the validation page from `index.html`.
+- Daily `update-ayar.yml` now runs the validation unit tests and rebuilds `data/ayar_validation.json` after daily history and indicator refresh.
+- Technical baseline: EMA20 above EMA50 = invested; otherwise cash. Signal is formed from the prior close and applied to the following close-to-close return; no future data is used for the strategy return.
+- Initial history snapshot: 1,977 validated trading sessions, 2018-06-09 through 2026-11-17. EMA warm-up: 49 sessions. Backtest window: 1,927 return sessions.
+- Initial full-sample result (assumed 0.15% fee each side): strategy CAGR 65.5655%, buy-and-hold CAGR 66.2494%; annualized volatility 41.2328% vs 41.2246%; max drawdown -50.7017% vs -50.6276%. Strategy made 21 position changes and only 10 completed round trips (80% win rate); this is too small a trade sample for a strong statistical claim.
+- Out-of-sample window from 2024-01-01: 663 sessions; strategy CAGR 130.7945% vs buy-and-hold 131.8504%; max drawdown -32.3194% for both; only 3 completed round trips. The strategy has not demonstrated an advantage over passive holding.
+- Signal direction hit rates are descriptive only and are not equivalent to a profitable trading strategy.
+- The 0.15% per-side fee is a placeholder assumption, not a verified fee schedule. Historical prices are the available validated TSETMC close series; corporate-action/distribution adjustment and execution slippage require separate review.
+- Fundamental validation ledger: `data/ayar_fundamental_forecast_ledger.json`. Same-session official-NAV anchors are excluded from forecast scoring. Current status is waiting for independent same-session fair-NAV estimates; scored forecasts = 0 and MAPE is therefore unavailable.
+- Dashboard: `https://saeedshiryan-dev.github.io/ayar-monitor/validation.html`.
+- Caution: initial JSON snapshot is bootstrapped from the currently stored validated history. The daily workflow is configured to regenerate it, but the latest GitHub Actions run has not been independently confirmed in this implementation session. Do not label the tests/workflow as passed until the run is checked.
