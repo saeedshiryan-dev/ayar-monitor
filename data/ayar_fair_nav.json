@@ -115,7 +115,7 @@
   "component_market_snapshot": {
     "snapshot_date": "2026-11-18",
     "jalali_date": "1405/08/27",
-    "status": "latest_available_exchange_quotes; no newer synchronized commodity quote found for 2026-11-19",
+    "status": "synchronized_latest_available_exchange_session",
     "usd_toman_daily_average": 266629,
     "xau_usd_per_oz_close": 3753.9,
     "coin_certificate": {
@@ -124,7 +124,10 @@
       "date": "2026-11-18",
       "fine_gold_grams": 7.322382,
       "implied_fine_gold_value_toman": 235631597.14558294,
-      "premium_pct": 5.227878180873247
+      "premium_pct": 5.227878180873247,
+      "price_type": "last_trade",
+      "trade_date": "2026-11-18",
+      "source": "https://bourseeye.com/commodities/1504/سکه-طلا"
     },
     "gold_bar_certificate": {
       "price_toman_per_certificate": 3226600,
@@ -132,7 +135,10 @@
       "date": "2026-11-18",
       "fine_gold_grams": 0.0995,
       "implied_fine_gold_value_toman": 3201873.9142516055,
-      "premium_pct": 0.7722379584760741
+      "premium_pct": 0.7722379584760741,
+      "price_type": "last_trade",
+      "trade_date": "2026-11-18",
+      "source": "https://bourseeye.com/commodities/1503/شمش-طلا"
     },
     "silver_bar_certificate": {
       "price_toman_per_gram": 419000,
@@ -157,6 +163,43 @@
       "Gold-bar certificate is only a market proxy; the fund report labels its holding as gold bullion and does not establish that the holding is this certificate.",
       "Point-in-time premiums cannot be applied as daily changes without a second synchronized quote.",
       "No reliable direct quote for the fund's coin-forward position was found."
-    ]
+    ],
+    "market_session_note": "27 Aban 1405 / 2026-11-18 was the latest common exchange session found for GoldBar, GoldCoin and Aske2; no later quote was found for 28 Aban.",
+    "coin_forward": {
+      "symbol": "عسکه۲",
+      "issuer": "بانک مرکزی جمهوری اسلامی ایران",
+      "underlying": "تمام سکه بهار آزادی طرح امام ضرب ۱۳۸۶",
+      "quote_date": "2026-11-18",
+      "quote_jalali": "1405/08/27",
+      "closing_price_rial_per_paper": 2485152,
+      "nominal_value_rial_per_paper": 1000000,
+      "total_papers_issued": 100000000,
+      "coin_equivalent_issued": 100000,
+      "papers_per_coin": 1000,
+      "price_toman_per_coin_equivalent": 248515200,
+      "initial_issue_price_toman_per_coin": 235700000,
+      "stated_minimum_maturity_return_pct": 7,
+      "maturity_date_jalali": "1405/09/18",
+      "maturity_date_gregorian": "2026-12-09",
+      "remaining_calendar_days_from_quote": 21,
+      "conditional_maturity_floor_toman_per_coin": 252199000,
+      "premium_vs_coin_certificate_pct": 0.2278966338916666,
+      "discount_to_conditional_floor_pct": 1.460671929706303,
+      "implied_simple_annualized_return_to_floor_pct": 25.764199687162915,
+      "implied_compound_annualized_return_to_floor_pct": 29.143127086355204,
+      "price_difference_vs_coin_certificate_toman": 565070,
+      "premium_vs_fine_gold_spot_pct": 5.467688973163076,
+      "fine_gold_intrinsic_toman": 235631597.14558294,
+      "source_price_history": "https://sahmino.com/symbol/sske?tab=chart",
+      "source_contract_terms": "https://www.tasnimnews.ir/fa/news/1405/06/17/3691813/آغاز-عرضه-100-هزار-قطعه-سکه-سلف-در-بورس-کالا-از-فردا",
+      "source_unit_conversion": "https://sahmino.com/learn/read/hzar-ktaah-skh-dr-kalb-mylyon-orkh-bors-kala-gzyyat-aardh-nkhstyn-aorak-slf-skh-bank-mrkzy-dr-nmad-aaskh-ra-bray-frda-shhryor-aaalam-kard",
+      "valuation_method": "direct market mark-to-market using closing price; compare with same-session coin certificate and conditional maturity floor",
+      "caveats": [
+        "The fund report describes a central-bank coin forward/salaf position but does not expose the holding ticker or exact paper count; mapping it to Aske2 is highly plausible, not confirmed from the holdings ledger.",
+        "The quoted price is per 1/1000 paper; 100 million papers correspond to 100,000 coins, therefore 1,000 papers represent one coin.",
+        "The 7% minimum return is a stated maturity protection subject to contract terms and settlement conditions, not a guaranteed interim resale price.",
+        "The market quote and certificate prices are from 27 Aban/18 Nov; this is not a 28 Aban live quote."
+      ]
+    }
   }
 }
