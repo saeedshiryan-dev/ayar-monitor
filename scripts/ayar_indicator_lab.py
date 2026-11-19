@@ -8,7 +8,9 @@ from zoneinfo import ZoneInfo
 ROOT = Path(__file__).resolve().parents[1]
 DATA = ROOT / "data"
 OOS_START = "20240101"
-FEE = 0.0015
+INITIAL_CAPITAL_TOMAN = 100_000_000
+FEE_PER_SIDE = 0.0015
+SLIPPAGE_PER_SIDE = 0.0010
 WARMUP = 200
 
 
@@ -31,12 +33,13 @@ def rsi(values, period=14):
         return out
     gains = [max(values[i] - values[i - 1], 0) for i in range(1, len(values))]
     losses = [max(values[i - 1] - values[i], 0) for i in range(1, len(values))]
-    avg_gain = sum(gains[:period]) / period
-    avg_loss = sum(losses[:period]) / period
+    avg_gain, avg_loss = sum(gains[:period]) / period, sum(losses[:period]) / period
+
     def value(g, l):
         if l == 0:
             return 100.0 if g > 0 else 50.0
         return 100 - 100 / (1 + g / l)
+
     out[period] = value(avg_gain, avg_loss)
     for i in range(period + 1, len(values)):
         avg_gain = (avg_gain * (period - 1) + gains[i - 1]) / period
@@ -46,8 +49,7 @@ def rsi(values, period=14):
 
 
 def sma(values, period):
-    out = [None] * len(values)
-    rolling = 0.0
+    out, rolling = [None] * len(values), 0.0
     for i, value in enumerate(values):
         rolling += value
         if i >= period:
@@ -62,8 +64,7 @@ def macd(values):
     line = [None if fast[i] is None or slow[i] is None else fast[i] - slow[i] for i in range(len(values))]
     valid = [x for x in line if x is not None]
     sig_valid = ema(valid, 9)
-    signal = [None] * len(values)
-    j = 0
+    signal, j = [None] * len(values), 0
     for i, x in enumerate(line):
         if x is not None:
             if sig_valid[j] is not None:
@@ -72,64 +73,133 @@ def macd(values):
     return line, signal
 
 
-def performance(returns, positions, dates, closes, start_i, fee=FEE):
-    equity = peak = 1.0
-    max_dd = 0.0
-    equity_curve = []
-    trade_returns = []
-    entry_equity = None
-    changes = 0
-    exposure = 0
-    net_returns = []
-    for i in range(start_i, len(closes)):
-        signal = int(positions[i - 1])
-        prior = 0 if i == WARMUP + 1 else (int(positions[i - 2]) if i >= 2 else 0)
-        change = abs(signal - prior)
-        raw = closes[i] / closes[i - 1] - 1
-        final_exit = int(i == len(closes) - 1 and signal == 1)
-        gross = 1 + raw if signal else 1.0
-        net = gross * ((1 - fee) ** (change + final_exit)) - 1
-        if change:
-            changes += 1
-            if signal:
-                entry_equity = equity * (1 - fee)
-            elif entry_equity is not None:
-                trade_returns.append((equity * (1 - fee)) / entry_equity - 1)
-                entry_equity = None
-        if final_exit and entry_equity is not None:
-            trade_returns.append((equity * (1 + raw) * (1 - fee)) / entry_equity - 1)
-            entry_equity = None
-        equity *= 1 + net
-        peak = max(peak, equity)
-        max_dd = min(max_dd, equity / peak - 1)
-        equity_curve.append(equity)
-        net_returns.append(net)
-        exposure += signal
-    n = len(net_returns)
-    avg = sum(net_returns) / n if n else 0
-    vol = stdev(net_returns) if n > 1 else 0
-    years = n / 252 if n else 0
-    cagr = equity ** (1 / years) - 1 if years > 0 and equity > 0 else None
-    wins = [x for x in trade_returns if x > 0]
-    losses = [x for x in trade_returns if x <= 0]
+def _metrics(equity_curve, dates, trades, start_capital, max_dd_pct, max_dd_toman, exposure, sessions):
+    ending = equity_curve[-1]["equity_toman"] if equity_curve else start_capital
+    total_return = ending / start_capital - 1
+    years = sessions / 252 if sessions else 0
+    cagr = (ending / start_capital) ** (1 / years) - 1 if years and ending > 0 else None
+    trade_pnls = [t["net_pnl_toman"] for t in trades]
+    wins = [x for x in trade_pnls if x > 0]
+    losses = [x for x in trade_pnls if x <= 0]
+    gross_profit, gross_loss = sum(wins), abs(sum(losses))
+    returns = []
+    prev = start_capital
+    for point in equity_curve:
+        returns.append(point["equity_toman"] / prev - 1 if prev else 0)
+        prev = point["equity_toman"]
+    vol = stdev(returns) if len(returns) > 1 else 0
+    avg = sum(returns) / len(returns) if returns else 0
+    streak = worst_streak = 0
+    for pnl in trade_pnls:
+        streak = streak + 1 if pnl <= 0 else 0
+        worst_streak = max(worst_streak, streak)
     return {
-        "sessions": n,
-        "total_return_pct": round((equity - 1) * 100, 4),
+        "starting_capital_toman": round(start_capital, 2),
+        "ending_capital_toman": round(ending, 2),
+        "net_pnl_toman": round(ending - start_capital, 2),
+        "total_return_pct": round(total_return * 100, 4),
         "cagr_pct": round(cagr * 100, 4) if cagr is not None else None,
+        "max_drawdown_pct": round(max_dd_pct * 100, 4),
+        "max_drawdown_toman": round(max_dd_toman, 2),
+        "round_trips": len(trades),
+        "winning_trades": len(wins),
+        "losing_trades": len(losses),
+        "win_rate_pct": round(len(wins) / len(trades) * 100, 2) if trades else None,
+        "profit_factor": round(gross_profit / gross_loss, 4) if gross_loss else (None if not gross_profit else "infinite"),
+        "average_trade_pnl_toman": round(sum(trade_pnls) / len(trades), 2) if trades else None,
+        "average_win_toman": round(sum(wins) / len(wins), 2) if wins else None,
+        "average_loss_toman": round(sum(losses) / len(losses), 2) if losses else None,
+        "largest_win_toman": round(max(wins), 2) if wins else None,
+        "largest_loss_toman": round(min(losses), 2) if losses else None,
+        "max_consecutive_losses": worst_streak,
+        "exposure_pct": round(exposure / sessions * 100, 2) if sessions else None,
         "sharpe_ratio_rf0": round(avg / vol * math.sqrt(252), 4) if vol else None,
-        "max_drawdown_pct": round(max_dd * 100, 4),
-        "position_changes": changes,
-        "completed_round_trips": len(trade_returns),
-        "exposure_pct": round(exposure / n * 100, 2) if n else None,
-        "trade_win_rate_pct": round(len(wins) / len(trade_returns) * 100, 2) if trade_returns else None,
-        "average_trade_return_pct": round(sum(trade_returns) / len(trade_returns) * 100, 4) if trade_returns else None,
-        "average_winning_trade_pct": round(sum(wins) / len(wins) * 100, 4) if wins else None,
-        "average_losing_trade_pct": round(sum(losses) / len(losses) * 100, 4) if losses else None,
+        "turnover_toman": round(sum(t["buy_value_toman"] + t["sell_value_toman"] for t in trades), 2),
     }
 
 
+def simulate_long_cash(rows, positions, start_index, initial_capital=INITIAL_CAPITAL_TOMAN,
+                       fee=FEE_PER_SIDE, slippage=SLIPPAGE_PER_SIDE, force_liquidate=True):
+    """Signal at prior close; execute at next open, or next close if open is unavailable.
+    Prices in source are rial; portfolio capital and P&L are toman. Integer fund units only.
+    """
+    cash, units, entry = float(initial_capital), 0, None
+    trades, curve = [], []
+    peak, max_dd_pct, max_dd_toman = initial_capital, 0.0, 0.0
+    exposure = 0
+    for i in range(start_index + 1, len(rows)):
+        row, prev_row = rows[i], rows[i - 1]
+        close = float(row["close"]) / 10.0
+        prev_close = float(prev_row["close"]) / 10.0
+        raw_open = float(row.get("open") or 0)
+        use_open = raw_open > 0
+        market_exec = raw_open / 10.0 if use_open else close
+        desired = int(bool(positions[i - 1]))
+        # Overnight mark on existing units before an open execution.
+        if units and use_open:
+            cash += 0  # value is marked through the updated reference price below
+        if desired and units == 0:
+            exec_price = market_exec * (1 + slippage)
+            qty = int(cash // (exec_price * (1 + fee)))
+            if qty > 0:
+                buy_value = qty * exec_price
+                buy_fee = buy_value * fee
+                cash -= buy_value + buy_fee
+                entry = {"date": row["date"], "price_toman": exec_price, "quantity": qty,
+                         "buy_value_toman": buy_value, "buy_fee_toman": buy_fee,
+                         "entry_equity_toman": cash + qty * close}
+                units = qty
+        elif not desired and units > 0:
+            exec_price = market_exec * (1 - slippage)
+            sell_value = units * exec_price
+            sell_fee = sell_value * fee
+            cash += sell_value - sell_fee
+            net_pnl = (sell_value - sell_fee) - (entry["buy_value_toman"] + entry["buy_fee_toman"])
+            trades.append({
+                "entry_date": entry["date"], "exit_date": row["date"],
+                "entry_price_toman": round(entry["price_toman"], 4),
+                "exit_price_toman": round(exec_price, 4), "quantity": units,
+                "buy_value_toman": round(entry["buy_value_toman"], 2),
+                "sell_value_toman": round(sell_value, 2),
+                "fees_toman": round(entry["buy_fee_toman"] + sell_fee, 2),
+                "net_pnl_toman": round(net_pnl, 2),
+                "return_pct": round(net_pnl / (entry["buy_value_toman"] + entry["buy_fee_toman"]) * 100, 4),
+                "holding_sessions": i - next(j for j in range(start_index + 1, i + 1) if rows[j]["date"] == entry["date"])
+            })
+            units, entry = 0, None
+        if units:
+            exposure += 1
+        equity = cash + units * close
+        peak = max(peak, equity)
+        dd = equity / peak - 1 if peak else 0
+        max_dd_pct = min(max_dd_pct, dd)
+        max_dd_toman = max(max_dd_toman, peak - equity)
+        curve.append({"date": row["date"], "equity_toman": round(equity, 2)})
+    if force_liquidate and units and rows:
+        row = rows[-1]
+        exec_price = (float(row["close"]) / 10.0) * (1 - slippage)
+        sell_value, sell_fee = units * exec_price, units * exec_price * fee
+        cash += sell_value - sell_fee
+        net_pnl = (sell_value - sell_fee) - (entry["buy_value_toman"] + entry["buy_fee_toman"])
+        trades.append({
+            "entry_date": entry["date"], "exit_date": row["date"],
+            "entry_price_toman": round(entry["price_toman"], 4), "exit_price_toman": round(exec_price, 4),
+            "quantity": units, "buy_value_toman": round(entry["buy_value_toman"], 2),
+            "sell_value_toman": round(sell_value, 2),
+            "fees_toman": round(entry["buy_fee_toman"] + sell_fee, 2),
+            "net_pnl_toman": round(net_pnl, 2),
+            "return_pct": round(net_pnl / (entry["buy_value_toman"] + entry["buy_fee_toman"]) * 100, 4),
+            "holding_sessions": sum(1 for r in rows if entry["date"] <= r["date"] <= row["date"]) - 1
+        })
+        if curve:
+            curve[-1]["equity_toman"] = round(cash, 2)
+    metrics = _metrics(curve, [x["date"] for x in rows], trades, initial_capital,
+                       max_dd_pct, max_dd_toman, exposure, len(curve))
+    return {"metrics": metrics, "trades": trades, "equity_curve": curve}
+
+
 def build_report(history):
-    rows = sorted(history, key=lambda x: x["date"])
+    rows = sorted((x for x in history if float(x.get("close") or 0) > 0), key=lambda x: x["date"])
     dates = [str(x["date"]) for x in rows]
     closes = [float(x["close"]) for x in rows]
     volumes = [float(x.get("volume", 0)) for x in rows]
@@ -144,8 +214,7 @@ def build_report(history):
         "macd_above_signal": [int(a is not None and b is not None and a > b) for a, b in zip(mline, msig)],
         "breakout_20": [int(i >= 20 and closes[i] > max(closes[i-20:i])) for i in range(len(closes))],
     }
-    rsi3070 = []
-    state = 0
+    rsi3070, state = [], 0
     for value in r14:
         if value is not None and value < 30:
             state = 1
@@ -154,55 +223,61 @@ def build_report(history):
         rsi3070.append(state)
     positions["rsi30_70_hold"] = rsi3070
 
-    full_start = WARMUP + 1
+    full_start = WARMUP
     oos_start = next((i for i, d in enumerate(dates) if d >= OOS_START), None)
-    result = {}
-    for key, pos in positions.items():
-        result[key] = {
-            "full_sample": performance(pos, pos, dates, closes, full_start),
-            "out_of_sample_from_2024": performance(pos, pos, dates, closes, max(full_start, oos_start)) if oos_start is not None else None,
-        }
-    # Volume is a descriptive filter, not a standalone long/cash strategy.
+    if oos_start is None:
+        raise ValueError("OOS period from 2024 is missing")
+    strategy_results = {}
+    for key, signal in positions.items():
+        full = simulate_long_cash(rows, signal, full_start)
+        oos = simulate_long_cash(rows, signal, max(full_start, oos_start))
+        strategy_results[key] = {"full_sample": full, "out_of_sample_from_2024": oos}
+
+    benchmark_signal = [1] * len(rows)
+    strategy_results["buy_and_hold"] = {
+        "full_sample": simulate_long_cash(rows, benchmark_signal, full_start),
+        "out_of_sample_from_2024": simulate_long_cash(rows, benchmark_signal, max(full_start, oos_start))
+    }
+
     volume_stats = {}
     for label, predicate in (
         ("above_sma20", lambda i: vma[i] is not None and volumes[i] > vma[i]),
         ("at_or_below_sma20", lambda i: vma[i] is not None and volumes[i] <= vma[i]),
     ):
-        for period, first in (("full_sample", full_start), ("out_of_sample_from_2024", max(full_start, oos_start or full_start))):
-            samples = []
-            for i in range(first, len(closes) - 10):
-                if predicate(i):
-                    samples.append(closes[i + 10] / closes[i] - 1)
+        for period, first in (("full_sample", full_start), ("out_of_sample_from_2024", max(full_start, oos_start))):
+            samples = [closes[i + 10] / closes[i] - 1 for i in range(first, len(closes) - 10) if predicate(i)]
             volume_stats[f"{label}_{period}"] = {
                 "samples": len(samples),
                 "positive_10d_rate_pct": round(sum(x > 0 for x in samples) / len(samples) * 100, 2) if samples else None,
-                "average_10d_return_pct": round(sum(samples) / len(samples) * 100, 4) if samples else None,
+                "average_10d_return_pct": round(sum(samples) / len(samples) * 100, 4) if samples else None
             }
-    benchmark = [1] * len(closes)
-    result["buy_and_hold"] = {
-        "full_sample": performance(benchmark, benchmark, dates, closes, full_start),
-        "out_of_sample_from_2024": performance(benchmark, benchmark, dates, closes, max(full_start, oos_start)) if oos_start is not None else None,
-    }
+
     return {
-        "model_version": "1.0.0",
+        "model_version": "2.0.0",
         "generated_at": datetime.now(ZoneInfo("Asia/Tehran")).isoformat(),
         "history": {"valid_sessions": len(rows), "first_date": dates[0], "last_date": dates[-1], "warmup_sessions": WARMUP},
         "assumptions": {
-            "fee_per_side_pct": FEE * 100,
-            "signal_timing": "signal from prior close; position held for next close-to-close return",
+            "starting_capital_toman": INITIAL_CAPITAL_TOMAN,
+            "fee_per_side_pct": FEE_PER_SIDE * 100,
+            "slippage_per_side_pct": SLIPPAGE_PER_SIDE * 100,
+            "execution": "signal at prior close; execute at next session open; if open is missing/zero, execute at next close as a conservative timing proxy",
+            "price_unit_conversion": "source prices are rial; portfolio accounting is toman (rial / 10)",
+            "position_sizing": "long/cash, integer fund units, all available cash, no leverage",
+            "end_of_period": "any open position is liquidated at the final close and exit costs are charged",
             "oos_start": OOS_START,
-            "annualization_sessions": 252,
+            "annualization_sessions": 252
         },
-        "strategies": result,
+        "strategies": strategy_results,
         "volume_filter": volume_stats,
         "limitations": [
-            "These are independent, simple indicator rules, not an optimized combined model.",
-            "Signals are formed from the previous close; the next close-to-close return is measured to avoid look-ahead.",
-            "Average trade returns include assumed entry and exit fees; incomplete open trades at period end are not included.",
-            "The 0.15% fee per side is an assumption and must be replaced by verified fund and broker costs.",
-            "OOS from 2024 contains one market regime and is not proof of durable predictive power.",
-            "Overlapping forward-return samples are not independent observations; hit rates are descriptive, not statistical significance tests.",
-            "Buy-and-hold and strategy results are sensitive to the selected start date and market regime."
+            "Starting capital of 100 million toman is an illustrative assumption and can be changed; it is not a recommendation.",
+            "Commission and slippage are estimates, not verified current broker/fund tariffs; results should be rerun with the user's actual costs.",
+            "The model assumes integer fund units, all-in long-only positions, no leverage, no tax, no order queue, no partial fills and no liquidity/market-impact constraints.",
+            "When next-session open is absent or zero, next-session close is used as an execution proxy; this is less realistic than tick-level execution.",
+            "Signals are generated from daily closing prices and executed no earlier than the next session.",
+            "A strategy and buy-and-hold each start independently in cash at the beginning of each test period; inherited positions are not carried into OOS.",
+            "Open positions are liquidated at the end of the test period and the exit fee/slippage are included.",
+            "OOS from 2024 covers one particular market regime and does not establish future predictive power; avoid selecting a strategy solely by historical CAGR."
         ]
     }
 
@@ -221,9 +296,10 @@ def main():
     temp.replace(target)
     print("INDICATOR_LAB_SUCCESS", report["history"], "strategies:", len(report["strategies"]))
     for name, item in report["strategies"].items():
-        if name != "buy_and_hold":
-            s = item["out_of_sample_from_2024"]
-            print(name, "OOS CAGR", s["cagr_pct"], "maxDD", s["max_drawdown_pct"], "avg trade", s["average_trade_return_pct"], "trades", s["completed_round_trips"])
+        m = item["out_of_sample_from_2024"]["metrics"]
+        print(name, "OOS P&L toman", m["net_pnl_toman"], "return", m["total_return_pct"],
+              "maxDD", m["max_drawdown_pct"], "round trips", m["round_trips"],
+              "win rate", m["win_rate_pct"], "PF", m["profit_factor"])
 
 
 if __name__ == "__main__":
