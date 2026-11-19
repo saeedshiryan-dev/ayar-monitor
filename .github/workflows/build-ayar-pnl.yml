@@ -1,0 +1,39 @@
+name: Build Ayar P&L Report
+
+on:
+  push:
+    paths:
+      - 'scripts/ayar_indicator_lab.py'
+      - 'data/ayar_daily_history.json'
+      - 'tests/test_ayar_validation.py'
+      - '.github/workflows/build-ayar-pnl.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ayar-pnl-report-main
+  cancel-in-progress: true
+
+jobs:
+  build-report:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run unit tests
+        run: python -m unittest discover -s tests -p 'test_ayar_validation.py' -v
+      - name: Build P&L report from latest validated history
+        run: python scripts/ayar_indicator_lab.py
+      - name: Publish report data
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/ayar_indicator_lab.json
+          git diff --cached --quiet || git commit -m "Build Ayar P&L backtest report"
+          git push origin HEAD:main
