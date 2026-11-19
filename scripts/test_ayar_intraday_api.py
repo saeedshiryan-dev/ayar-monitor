@@ -17,7 +17,9 @@ def main():
     if len(days) < 3:
         raise RuntimeError("Not enough validated daily history to test.")
 
-    sample = days[-3:]
+    # Probe the full available daily-history span, not only the latest sessions.
+    sample_indexes = sorted({0, len(days) // 4, len(days) // 2, (3 * len(days)) // 4, len(days) - 1})
+    sample = [days[index] for index in sample_indexes]
     session = requests.Session()
     retry = Retry(total=4, connect=4, read=4, status=4, backoff_factor=2, status_forcelist=(429, 500, 502, 503, 504), allowed_methods=frozenset(["GET"]), raise_on_status=False)
     session.mount("https://", HTTPAdapter(max_retries=retry))
