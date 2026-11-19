@@ -309,6 +309,35 @@ def main():
         "گزارش ماهانه پرتفوی در سه صفحه اخیر کدال پیدا نشد"
     )
     used_fallback_report = report is None
+    # Never replace a user-uploaded official workbook with the dated fallback
+    # merely because the Codal search API timed out or returned no recent page.
+    if used_fallback_report and OUT.exists():
+        try:
+            existing = json.loads(OUT.read_text(encoding="utf-8"))
+        except Exception:
+            existing = {}
+        existing_period = (existing.get("report") or {}).get("period_end_jalali") or ""
+        fallback_period = FALLBACK_REPORT["period_end_jalali"]
+        if (existing.get("status") == "official_report_uploaded"
+                and existing_period >= fallback_period):
+            checked = datetime.now().astimezone().isoformat()
+            existing["official_source_error"] = search_error
+            existing["latest_report_search"] = {
+                "checked_at": checked,
+                "result": "No newer Codal portfolio report was confirmed; retained the existing official workbook.",
+                "fallback_not_promoted": True,
+                "existing_report_period": existing_period,
+                "fallback_report_period": fallback_period,
+            }
+            save_output(existing)
+            print(json.dumps({
+                "status": existing.get("status"),
+                "preserved_uploaded_report": True,
+                "existing_report_period": existing_period,
+                "search_error": search_error,
+                "output": str(OUT),
+            }, ensure_ascii=False, indent=2))
+            return existing
     if report is None:
         report = {
             "ExcelUrl": FALLBACK_REPORT["excel_url"],
