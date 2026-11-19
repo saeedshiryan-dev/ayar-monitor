@@ -3,6 +3,8 @@ import time
 from pathlib import Path
 
 import requests
+from requests.adapters import HTTPAdapter
+from urllib3.util.retry import Retry
 
 INS_CODE = "34144395039913458"
 BASE = "https://cdn.tsetmc.com/api"
@@ -17,6 +19,8 @@ def main():
 
     sample = days[-3:]
     session = requests.Session()
+    retry = Retry(total=4, connect=4, read=4, status=4, backoff_factor=2, status_forcelist=(429, 500, 502, 503, 504), allowed_methods=frozenset(["GET"]), raise_on_status=False)
+    session.mount("https://", HTTPAdapter(max_retries=retry))
     session.headers.update({
         "User-Agent": "Mozilla/5.0",
         "Accept": "application/json",
@@ -28,7 +32,7 @@ def main():
         date = str(daily["date"])
         url = f"{BASE}/Trade/GetTradeHistory/{INS_CODE}/{date}/false"
         try:
-            response = session.get(url, timeout=(20, 90))
+            response = session.get(url, timeout=(25, 180))
             response.raise_for_status()
             payload = response.json()
             if not isinstance(payload, dict) or not isinstance(payload.get("tradeHistory"), list):
@@ -126,7 +130,7 @@ def main():
                 }, ensure_ascii=False))
         except Exception as exc:
             failures += 1
-            print(json.dumps({"date": date, "error": str(exc)}, ensure_ascii=False))
+            print(json.dumps({"date": date, "error": str(exc), "retry_policy": "4 retries with exponential backoff; connect/read timeout 25/180s"}, ensure_ascii=False))
         time.sleep(1)
 
     if failures:
