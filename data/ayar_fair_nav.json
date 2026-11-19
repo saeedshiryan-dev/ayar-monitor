@@ -45,7 +45,7 @@
     "usd_now_date": "2026-11-18",
     "bank_deposit_annual_rate_pct": null,
     "bank_deposit_accrual_start_date": null,
-    "latest_component_quotes_retrieved_at": "2026-11-19T17:26:43.011531+03:30"
+    "latest_component_quotes_retrieved_at": "2026-11-19T17:39:27.767610+03:30"
   },
   "assumptions": [
     "مدل نسخه 2 هر طبقه دارایی را با روش مستقل ارزش‌گذاری می‌کند؛ هیچ بتای یکسانی برای شمش، گواهی سکه و سلف اعمال نمی‌شود.",

@@ -1,6 +1,6 @@
 {
   "status": "synchronized_latest_exchange_session",
-  "retrieved_at": "2026-11-19T17:26:43.011531+03:30",
+  "retrieved_at": "2026-11-19T17:39:27.767610+03:30",
   "expected_session_date_gregorian": "2026-11-18",
   "calendar_rule": "Iran commodity-certificate sessions scheduled Saturday-Wednesday; Thursday/Friday resolve to the preceding Wednesday unless a holiday intervenes.",
   "common_quote_date_gregorian": "2026-11-18",
@@ -50,7 +50,7 @@
     }
   },
   "errors": {
-    "coin_forward_refresh_error": "ValueError: aske2_history_date_not_found"
+    "coin_forward_refresh_error": "RuntimeError: IME history 1405/06/21 to 1405/08/28, offset 0: HTTPSConnectionPool(host='www.ime.co.ir', port=443): Max retries exceeded with url: /subsystems/ime/bazaremali/bazaremalidata.ashx?c=0&ot=0&lang=8&order=asc&sort=LVal18AFC&"
   },
   "rules": [
     "Only explicitly dated last-trade/daily-close quotes are accepted.",
