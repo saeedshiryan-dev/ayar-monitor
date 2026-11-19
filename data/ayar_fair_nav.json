@@ -39,24 +39,31 @@
     "forward_holding_quantity_confirmed": true,
     "next_scheduled_exchange_session_jalali": "1405/08/30",
     "next_scheduled_exchange_session_gregorian": "2026-11-21",
-    "next_session_market_status": "not_yet_traded_weekend_closure_on_1405/08/28_and_1405/08/29"
+    "next_session_market_status": "not_yet_traded_weekend_closure_on_1405/08/28_and_1405/08/29",
+    "valuation_as_of_date": "2026-11-19",
+    "usd_base_date": "2026-11-18",
+    "usd_now_date": "2026-11-19",
+    "bank_deposit_annual_rate_pct": null,
+    "bank_deposit_accrual_start_date": null
   },
   "assumptions": [
-    "شمش طلا در برآورد NAV یک‌روزه قبلی با شاخص طلای ریالی مدل شده است؛ برای گواهی سکه و سلف، قیمت مستقل هم‌تاریخ 2026-11-18 اکنون در component_market_snapshot ثبت شده، اما چون quote جدیدتری از 2026-11-19 در دست نیست، بازده روز بعد از آن‌ها ساخته نشده است.",
-    "نقره با تغییر روزانه اعلام‌شده 0.42% به‌علاوه تغییر دلار در تخمین قبلی مدل شده است؛ قیمت آخرین معامله گواهی نقره نیز در snapshot بازار ثبت شده است.",
-    "سپرده بانکی و مانده طبقه‌بندی‌نشده در فاصله کوتاه ثابت فرض شده‌اند.",
-    "وزن‌ها از گزارش رسمی پرتفوی پایان مهر 1405 هستند؛ تغییرات پرتفوی پس از آن به‌طور کامل معلوم نیست.",
-    "قیمت‌های گواهی شمش، گواهی سکه و عسکه2 در 27 آبان/18 نوامبر 2026 هم‌تاریخ‌اند؛ این‌ها قیمت‌گذاری مستقل همان جلسه‌اند، نه قیمت زنده 28 آبان.",
-    "کف بازده 7 درصدی عسکه2 یک شرط سررسیدی طبق شرایط قرارداد است و نباید به‌عنوان قیمت تضمین‌شده فروش مجدد قبل از سررسید تلقی شود.",
-    "آخرین بازبینی بازار در 2026-11-19 تأیید کرد که قیمت پایانی گواهی سکه، گواهی شمش و عسکه۲ برای جلسه مشترک 2026-11-18/1405-08-27 قابل استفاده است؛ برای جلسه بعد quote مشترک جدیدی در منابع بررسی‌شده موجود نبود.",
-    "گزارش رسمی پرتفوی مهر در شیت «اوراق»، ردیف 9، تعداد 6,645,054 ورقه از «سلف استاندارد سکه مرکزی» را نشان می‌دهد. نام ابزار با عنوان نماد عسکه۲ در سهمینو منطبق است؛ چون نماد در خود فایل صندوق چاپ نشده، نگاشت نماد با اطمینان بالا ولی نه با کد نماد درج‌شده در گزارش ثبت شده است.",
-    "ارزش بازار سلف در 27 آبان فقط در فرض ثابت‌ماندن تعداد 6,645,054 ورقه پس از پایان مهر، 16,513,969,238,208 ریال می‌شود؛ این عدد ارزش‌گذاری مشروط است، نه تأیید موجودی روز 27 آبان."
+    "مدل نسخه 2 هر طبقه دارایی را با روش مستقل ارزش‌گذاری می‌کند؛ هیچ بتای یکسانی برای شمش، گواهی سکه و سلف اعمال نمی‌شود.",
+    "شمش طلا با شاخص ارزش طلای خالص XAUUSD × دلار آزاد به‌عنوان proxy بازار ارزش‌گذاری می‌شود؛ چون وزن/عیار دقیق طلای خالص و هزینه‌ها در گزارش تجمیعی افشا نشده، پریمیوم و هزینه نگهداری جداگانه قابل محاسبه نیست.",
+    "گواهی سکه و شمش نقره فقط با قیمت مستقیم همان ابزار در جلسه جاری ارزش‌گذاری می‌شوند؛ در نبود قیمت تازه، قیمت anchor به‌عنوان قیمت روز استفاده نمی‌شود.",
+    "سلف عسکه۲ با قیمت مستقیم هر ورقه و شرایط قرارداد سررسید مدل می‌شود؛ شرط 7 درصدی فقط مشروط به تسویه سررسید است و قیمت خروج زودهنگام تضمین‌شده نیست.",
+    "سپرده بانکی برای محاسبه accrual به نرخ سود و تاریخ شروع نیاز دارد؛ این داده‌ها فعلاً وارد نشده‌اند.",
+    "مانده 0.064237 درصدی طبقه‌بندی‌نشده تا دریافت تفکیک رسمی ارزش‌گذاری نمی‌شود و بازده صفر برای آن فرض نمی‌شود.",
+    "وزن‌های پرتفوی از گزارش رسمی پایان مهر هستند؛ تغییر تعداد و ترکیب دارایی‌ها تا روز ارزش‌گذاری باید از گزارش جدیدتر تأیید شود."
   ],
   "limitations": [
-    "این خروجی تخمین حساسیت است، نه NAV رسمی منتشرشده از TSETMC یا متولی.",
-    "ارزش‌گذاری عسکه2 به قیمت بازار قابل انجام است؛ اما اتصال قطعی نماد عسکه2 به ردیف سلف صندوق تا دریافت تعداد ورقه/نماد از گزارش تفصیلی پرتفوی مشروط می‌ماند.",
-    "تا زمان بازبینی 2026-11-19، داده مشترک جدیدتر از جلسه 27 آبان/18 نوامبر برای هر سه ابزار پیدا نشد؛ NAV تخمینی به روز بعد roll-forward نشده است.",
-    "تعداد 6,645,054 ورقه از گزارش پایان مهر تأیید شده، اما تغییر احتمالی تعداد دارایی بین 30 مهر و 27 آبان معلوم نیست؛ mark-to-market روز 27 آبان با فرض ثابت‌ماندن تعداد ارائه شده است."
+    "در تاریخ 2026-11-19 فقط قیمت‌های anchor هم‌زمان 2026-11-18 برای گواهی سکه، نقره و عسکه۲ در دست است؛ quote جدیدتر مشترک موجود نیست، بنابراین NAV کامل روز 19 نوامبر محاسبه نمی‌شود.",
+    "مدل مقدار NAV کامل را null نگه می‌دارد تا قیمت روز همه اجزای دارای وزن مثبت و تفکیک مانده نامشخص تأمین شود؛ هیچ جزء فاقد قیمت با بازده صفر یا قیمت کهنه جایگزین نمی‌شود.",
+    "ارزش‌گذاری شمش با XAUUSD×دلار proxy است؛ عیار، وزن طلای خالص، محل نگهداری، هزینه بیمه/انبارداری و فاصله قیمت فروش شمش از spot باید از گزارش/منبع رسمی تکمیل شود.",
+    "ارزش‌گذاری گواهی سکه به قیمت معامله مستقیم نیاز دارد؛ پریمیوم نقطه‌ای 5.2279 درصد در تاریخ anchor فقط تشخیصی است و تغییر روزانه پریمیوم نیست.",
+    "برای نقره، قیمت پایه 419,000 تومان/گرم ثبت شده اما قیمت جاری هم‌تاریخ جدیدتر و مبنای دقیق عیار/هزینه در دست نیست.",
+    "سلف با قیمت مستقیم عسکه۲ ارزش‌گذاری می‌شود؛ تعداد 6,645,054 ورقه مربوط به پایان مهر است و ثابت‌ماندن تعداد تا تاریخ قیمت‌گذاری فرض تأییدنشده است.",
+    "سپرده بانکی به نرخ و تاریخ accrual نیاز دارد؛ مانده طبقه‌بندی‌نشده 0.064237 درصد نیز بدون تفکیک گزارش قابل ارزش‌گذاری نیست.",
+    "این خروجی مدل تخمینی است و NAV رسمی متولی/بورس را جایگزین نمی‌کند."
   ],
   "sources": [
     "https://www.fxempire.com/commodities/gold/history",
@@ -68,130 +75,12 @@
     "Official uploaded portfolio workbook: 4-عملکرد_صندوق_عیار_مهر_1405نهایی.xlsx, sheet «اوراق», row 9, columns Q/S/U/W/Y."
   ],
   "calculation": {
-    "method": "weighted spot-index adjustment to last official redemption NAV",
-    "gold_local_return_pct": -0.6904,
-    "silver_local_return_pct": 0.3017,
-    "gold_linked_weight_pct": 99.323899,
-    "silver_weight_pct": 0.610935,
-    "unclassified_weight_pct": 0.064237,
-    "weighted_estimated_nav_return_pct": -0.6839,
-    "indicative_nav_rial": 658989,
-    "indicative_nav_toman": 65898.9,
-    "last_official_market_price_vs_same_day_nav_pct": -1.1944,
-    "scenario_shocks_pct": [
-      -2,
-      0,
-      2
-    ],
-    "scenario_matrix": [
-      {
-        "usd_shock_pct": -2,
-        "nav_rial_by_xau_shock": {
-          "0": 645818,
-          "2": 658647,
-          "-2": 632989
-        }
-      },
-      {
-        "usd_shock_pct": 0,
-        "nav_rial_by_xau_shock": {
-          "0": 658989,
-          "2": 672080,
-          "-2": 645898
-        }
-      },
-      {
-        "usd_shock_pct": 2,
-        "nav_rial_by_xau_shock": {
-          "0": 672160,
-          "2": 685513,
-          "-2": 658808
-        }
-      }
-    ],
-    "validation": {
-      "weights_sum_with_residual_pct": 100,
-      "weights_sum_valid": true,
-      "calculation_reproduced": true,
-      "official_nav_not_replaced": true,
-      "current_market_premium_not_calculated_due_to_non_synchronous_quote": true,
-      "component_premiums_reproduced": true,
-      "forward_price_unit_conversion_valid": true,
-      "forward_mark_to_market_reproduced": true,
-      "current_fair_nav_refreshed": false,
-      "forward_market_quote_recorded": true,
-      "forward_holding_mapping_confirmed": true,
-      "next_session_quote_available": false,
-      "forward_holding_quantity_reproduced": true,
-      "forward_holding_symbol_mapping_high_confidence": true,
-      "forward_holding_value_reproduced": true,
-      "next_session_quote_not_yet_available": true,
-      "forward_holding_mapping_basis": "high_confidence_exact_instrument_name_match; ticker not printed in workbook"
-    },
-    "component_market_diagnostic": {
-      "coin_certificate_premium_vs_fine_gold_pct": 5.2279,
-      "gold_bar_certificate_premium_vs_fine_gold_pct": 0.7722,
-      "premium_gap_percentage_points": 4.4556,
-      "forward": {
-        "symbol": "عسکه۲",
-        "price_toman_per_coin_equivalent": 248515200,
-        "premium_vs_coin_certificate_pct": 0.2279,
-        "premium_vs_fine_gold_spot_pct": 5.4677,
-        "conditional_maturity_floor_toman": 252199000,
-        "discount_to_conditional_floor_pct": 1.4607,
-        "implied_simple_annualized_return_to_floor_pct": 25.7642,
-        "implied_compound_annualized_return_to_floor_pct": 29.1431,
-        "remaining_calendar_days": 21
-      },
-      "forward_component_directly_priced": true,
-      "current_fair_nav_refreshed": false,
-      "reason": "The official Mehr portfolio workbook confirms 6,645,054 papers under the exact instrument name «سلف استاندارد سکه مرکزی»; Sahmino maps this instrument name to symbol عسکه۲. Last synchronized quotes remain 27 Aban/18 Nov. 28-29 Aban are weekly market closure; next scheduled session is 30 Aban/21 Nov and has not traded yet.",
-      "forward_holding": {
-        "status": "quantity_confirmed_from_official_monthly_portfolio_report",
-        "report_file": "4-عملکرد_صندوق_عیار_مهر_1405نهایی.xlsx",
-        "report_period_jalali": "1405/07/30",
-        "report_sheet": "اوراق",
-        "report_row": 9,
-        "reported_instrument_name": "سلف استاندارد سکه مرکزی",
-        "symbol": "عسکه۲",
-        "symbol_mapping_basis": "Exact instrument-name match: Sahmino identifies عسکه2 as «سلف استاندارد سکه مرکزی»; ticker is not printed in the fund workbook.",
-        "symbol_mapping_confidence": "high",
-        "symbol_explicitly_printed_in_fund_report": false,
-        "papers_held": 6645054,
-        "papers_per_coin": 1000,
-        "coin_equivalent": 6645.054,
-        "market_price_rial_per_paper_at_report_date": 2671158,
-        "reported_book_cost_rial": 15837071677862,
-        "reported_net_market_value_rial": 17808981048023,
-        "reported_value_pct_total_assets": 0.45552607909087467,
-        "source_columns": {
-          "quantity": "Q",
-          "market_price_per_paper": "S",
-          "book_cost": "U",
-          "net_market_value": "W",
-          "asset_weight": "Y"
-        },
-        "reconciliation": {
-          "market_price_times_quantity_rial": 17749989152532,
-          "reported_net_market_value_minus_price_times_quantity_rial": 58991895491,
-          "implied_net_value_per_paper_rial": 2680035.5645,
-          "difference_pct_vs_price_times_quantity": 0.3323489101,
-          "note": "The report's net market value does not equal quantity × displayed market price per paper; discrepancy retained and flagged, not silently adjusted."
-        },
-        "latest_same_session_mark": {
-          "quote_date": "2026-11-18",
-          "quote_jalali": "1405/08/27",
-          "price_rial_per_paper": 2485152,
-          "market_value_if_quantity_unchanged_rial": 16513969238208,
-          "market_value_if_quantity_unchanged_toman": 1651396923820.8,
-          "change_pct_vs_reported_end_of_mehr_value_if_quantity_unchanged": -7.2716782972,
-          "quantity_unchanged_is_assumption": true
-        }
-      },
-      "forward_holding_quantity_confirmed": true,
-      "forward_holding_mapping_confidence": "high",
-      "forward_market_value_if_quantity_unchanged_rial": 16513969238208
-    }
+    "method": "independent_component_valuation_v2_no_stale_quote_carry_forward",
+    "valuation_as_of_date": "2026-11-19",
+    "indicative_nav_rial": null,
+    "indicative_nav_toman": null,
+    "full_nav_status": "pending_engine_run",
+    "note": "The calculator now returns no full NAV while direct same-session quotes for coin certificates and silver, the current forward quote, bank accrual inputs, and residual breakdown are missing."
   },
   "component_market_snapshot": {
     "snapshot_date": "2026-11-18",
@@ -208,7 +97,9 @@
       "premium_pct": 5.227878180873247,
       "price_type": "last_trade",
       "trade_date": "2026-11-18",
-      "source": "https://bourseeye.com/commodities/1504/سکه-طلا"
+      "source": "https://bourseeye.com/commodities/1504/سکه-طلا",
+      "current_price_toman_per_certificate": null,
+      "current_quote_date": null
     },
     "gold_bar_certificate": {
       "price_toman_per_certificate": 3226600,
@@ -225,11 +116,13 @@
       "price_toman_per_gram": 419000,
       "daily_change_pct": -1.28,
       "date": "2026-11-18",
-      "note": "Exchange quote; no synchronized USD silver close captured for direct premium calculation."
+      "note": "Exchange quote; no synchronized USD silver close captured for direct premium calculation.",
+      "current_price_toman_per_gram": null,
+      "current_quote_date": null
     },
     "forward_coin": {
-      "status": "not_priced",
-      "note": "No reliable matched quote/settlement and maturity basis found; excluded from direct component repricing."
+      "status": "legacy_alias_not_used_for_valuation",
+      "note": "Use coin_forward below: direct عسکه۲ closing quote and contractual maturity terms."
     },
     "sources": [
       "https://bourseeye.com/commodities/1504/سکه-طلا/history",
@@ -276,7 +169,7 @@
       "source_price_history": "https://sahmino.com/symbol/sske?tab=chart",
       "source_contract_terms": "https://www.tasnimnews.ir/fa/news/1405/06/17/3691813/آغاز-عرضه-100-هزار-قطعه-سکه-سلف-در-بورس-کالا-از-فردا",
       "source_unit_conversion": "https://sahmino.com/learn/read/hzar-ktaah-skh-dr-kalb-mylyon-orkh-bors-kala-gzyyat-aardh-nkhstyn-aorak-slf-skh-bank-mrkzy-dr-nmad-aaskh-ra-bray-frda-shhryor-aaalam-krd",
-      "status": "priced_market_quote_and_holding_quantity_identified",
+      "status": "direct_market_quote_available_for_anchor_only",
       "mapping_to_fund_holding": "high_confidence_exact_instrument_name_match",
       "valuation_method": "direct market mark-to-market using same-session closing price",
       "caveats": [
@@ -286,7 +179,7 @@
         "در گزارش مهر، قیمت بازار هر ورقه × تعداد با خالص ارزش فروش ثبت‌شده 0.3323% اختلاف دارد؛ هر دو عدد عیناً نگهداری و اختلاف علامت‌گذاری شده‌اند.",
         "کف بازده 7 درصدی، مشروط به قرارداد و تسویه در سررسید است و قیمت تضمینی فروش زودهنگام نیست."
       ],
-      "note": "قیمت عسکه۲ برای همان جلسه 27 آبان ثبت شده است؛ هویت دقیق ردیف دارایی صندوق همچنان به‌دلیل نبود نماد و تعداد ورقه در گزارش پرتفوی تأیید نشده است.",
+      "note": "The 2026-11-18 quote is the anchor quote; no later common-session quote is available as of 2026-11-19.",
       "holding": {
         "status": "quantity_confirmed_from_official_monthly_portfolio_report",
         "report_file": "4-عملکرد_صندوق_عیار_مهر_1405نهایی.xlsx",
@@ -328,7 +221,9 @@
           "change_pct_vs_reported_end_of_mehr_value_if_quantity_unchanged": -7.2716782972,
           "quantity_unchanged_is_assumption": true
         }
-      }
+      },
+      "current_price_rial_per_paper": null,
+      "current_quote_date": null
     },
     "last_rechecked_at": "2026-11-19",
     "next_session": {
@@ -338,5 +233,52 @@
       "quotes_available": false,
       "reason": "28 and 29 Aban are the Iranian Thursday-Friday weekly market closure."
     }
+  },
+  "component_valuation_model": {
+    "version": "2.0.0",
+    "as_of_date": "2026-11-19",
+    "objective": "Independent valuation by asset class; prevent stale-price carry-forward and unsupported zero-return assumptions.",
+    "methods": [
+      {
+        "component": "gold_bullion",
+        "method": "XAUUSD spot × free-market USD/IRR",
+        "classification": "market spot proxy",
+        "limitation": "exact fine-gold quantity, fineness, custody and transaction costs not disclosed"
+      },
+      {
+        "component": "coin_certificates",
+        "method": "direct same-session exchange last trade per certificate",
+        "classification": "direct market mark",
+        "limitation": "requires a newer quote for a new valuation date"
+      },
+      {
+        "component": "silver",
+        "method": "direct same-session exchange price per gram",
+        "classification": "direct market mark",
+        "limitation": "requires newer quote and confirmed purity/contract specification"
+      },
+      {
+        "component": "coin_forward",
+        "method": "direct عسکه۲ quote per paper plus separate contractual maturity payoff analysis",
+        "classification": "direct market mark plus contract cashflow",
+        "limitation": "maturity floor is conditional and not an early-exit quote"
+      },
+      {
+        "component": "bank_deposit",
+        "method": "daily accrual from disclosed annual rate and accrual start date",
+        "classification": "accrued cash yield",
+        "limitation": "rate and start date currently missing"
+      },
+      {
+        "component": "unclassified_residual",
+        "method": "no valuation until official category breakdown",
+        "classification": "unresolved",
+        "limitation": "0.064237% of portfolio remains unclassified"
+      }
+    ],
+    "current_status": "partial_inputs_no_full_nav",
+    "full_nav_allowed_only_if": "all non-zero-weight components have valid valuation inputs for the same as-of date and portfolio holdings/weights are current",
+    "no_stale_quote_carry_forward": true,
+    "no_unpriced_component_assigned_zero_return": true
   }
 }
