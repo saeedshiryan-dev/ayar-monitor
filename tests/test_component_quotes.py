@@ -51,7 +51,7 @@ class ComponentQuoteParserTests(unittest.TestCase):
             "usd": {"updated_at": "2026-11-19T12:34:43+00:00", "display_price": 268237.5},
             "xau": {"updated_at": "2026-11-19T12:44:43+00:00", "display_price": 3714.94},
         }
-        ok, reason = apply_macro_quotes_for_session(data, "2026-11-18", macro)
+        ok, reason = apply_macro_quotes_for_session(data, "2026-11-21", macro)
         self.assertFalse(ok)
         self.assertIn("macro_quotes_not_same_session", reason)
 
