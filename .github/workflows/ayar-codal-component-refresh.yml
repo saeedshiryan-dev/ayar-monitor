@@ -2,6 +2,13 @@ name: Refresh Ayar Codal and Component Quotes
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/ayar-codal-component-refresh.yml'
+      - 'scripts/fetch_ayar_codal_portfolio.py'
+      - 'scripts/fetch_ayar_component_quotes.py'
+      - 'scripts/calculate_ayar_fair_nav.py'
+      - 'scripts/component_valuation.py'
   schedule:
     # 18:15 Tehran time, after the 18:00 commodity-certificate session.
     # Saturday through Wednesday (Iran trading week).
