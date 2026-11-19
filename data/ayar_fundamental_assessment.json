@@ -264,11 +264,20 @@
     "full_fair_nav_status": "blocked_missing_deposit_accrual_and_unclassified_residual",
     "no_stale_quote_carry_forward": true,
     "caveats": [
-      "قیمت گواهی سکه، نقره و عسکه۲ آخرین جلسه مشترک 27 آبان/18 نوامبر است؛ قیمت روز جدیدتر در جلسه مشترک ثبت نشده است.",
-      "وزن‌ها از گزارش 30 مهرند؛ تعداد واقعی همه دارایی‌ها در 27 آبان تأیید نشده است.",
+      "چهار طبقه شمش/گواهی سکه/نقره/عسکه۲ برای جلسه 27 آبان 1405 / 18 نوامبر هم‌تاریخ شدند و در مدل ثبت شدند.",
+      "برای عسکه۲ در همان تاریخ، قیمت پایه قبلاً تأییدشده استفاده شد؛ این fallback فقط برای همان تاریخ پایه مجاز است و به جلسه بعد منتقل نمی‌شود.",
+      "برای به‌روزرسانی عسکه۲ در جلسات آینده، Sahmino API token با scope api:prices لازم است.",
       "سپرده بانکی به نرخ/تاریخ accrual و مانده 0.064237% به تفکیک رسمی نیاز دارد.",
-      "GoldBar صرفاً مرجع بازار است و به‌عنوان دارایی مستقل صندوق فرض نشده است.",
-      "کف بازده عسکه۲ مشروط به تسویه در سررسید است و قیمت خروج زودهنگام را تضمین نمی‌کند."
+      "وزن‌ها از گزارش مهرند؛ تعداد واقعی همه دارایی‌ها در 27 آبان تأیید نشده است."
+    ],
+    "latest_component_quote_status": "synchronized_latest_exchange_session",
+    "latest_component_quote_date": "2026-11-18",
+    "promoted_to_valuation_model": true,
+    "base_anchor_fallback_used_for_aske2": true,
+    "live_aske2_refresh_status": "API token missing; exact-date base NAV anchor used only for 2026-11-18",
+    "full_nav_missing_components": [
+      "bank_deposit",
+      "unclassified_residual"
     ]
   },
   "macro_and_scenarios": {
@@ -454,5 +463,5 @@
     "https://www.tasnimnews.ir/fa/news/1405/08/05/3733157/حد-نصاب-سرمایه-گذاری-صندوق-های-قابل-معامله-اصلاح-شد",
     "https://www.tasnimnews.ir/fa/news/1405/07/03/3705568/کاهش-سقف-دارایی-اشخاص-حقوقی-در-گواهی-سپرده-شمش-طلا"
   ],
-  "updated_at": "2026-11-19T17:32:00+03:30"
+  "updated_at": "2026-11-19T17:35:00+03:30"
 }
