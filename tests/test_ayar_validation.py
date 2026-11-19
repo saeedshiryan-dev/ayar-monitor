@@ -25,6 +25,20 @@ class AyarValidationTests(unittest.TestCase):
         self.assertEqual(result["strategy"]["sessions"], 5)
         self.assertGreater(result["strategy"]["total_return_pct"], 0)
 
+    def test_indicator_lab_reports_drawdown_and_trade_metrics(self):
+        from scripts.ayar_indicator_lab import build_report
+        history = []
+        price = 100
+        for i in range(260):
+            price *= 1.01 if i % 20 < 10 else 0.99
+            history.append({"date": f"2025{i//30+1:02d}{i%30+1:02d}", "close": price, "volume": 1000 + i})
+        report = build_report(history)
+        item = report["strategies"]["ema20_50"]["out_of_sample_from_2024"]
+        self.assertIn("max_drawdown_pct", item)
+        self.assertIn("average_trade_return_pct", item)
+        self.assertIn("average_winning_trade_pct", item)
+        self.assertIn("average_losing_trade_pct", item)
+
 
 if __name__ == "__main__":
     unittest.main()
