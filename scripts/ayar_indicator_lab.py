@@ -92,6 +92,49 @@ def build_positions(closes, volumes):
             state = 0
         rsi3070.append(state)
     positions["rsi30_70_hold"] = rsi3070
+
+    # Swing strategies: all signals use only the current and prior daily closes.
+    # RSI reversal: enter on a cross back above 35; exit above 60.
+    rsi_swing, state = [], 0
+    for i, value in enumerate(r14):
+        prev = r14[i - 1] if i else None
+        if value is not None and prev is not None and prev <= 35 < value:
+            state = 1
+        elif value is not None and value >= 60:
+            state = 0
+        rsi_swing.append(state)
+    positions["swing_rsi_reversal_35_60"] = rsi_swing
+
+    # Bollinger mean reversion: enter after close recovers above lower band;
+    # exit at/above the 20-session mean. Population standard deviation is causal.
+    bb_swing, state = [], 0
+    mid = sma(closes, 20)
+    for i, value in enumerate(closes):
+        if i >= 19 and mid[i] is not None:
+            window = closes[i - 19:i + 1]
+            sd = (sum((x - mid[i]) ** 2 for x in window) / 20) ** 0.5
+            lower = mid[i] - 2 * sd
+            prev_mid = mid[i - 1]
+            prev_window = closes[i - 20:i]
+            prev_sd = (sum((x - prev_mid) ** 2 for x in prev_window) / 20) ** 0.5 if prev_mid is not None else None
+            prev_lower = prev_mid - 2 * prev_sd if prev_sd is not None else None
+            if state == 0 and prev_lower is not None and closes[i - 1] <= prev_lower and value > lower:
+                state = 1
+            elif state == 1 and value >= mid[i]:
+                state = 0
+        bb_swing.append(state)
+    positions["swing_bollinger_reversion"] = bb_swing
+
+    # Trend pullback: buy a recovery above EMA20 while above EMA200; exit below EMA20.
+    ema_pullback, state = [], 0
+    for i, value in enumerate(closes):
+        if i > 0 and e20[i] is not None and e200[i] is not None and e20[i - 1] is not None:
+            if state == 0 and value > e20[i] and closes[i - 1] <= e20[i - 1] and value > e200[i] and r14[i] is not None and r14[i] > 40:
+                state = 1
+            elif state == 1 and value < e20[i]:
+                state = 0
+        ema_pullback.append(state)
+    positions["swing_ema20_pullback"] = ema_pullback
     return positions
 
 
@@ -279,7 +322,7 @@ def build_report(history):
             }
 
     return {
-        "model_version": "2.1.0",
+        "model_version": "2.2.0",
         "generated_at": datetime.now(ZoneInfo("Asia/Tehran")).isoformat(),
         "history": {"valid_sessions": len(rows), "first_date": dates[0], "last_date": dates[-1], "warmup_sessions": WARMUP},
         "assumptions": {
