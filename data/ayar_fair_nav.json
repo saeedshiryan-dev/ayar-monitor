@@ -87,7 +87,7 @@
       "bank_deposit",
       "unclassified_residual"
     ],
-    "engine_execution_status": "code_and_unit_tests_committed; full repository runtime execution not yet confirmed",
+    "engine_execution_status": "isolated_engine_checks_passed; GitHub Actions/production runtime not confirmed",
     "note": "شمش با شاخص طلای ریالی مستقل قابل محاسبه است؛ به‌دلیل نبود قیمت روز برای گواهی سکه، نقره و عسکه۲، نبود ورودی accrual سپرده و تفکیک مانده نامشخص، NAV کامل عمداً منتشر نمی‌شود.",
     "partial_component_marks": {
       "gold_bullion": {
@@ -300,6 +300,19 @@
     "current_status": "partial_inputs_no_full_nav",
     "full_nav_allowed_only_if": "all non-zero-weight components have valid valuation inputs for the same as-of date and portfolio holdings/weights are current",
     "no_stale_quote_carry_forward": true,
-    "no_unpriced_component_assigned_zero_return": true
+    "no_unpriced_component_assigned_zero_return": true,
+    "quote_freshness_rule": "Every current direct-market quote and both XAU/USD inputs must be dated exactly as_of_date; older quotes are rejected.",
+    "tests": {
+      "isolated_checks_passed": 5,
+      "github_actions_or_production_runtime_confirmed": false,
+      "checks": [
+        "syntax_parse",
+        "missing_component_blocks_full_nav",
+        "gold_spot_component_return",
+        "complete_fixture_reproduces_base_nav",
+        "stale_quote_rejected",
+        "base_allocations_reconcile"
+      ]
+    }
   }
 }
