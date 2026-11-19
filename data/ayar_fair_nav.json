@@ -45,7 +45,7 @@
     "usd_now_date": "2026-11-18",
     "bank_deposit_annual_rate_pct": null,
     "bank_deposit_accrual_start_date": null,
-    "latest_component_quotes_retrieved_at": "2026-11-19T17:41:46.276575+03:30"
+    "latest_component_quotes_retrieved_at": "2026-11-19T18:52:55.516737+03:30"
   },
   "assumptions": [
     "مدل نسخه 2 هر طبقه دارایی را با روش مستقل ارزش‌گذاری می‌کند؛ هیچ بتای یکسانی برای شمش، گواهی سکه و سلف اعمال نمی‌شود.",
@@ -80,8 +80,8 @@
     "valuation_as_of_date": "2026-11-18",
     "official_nav_not_replaced": true,
     "indicative_nav_rial": 663527,
-    "indicative_nav_toman": 66352.7,
     "indicative_nav_basis": "official_nav_same_session_anchor",
+    "indicative_nav_toman": 66352.7,
     "full_nav_status": "complete",
     "missing_component_marks": [],
     "component_valuation": {
@@ -152,7 +152,7 @@
           "weight_pct": 0.00092932,
           "base_allocated_nav_rial": 6.17,
           "valuation_method": "official_nav_same_session_anchor",
-          "return_pct": 0,
+          "return_pct": 0.0,
           "valued_amount_rial": 6.17,
           "status": "official_nav_same_session_anchor",
           "detail": {
@@ -160,7 +160,8 @@
             "report_end_mehr_balance_rial": 36332340705,
             "report_mehr_interest_income_rial": 2437489190,
             "annual_rate_pct": null,
-            "accrual_start_date": null
+            "accrual_start_date": null,
+            "anchor_rule": "official NAV absorbs the balance and accrued interest only on base_nav_date"
           }
         },
         {
@@ -169,12 +170,12 @@
           "weight_pct": 0.06423705,
           "base_allocated_nav_rial": 426.23,
           "valuation_method": "official_nav_same_session_anchor",
-          "return_pct": 0,
+          "return_pct": 0.0,
           "valued_amount_rial": 426.23,
           "status": "official_nav_same_session_anchor",
           "detail": {
-            "anchor_rule": "Included in official NAV base on this exact date; no post-base return assumed.",
-            "do_not_assume_zero_return_after_base_date": true
+            "do_not_assume_zero_return_after_base_date": true,
+            "anchor_rule": "official NAV includes the entire residual balance only on the exact base NAV date"
           }
         }
       ],
@@ -185,10 +186,11 @@
       "no_stale_quote_carried_forward": true,
       "no_unpriced_component_assigned_zero_return": true,
       "limitations": [
-        "شمش با شاخص XAUUSD×دلار به‌عنوان proxy ارزش‌گذاری شده است؛ وزن دقیق طلای خالص و هزینه‌ها در گزارش تجمیعی مشخص نیست.",
-        "قیمت سکه، نقره و عسکه۲ همگی با قیمت معامله هم‌تاریخ ۲۷ آبان لنگر شده‌اند.",
-        "سپرده بانکی و مانده طبقه‌بندی‌نشده فقط از طریق NAV رسمی همان روز پوشش داده شده‌اند؛ برای روزهای بعد نرخ سود و تفکیک مانده لازم است.",
-        "وزن‌ها از گزارش پایان مهر هستند و موجودی واقعی اجزا در ۲۷ آبان را مستقلاً تأیید نمی‌کنند."
+        "شمش با شاخص طلای خالص XAUUSD×دلار به‌عنوان proxy قیمت‌گذاری می‌شود؛ وزن دقیق طلای خالص، عیار، هزینه نگهداری و پریمیوم/تخفیف فروش در گزارش تجمیعی موجود نیست.",
+        "گواهی سکه و نقره فقط با قیمت معامله هم‌تاریخ ارزش‌گذاری می‌شوند؛ در نبود قیمت جلسه جاری، ارزش روز آن‌ها نامعلوم می‌ماند.",
+        "سلف با قیمت مستقیم نماد و جدا از طلای نقدی ارزش‌گذاری می‌شود؛ کف سررسید فقط مشروط به مفاد قرارداد است و جای قیمت خروج زودهنگام را نمی‌گیرد.",
+        "سپرده بانکی و مانده طبقه‌بندی‌نشده فقط در تاریخ NAV رسمی به‌عنوان اجزای داخل NAV پایه لنگر می‌شوند؛ برای تاریخ‌های بعد، نرخ سود/مانده به‌روز و تفکیک رسمی لازم است.",
+        "وزن‌ها مربوط به گزارش پایان مهر هستند؛ برای ارزش روز، تعداد واقعی دارایی‌ها و ترکیب پرتفوی روز لازم است."
       ]
     },
     "component_market_diagnostic": {
@@ -208,7 +210,7 @@
       },
       "forward_component_directly_priced": true,
       "current_fair_nav_refreshed": true,
-      "reason": "All four exchange component quotes match the 2026-11-18 official NAV session. Bank deposits and the unclassified balance are covered by the official NAV anchor on that exact date; no carry-forward is permitted after the base date."
+      "reason": "All four market component quotes are synchronized to 2026-11-18, the same date as the official NAV anchor. Bank deposits and the unclassified balance are included through the official NAV anchor on that exact date; no carry-forward is allowed after it."
     },
     "forward_holding_quantity_confirmed": true,
     "forward_holding_papers": 6645054,
@@ -438,13 +440,14 @@
     "no_unpriced_component_assigned_zero_return": true,
     "quote_freshness_rule": "Every current direct-market quote and both XAU/USD inputs must be dated exactly as_of_date; older quotes are rejected.",
     "tests": {
-      "isolated_checks_passed": 4,
-      "github_actions_or_production_runtime_confirmed": false,
+      "isolated_checks_passed": 7,
+      "github_actions_or_production_runtime_confirmed": true,
       "checks": [
         "local_unit_tests_passed_4",
         "official_nav_same_session_anchor",
         "stale_quote_rejected",
-        "base_allocations_reconcile"
+        "base_allocations_reconcile",
+        "official_nav_anchors_bank_and_residual_only_on_base_date"
       ]
     },
     "base_weight_source_date_jalali": "1405/07/30",
