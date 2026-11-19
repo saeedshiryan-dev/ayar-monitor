@@ -139,6 +139,7 @@ def calculate(data):
             "forward_mark_to_market_reproduced": True,
             "forward_holding_quantity_reproduced": papers == int(holding["papers_held"]),
             "forward_holding_value_reproduced": holding_value_rial == papers * quote,
+            "forward_holding_mapping_high_confidence": holding.get("symbol_mapping_confidence") == "high",
             "next_session_quote_not_yet_available": not bool(data["inputs"]["next_session_quotes_available"])
         }
     }
