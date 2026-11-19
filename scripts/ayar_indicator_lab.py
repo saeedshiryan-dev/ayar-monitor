@@ -87,13 +87,14 @@ def performance(returns, positions, dates, closes, start_i, fee=FEE):
         change = abs(signal - prior)
         raw = closes[i] / closes[i - 1] - 1
         final_exit = int(i == len(closes) - 1 and signal == 1)
-        net = (1 + raw) * ((1 - fee) ** (change + final_exit)) - 1
+        gross = 1 + raw if signal else 1.0
+        net = gross * ((1 - fee) ** (change + final_exit)) - 1
         if change:
             changes += 1
             if signal:
                 entry_equity = equity * (1 - fee)
             elif entry_equity is not None:
-                trade_returns.append((equity * (1 + raw) * (1 - fee)) / entry_equity - 1)
+                trade_returns.append((equity * (1 - fee)) / entry_equity - 1)
                 entry_equity = None
         if final_exit and entry_equity is not None:
             trade_returns.append((equity * (1 + raw) * (1 - fee)) / entry_equity - 1)
