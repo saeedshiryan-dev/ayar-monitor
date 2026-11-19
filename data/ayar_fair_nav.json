@@ -30,7 +30,12 @@
     "usd_now_source": "NerkhAra free-market USD; https://nerkhara.com/dollar/",
     "silver_usd_change_pct": 0.42,
     "silver_change_date": "2026-11-19",
-    "silver_source": "Kalameh market snapshot; https://www.kalamehfarsi.tv/en/economy/"
+    "silver_source": "Kalameh market snapshot; https://www.kalamehfarsi.tv/en/economy/",
+    "latest_market_quote_check_date": "2026-11-19",
+    "latest_common_exchange_session": "2026-11-18",
+    "latest_common_exchange_session_jalali": "1405/08/27",
+    "next_session_quotes_available": false,
+    "forward_holding_mapping_confirmed": false
   },
   "assumptions": [
     "شمش طلا در برآورد NAV یک‌روزه قبلی با شاخص طلای ریالی مدل شده است؛ برای گواهی سکه و سلف، قیمت مستقل هم‌تاریخ 2026-11-18 اکنون در component_market_snapshot ثبت شده، اما چون quote جدیدتری از 2026-11-19 در دست نیست، بازده روز بعد از آن‌ها ساخته نشده است.",
@@ -38,14 +43,15 @@
     "سپرده بانکی و مانده طبقه‌بندی‌نشده در فاصله کوتاه ثابت فرض شده‌اند.",
     "وزن‌ها از گزارش رسمی پرتفوی پایان مهر 1405 هستند؛ تغییرات پرتفوی پس از آن به‌طور کامل معلوم نیست.",
     "قیمت‌های گواهی شمش، گواهی سکه و عسکه2 در 27 آبان/18 نوامبر 2026 هم‌تاریخ‌اند؛ این‌ها قیمت‌گذاری مستقل همان جلسه‌اند، نه قیمت زنده 28 آبان.",
-    "نگاشت سلف استاندارد سکه مرکزی در گزارش صندوق به نماد عسکه2 محتمل است اما به علت نبود نماد/تعداد ورقه در گزارش پرتفوی، هنوز از روی دفتر دارایی صندوق قطعی نشده است.",
-    "کف بازده 7 درصدی عسکه2 یک شرط سررسیدی طبق شرایط قرارداد است و نباید به‌عنوان قیمت تضمین‌شده فروش مجدد قبل از سررسید تلقی شود."
+    "کف بازده 7 درصدی عسکه2 یک شرط سررسیدی طبق شرایط قرارداد است و نباید به‌عنوان قیمت تضمین‌شده فروش مجدد قبل از سررسید تلقی شود.",
+    "آخرین بازبینی بازار در 2026-11-19 تأیید کرد که قیمت پایانی گواهی سکه، گواهی شمش و عسکه۲ برای جلسه مشترک 2026-11-18/1405-08-27 قابل استفاده است؛ برای جلسه بعد quote مشترک جدیدی در منابع بررسی‌شده موجود نبود."
   ],
   "limitations": [
     "این خروجی تخمین حساسیت است، نه NAV رسمی منتشرشده از TSETMC یا متولی.",
     "برای تبدیل ارزش‌گذاری هم‌تاریخ 18 نوامبر به NAV تازه‌تر، قیمت‌های هم‌زمان جلسه بعد و گزارش پرتفوی جدیدتر/تعداد دقیق اوراق در اختیار صندوق لازم است.",
-    "آخرین قیمت‌های هم‌زمان سه ابزار در 18 نوامبر است؛ از آن‌ها برای ساخت حباب یا بازده 19 نوامبر استفاده نشده است.",
-    "ارزش‌گذاری عسکه2 به قیمت بازار قابل انجام است؛ اما اتصال قطعی نماد عسکه2 به ردیف سلف صندوق تا دریافت تعداد ورقه/نماد از گزارش تفصیلی پرتفوی مشروط می‌ماند."
+    "ارزش‌گذاری عسکه2 به قیمت بازار قابل انجام است؛ اما اتصال قطعی نماد عسکه2 به ردیف سلف صندوق تا دریافت تعداد ورقه/نماد از گزارش تفصیلی پرتفوی مشروط می‌ماند.",
+    "تا زمان بازبینی 2026-11-19، داده مشترک جدیدتر از جلسه 27 آبان/18 نوامبر برای هر سه ابزار پیدا نشد؛ NAV تخمینی به روز بعد roll-forward نشده است.",
+    "تطبیق قطعی ردیف سلف صندوق با نماد عسکه۲ و تعداد دقیق ورقه‌ها، بدون گزارش تفصیلی/دفتر دارایی که نماد و تعداد را نشان دهد، ممکن نیست."
   ],
   "sources": [
     "https://www.fxempire.com/commodities/gold/history",
@@ -105,7 +111,10 @@
       "component_premiums_reproduced": true,
       "forward_price_unit_conversion_valid": true,
       "forward_mark_to_market_reproduced": true,
-      "current_fair_nav_refreshed": false
+      "current_fair_nav_refreshed": false,
+      "forward_market_quote_recorded": true,
+      "forward_holding_mapping_confirmed": false,
+      "next_session_quote_available": false
     },
     "component_market_diagnostic": {
       "coin_certificate_premium_vs_fine_gold_pct": 5.2279,
@@ -124,7 +133,7 @@
       },
       "forward_component_directly_priced": true,
       "current_fair_nav_refreshed": false,
-      "reason": "All three component quotes are synchronized to 2026-11-18, the same date as the last official NAV. Aske2 can now be marked to market, but no later common-session quote exists to roll NAV beyond 2026-11-18."
+      "reason": "قیمت مستقیم عسکه۲ و گواهی‌های سکه و شمش برای جلسه مشترک 27 آبان/18 نوامبر ثبت شده‌اند. در بازبینی 19 نوامبر قیمت مشترک جدیدتری برای جلسه بعد یافت نشد؛ بنابراین NAV رسمی 18 نوامبر مبنا مانده و NAV روز بعد ساخته نشده است."
     }
   },
   "component_market_snapshot": {
@@ -170,7 +179,10 @@
       "https://bourseeye.com/commodities/1503/شمش-طلا/history?year=1405",
       "https://nerkhara.com/dollar/",
       "https://www.fxempire.com/commodities/gold/history",
-      "https://www.tgju.org/coin"
+      "https://www.tgju.org/coin",
+      "https://sahmino.com/symbol/sske?tab=chart",
+      "https://bourseeye.com/commodities/1504/سکه-طلا",
+      "https://bourseeye.com/commodities/1503/شمش-طلا"
     ],
     "caveats": [
       "Coin and gold-bar certificate quotes are the last available trades on 27 Aban/18 Nov, not live 19 Nov quotes.",
@@ -179,7 +191,7 @@
       "Point-in-time premiums cannot be applied as daily changes without a second synchronized quote.",
       "No reliable direct quote for the fund's coin-forward position was found."
     ],
-    "market_session_note": "27 Aban 1405 / 2026-11-18 was the latest common exchange session found for GoldBar, GoldCoin and Aske2; no later quote was found for 28 Aban.",
+    "market_session_note": "آخرین جلسه مشترک قابل اتکا برای گواهی سکه، گواهی شمش و عسکه۲، 27 آبان 1405 / 2026-11-18 است. بررسی مجدد در 2026-11-19 نشان داد بازار گواهی‌ها آخرین بار در 27 آبان به‌روزرسانی شده و quote هم‌زمان جدیدتری برای 28 آبان منتشر نشده است.",
     "coin_forward": {
       "symbol": "عسکه۲",
       "issuer": "بانک مرکزی جمهوری اسلامی ایران",
@@ -198,23 +210,26 @@
       "maturity_date_gregorian": "2026-12-09",
       "remaining_calendar_days_from_quote": 21,
       "conditional_maturity_floor_toman_per_coin": 252199000,
-      "premium_vs_coin_certificate_pct": 0.2278966338916666,
-      "discount_to_conditional_floor_pct": 1.460671929706303,
-      "implied_simple_annualized_return_to_floor_pct": 25.764199687162915,
-      "implied_compound_annualized_return_to_floor_pct": 29.143127086355204,
+      "premium_vs_coin_certificate_pct": 0.2279,
+      "premium_vs_fine_gold_spot_pct": 5.4677,
+      "discount_to_conditional_floor_pct": 1.4607,
+      "implied_simple_annualized_return_to_floor_pct": 25.7642,
+      "implied_compound_annualized_return_to_floor_pct": 29.1431,
       "price_difference_vs_coin_certificate_toman": 565070,
-      "premium_vs_fine_gold_spot_pct": 5.467688973163076,
-      "fine_gold_intrinsic_toman": 235631597.14558294,
       "source_price_history": "https://sahmino.com/symbol/sske?tab=chart",
       "source_contract_terms": "https://www.tasnimnews.ir/fa/news/1405/06/17/3691813/آغاز-عرضه-100-هزار-قطعه-سکه-سلف-در-بورس-کالا-از-فردا",
-      "source_unit_conversion": "https://sahmino.com/learn/read/hzar-ktaah-skh-dr-kalb-mylyon-orkh-bors-kala-gzyyat-aardh-nkhstyn-aorak-slf-skh-bank-mrkzy-dr-nmad-aaskh-ra-bray-frda-shhryor-aaalam-kard",
-      "valuation_method": "direct market mark-to-market using closing price; compare with same-session coin certificate and conditional maturity floor",
+      "source_unit_conversion": "https://sahmino.com/learn/read/hzar-ktaah-skh-dr-kalb-mylyon-orkh-bors-kala-gzyyat-aardh-nkhstyn-aorak-slf-skh-bank-mrkzy-dr-nmad-aaskh-ra-bray-frda-shhryor-aaalam-krd",
+      "status": "priced_market_quote",
+      "mapping_to_fund_holding": "plausible_not_confirmed",
+      "valuation_method": "direct market mark-to-market using same-session closing price",
       "caveats": [
-        "The fund report describes a central-bank coin forward/salaf position but does not expose the holding ticker or exact paper count; mapping it to Aske2 is highly plausible, not confirmed from the holdings ledger.",
-        "The quoted price is per 1/1000 paper; 100 million papers correspond to 100,000 coins, therefore 1,000 papers represent one coin.",
-        "The 7% minimum return is a stated maturity protection subject to contract terms and settlement conditions, not a guaranteed interim resale price.",
-        "The market quote and certificate prices are from 27 Aban/18 Nov; this is not a 28 Aban live quote."
-      ]
-    }
+        "قیمت عسکه۲ در 27 آبان/18 نوامبر 2026 قیمت پایانی 2,485,152 ریال به‌ازای هر ورقه است.",
+        "هر 1,000 ورقه معادل یک سکه است؛ قیمت معادل هر سکه 248,515,200 تومان محاسبه می‌شود.",
+        "گزارش صندوق فقط طبقه سلف استاندارد سکه مرکزی را نشان می‌دهد و نماد/تعداد ورقه را اعلام نمی‌کند؛ تطبیق با عسکه۲ هنوز قطعی نیست.",
+        "کف 7 درصدی، مشروط به شرایط قرارداد و تسویه در سررسید است و قیمت تضمینی فروش زودتر محسوب نمی‌شود."
+      ],
+      "note": "قیمت عسکه۲ برای همان جلسه 27 آبان ثبت شده است؛ هویت دقیق ردیف دارایی صندوق همچنان به‌دلیل نبود نماد و تعداد ورقه در گزارش پرتفوی تأیید نشده است."
+    },
+    "last_rechecked_at": "2026-11-19"
   }
 }
