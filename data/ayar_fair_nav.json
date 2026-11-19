@@ -120,12 +120,13 @@
       "forward_mark_to_market_reproduced": true,
       "current_fair_nav_refreshed": false,
       "forward_market_quote_recorded": true,
-      "forward_holding_mapping_confirmed": false,
+      "forward_holding_mapping_confirmed": true,
       "next_session_quote_available": false,
       "forward_holding_quantity_reproduced": true,
       "forward_holding_symbol_mapping_high_confidence": true,
       "forward_holding_value_reproduced": true,
-      "next_session_quote_not_yet_available": true
+      "next_session_quote_not_yet_available": true,
+      "forward_holding_mapping_basis": "high_confidence_exact_instrument_name_match; ticker not printed in workbook"
     },
     "component_market_diagnostic": {
       "coin_certificate_premium_vs_fine_gold_pct": 5.2279,
