@@ -64,6 +64,27 @@ button.active{background:#d5a84e;color:#172033;border-color:#d5a84e;font-weight:
 <div class="metric"><span>دلار آزاد (فروش، تومان)</span><b id="macroUsd">—</b><small id="macroUsdTime" class="muted">—</small></div>
 <div class="metric"><span>اونس جهانی طلا (دلار)</span><b id="macroXau">—</b><small id="macroXauTime" class="muted">—</small></div>
 </div><div id="macroQuality" class="foot">منبع: <a href="https://nerkhara.com/" target="_blank" rel="noopener" style="color:#9fc7ff">نر‌خ‌آرا</a> · زمان هر مظنه جداگانه کنترل می‌شود؛ داده بیش از ۲۰ دقیقه تازه تلقی نمی‌شود.</div></section>
+<section class="panel" id="fundamentalPanel">
+<div class="panelhead"><h2>تحلیل بنیادی و ارزش‌گذاری عیار</h2><span id="fundamentalScore" class="muted">در حال دریافت پرونده بنیادی…</span></div>
+<div class="metrics">
+<div class="metric"><span>وزن شمش + گواهی سکه</span><b id="fundamentalGoldWeight">—</b></div>
+<div class="metric"><span>سود خالص صورت مالی (همت)</span><b id="fundamentalNetProfit">—</b></div>
+<div class="metric"><span>سهم سود تحقق‌نیافته از سود خالص</span><b id="fundamentalUnrealized">—</b></div>
+<div class="metric"><span>بازده NAV تعدیل‌شده یک‌ساله</span><b id="fundamentalOneYear">—</b></div>
+<div class="metric"><span>دارایی صندوق (همت)</span><b id="fundamentalAum">—</b></div>
+<div class="metric"><span>خالص صدور و ابطال یک‌ماهه (همت)</span><b id="fundamentalFlow">—</b></div>
+<div class="metric"><span>تخفیف قیمت پایانی به NAV</span><b id="fundamentalDiscount">—</b></div>
+<div class="metric"><span>افت بیشینه یک‌ساله</span><b id="fundamentalDrawdown">—</b></div>
+</div>
+<div id="fundamentalQuality" class="foot">داده‌ها با تاریخ و درجه اطمینان منبع نگهداری می‌شوند؛ NAV کامل در صورت فقدان قیمت یک جزء مسدود می‌ماند.</div>
+<div class="bookgrid">
+<div><h3 class="buytitle" style="font-size:14px">ترکیب آخرین پرتفوی رسمی · پایان مهر</h3><table class="booktable"><thead><tr><th>دارایی</th><th>وزن</th></tr></thead><tbody id="fundamentalPortfolioRows"></tbody></table></div>
+<div><h3 class="selltitle" style="font-size:14px">مقایسه منتخب رقبا</h3><table class="booktable"><thead><tr><th>صندوق</th><th>۳ ماه</th><th>۱ سال</th></tr></thead><tbody id="fundamentalPeers"></tbody></table></div>
+</div>
+<div style="overflow-x:auto;margin-top:12px"><h3 style="font-size:14px">امتیاز پوشش لایه‌های بنیادی</h3><table class="booktable"><thead><tr><th>لایه</th><th>امتیاز</th><th>شاهد اصلی</th></tr></thead><tbody id="fundamentalScoreRows"></tbody></table></div>
+<div style="overflow-x:auto;margin-top:12px"><h3 style="font-size:14px">سناریوی حساسیت دلار و اونس (شوک ۱۰٪)</h3><table class="booktable"><thead><tr><th>شوک دلار</th><th>شوک اونس</th><th>اثر تقریبی NAV</th></tr></thead><tbody id="fundamentalScenarioRows"></tbody></table></div>
+<div class="foot"><a href="research/AYAR_FUNDAMENTAL_REPORT_2026-11-19.md" target="_blank" rel="noopener" style="color:#9fc7ff">پرونده کامل تحلیل بنیادی</a> · <a href="data/ayar_fundamental_assessment.json" target="_blank" rel="noopener" style="color:#9fc7ff">داده ساخت‌یافته و منابع</a></div>
+</section>
 <section class="panel"><div class="panelhead"><h2>نمودار قیمت و میانگین‌های متحرک</h2><span class="muted">نمایش ۱۲۰ کندل آخر</span></div><div class="chartbox"><canvas id="priceChart"></canvas></div></section>
 <section class="panel"><div class="panelhead"><h2>وضعیت اندیکاتورها</h2><span class="muted">مقادیر آخرین کندل</span></div><div class="metrics" id="metrics"></div></section>
 <section class="panel"><div class="panelhead"><h2>RSI و MACD</h2><span class="muted">تاریخچه کندل‌ها</span></div><div class="smallchart"><canvas id="rsiChart"></canvas></div><div class="smallchart" style="margin-top:14px"><canvas id="macdChart"></canvas></div></section>
@@ -76,6 +97,7 @@ const LIVE_URL='https://raw.githubusercontent.com/saeedshiryan-dev/ayar-monitor/
 const FUND_HISTORY_URL='https://raw.githubusercontent.com/saeedshiryan-dev/ayar-monitor/main/data/ayar_fund_history.json';
 const CODAL_PORTFOLIO_URL='https://raw.githubusercontent.com/saeedshiryan-dev/ayar-monitor/main/data/ayar_codal_portfolio.json';
 const MACRO_URL='https://raw.githubusercontent.com/saeedshiryan-dev/ayar-monitor/main/data/ayar_macro_live.json';
+const FUNDAMENTAL_URL='https://raw.githubusercontent.com/saeedshiryan-dev/ayar-monitor/main/data/ayar_fundamental_assessment.json';
 let data=null,tf='1h',charts={};
 const fmt=n=>n==null||!Number.isFinite(Number(n))?'—':Number(n).toLocaleString('en-US',{maximumFractionDigits:2});
 const faDate=s=>s? s.slice(6,8)+'/'+s.slice(4,6)+'/'+s.slice(0,4):'—';
@@ -261,6 +283,39 @@ function drawMacro(j){
   quality.textContent=(j.error_fa||'خطای نامشخص')+' · زمان تلاش: '+String(j.retrieved_at||'—').replace('T',' ').slice(0,19);
  }
 }
+function drawFundamental(j){
+ const fmtPct=v=>v==null?'—':Number(v).toFixed(2)+'٪';
+ const fmtNum=v=>v==null?'—':Number(v).toLocaleString('en-US',{maximumFractionDigits:2});
+ const w=j.portfolio_composition?.weights_pct?.['1405/07/30']||{};
+ document.getElementById('fundamentalScore').textContent='عمق پژوهش '+fmtNum(j.research_depth_score_10)+'/10 · '+(j.jalali_as_of_date||j.as_of_date||'—');
+ document.getElementById('fundamentalGoldWeight').textContent=fmtPct(j.portfolio_composition?.latest_combined_gold_weight_pct);
+ document.getElementById('fundamentalNetProfit').textContent=fmtNum(j.financials?.net_profit_hamt);
+ document.getElementById('fundamentalUnrealized').textContent=fmtPct(j.financials?.unrealized_gain_as_pct_of_net_profit);
+ document.getElementById('fundamentalOneYear').textContent=fmtPct(j.peer_comparison?.returns_pct?.ayar?.one_year);
+ document.getElementById('fundamentalAum').textContent=fmtNum(j.peer_comparison?.ayar_assets_hamt);
+ document.getElementById('fundamentalFlow').textContent=fmtNum(j.peer_comparison?.ayar_net_issue_flow_hamt?.one_month);
+ document.getElementById('fundamentalDiscount').textContent=fmtPct(j.nav_performance?.close_discount_to_same_day_redemption_nav_pct);
+ document.getElementById('fundamentalDrawdown').textContent=fmtPct(j.risk_and_liquidity?.one_year_max_drawdown_pct);
+ const q=document.getElementById('fundamentalQuality');
+ q.textContent='آخرین ترکیب تفصیلی: ۳۰ مهر ۱۴۰۵ · آخرین NAV رسمی: '+(j.nav_performance?.official_nav_date||'—')+' · وضعیت NAV کامل: '+(j.component_valuation?.full_fair_nav_status||'—')+' · امتیازها کیفیت پژوهش‌اند، نه توصیه خرید.';
+ const portfolioNames=[['شمش طلا','gold_bullion'],['گواهی سکه','coin_certificates'],['نقره','silver'],['سلف سکه','coin_forward'],['سپرده','bank_deposit'],['طبقه‌بندی‌نشده','unclassified']];
+ const pb=document.getElementById('fundamentalPortfolioRows');pb.replaceChildren();
+ portfolioNames.forEach(([label,key])=>{const tr=document.createElement('tr');const a=document.createElement('td');a.textContent=label;const b=document.createElement('td');b.textContent=fmtPct(w[key]);tr.append(a,b);pb.appendChild(tr);});
+ const peers=j.peer_comparison?.returns_pct||{};
+ const peerRows=[['عیار','ayar'],['لوتوس','lotus'],['کهربا','kahroba'],['مثقال','mesghal'],['گنج','ganj'],['گوهر','gohar'],['جواهر','javaher'],['زروان','zarvan'],['تابش','tabesh']];
+ const pt=document.getElementById('fundamentalPeers');pt.replaceChildren();
+ peerRows.forEach(([label,key])=>{const v=peers[key];if(!v)return;const tr=document.createElement('tr');[label,fmtPct(v.three_months),fmtPct(v.one_year)].forEach(x=>{const td=document.createElement('td');td.textContent=x;tr.appendChild(td);});pt.appendChild(tr);});
+ const st=document.getElementById('fundamentalScoreRows');st.replaceChildren();
+ (j.scorecard||[]).forEach(x=>{const tr=document.createElement('tr');[x.layer,fmtNum(x.score_10)+'/10',x.evidence].forEach(v=>{const td=document.createElement('td');td.textContent=v;tr.appendChild(td);});st.appendChild(tr);});
+ const scenarios=j.macro_and_scenarios?.scenario_grid_pct||[];
+ const xt=document.getElementById('fundamentalScenarioRows');xt.replaceChildren();
+ scenarios.forEach(x=>{const tr=document.createElement('tr');[fmtPct(x.usd_shock),fmtPct(x.xau_shock),fmtPct(x.indicative_nav_effect)].forEach(v=>{const td=document.createElement('td');td.textContent=v;tr.appendChild(td);});xt.appendChild(tr);});
+}
+async function loadFundamental(){
+ const stamp=document.getElementById('fundamentalScore');
+ try{const r=await fetch(FUNDAMENTAL_URL+'?v='+Date.now(),{cache:'no-store'});if(!r.ok)throw Error('HTTP '+r.status);const j=await r.json();if(!j.scorecard||!j.portfolio_composition)throw Error('ساختار پرونده بنیادی معتبر نیست');drawFundamental(j);}
+ catch(e){stamp.textContent='دریافت پرونده بنیادی ناموفق: '+e.message;}
+}
 async function loadMacro(){
  const stamp=document.getElementById('macroStatus');
  try{
@@ -304,7 +359,7 @@ function drawOrderbook(j){
 }
 async function load(){const n=document.getElementById('notice');n.textContent='در حال دریافت داده از مخزن…';try{const res=await fetch(DATA_URL+'?v='+Date.now(),{cache:'no-store'});if(!res.ok)throw Error('HTTP '+res.status);const j=await res.json();if(!j.timeframes||!j.timeframes['1h']?.candles?.length||!j.timeframes['4h']?.candles?.length)throw Error('ساختار فایل داده معتبر نیست');data=j;draw();}catch(e){n.innerHTML='<span class="bad">دریافت داده ناموفق بود: '+e.message+'</span> · کمی بعد دوباره تلاش کن.';} try{const lr=await fetch(LIVE_URL+'?v='+Date.now(),{cache:'no-store'});if(!lr.ok)throw Error('HTTP '+lr.status);drawOrderbook(await lr.json());}catch(le){document.getElementById('bookStatus').textContent='خطا در دریافت';document.getElementById('bookUpdated').textContent=le.message;}}
 document.querySelectorAll('.tf').forEach(b=>b.addEventListener('click',()=>{tf=b.dataset.tf;document.querySelectorAll('.tf').forEach(x=>x.classList.toggle('active',x===b));draw();}));
-document.getElementById('refresh').addEventListener('click',()=>{load();loadFundHistory();loadCodalPortfolio();loadMacro();});load();loadFundHistory();loadCodalPortfolio();loadMacro();
+document.getElementById('refresh').addEventListener('click',()=>{load();loadFundHistory();loadCodalPortfolio();loadMacro();loadFundamental();});load();loadFundHistory();loadCodalPortfolio();loadMacro();loadFundamental();
 // Refresh the published five-minute feed automatically while the dashboard is open.
-setInterval(()=>{if(!document.hidden){load();loadFundHistory();loadCodalPortfolio();loadMacro();}},60000);
+setInterval(()=>{if(!document.hidden){load();loadFundHistory();loadCodalPortfolio();loadMacro();loadFundamental();}},60000);
 </script></body></html>
