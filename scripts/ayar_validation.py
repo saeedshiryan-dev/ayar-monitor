@@ -74,7 +74,8 @@ def run_period(closes, dates, fast, slow, first_i, fee, initial_position=0):
         signal = 1 if fast[i - 1] is not None and slow[i - 1] is not None and fast[i - 1] > slow[i - 1] else 0
         change = abs(signal - position)
         raw_return = closes[i] / closes[i - 1] - 1.0
-        net_return = (1.0 + raw_return) * ((1.0 - fee) ** change) - 1.0
+        final_exit = 1 if i == len(closes) - 1 and signal == 1 and change == 0 else 0
+        net_return = (1.0 + raw_return) * ((1.0 - fee) ** (change + final_exit)) - 1.0
         if change:
             transitions += 1
             if signal == 1:
@@ -83,6 +84,10 @@ def run_period(closes, dates, fast, slow, first_i, fee, initial_position=0):
                 exit_equity = equity * (1.0 + raw_return) * (1.0 - fee)
                 closed_trades.append(exit_equity / trade_entry_equity - 1.0)
                 trade_entry_equity = None
+        elif final_exit and trade_entry_equity is not None:
+            exit_equity = equity * (1.0 + raw_return) * (1.0 - fee)
+            closed_trades.append(exit_equity / trade_entry_equity - 1.0)
+            trade_entry_equity = None
         equity *= 1.0 + net_return
         position = signal
         peak = max(peak, equity)
