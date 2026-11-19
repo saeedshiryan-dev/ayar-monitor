@@ -89,6 +89,15 @@ def main():
                 "intraday_volume": volume,
                 "checks": checks,
                 "passed": all(checks.values()),
+                "schema": {
+                    "trade_fields": sorted(trades[0].keys()) if trades else [],
+                    "first_trade": trades[0] if trades else None,
+                    "last_trade": trades[-1] if trades else None,
+                    "hEven_min": min((int(t.get("hEven", 0) or 0) for t in normalized), default=None),
+                    "hEven_max": max((int(t.get("hEven", 0) or 0) for t in normalized), default=None),
+                    "hEven_samples": sorted({int(t.get("hEven", 0) or 0) for t in normalized})[:12],
+                    "hEven_samples_last": sorted({int(t.get("hEven", 0) or 0) for t in normalized})[-12:],
+                },
             }, ensure_ascii=False))
             if not all(checks.values()):
                 failures += 1
