@@ -228,6 +228,37 @@ def apply_macro_quotes_for_session(data, session_date, macro_data=None):
     inputs["macro_quote_retrieved_at"] = macro_data.get("retrieved_at")
     return True, "same_session_macro_quotes"
 
+
+def apply_base_forward_anchor(quotes, errors, data, expected_session):
+    """Reuse the already verified Aske2 anchor only on that exact same session."""
+    if "coin_forward" in quotes or len(quotes) != 3:
+        return False
+    dates = {q["date"] for q in quotes.values()}
+    if len(dates) != 1:
+        return False
+    common = next(iter(dates))
+    inputs = data.get("inputs", {})
+    snapshot = data.get("component_market_snapshot", {}).get("coin_forward", {})
+    base_date = inputs.get("base_nav_date")
+    anchor_date = snapshot.get("quote_date")
+    anchor_price = snapshot.get("closing_price_rial_per_paper")
+    if not (common == expected_session == base_date == anchor_date and anchor_price):
+        return False
+    quotes["coin_forward"] = {
+        "key": "coin_forward",
+        "symbol": "عسکه۲",
+        "price": int(anchor_price),
+        "unit": "rial_per_paper",
+        "jalali_date": snapshot.get("quote_jalali"),
+        "date": anchor_date,
+        "source": snapshot.get("source_price_history", "https://sahmino.com/symbol/sske?tab=chart"),
+        "price_type": "same_session_base_anchor",
+        "anchor_fallback": True,
+    }
+    if "coin_forward" in errors:
+        errors["coin_forward_refresh_error"] = errors.pop("coin_forward")
+    return True
+
 def main():
     now = datetime.now(ZoneInfo("Asia/Tehran"))
     retrieved_at = now.isoformat()
@@ -250,14 +281,14 @@ def main():
     except Exception as exc:
         errors["coin_forward"] = f"{type(exc).__name__}: {str(exc)[:220]}"
 
+    expected_session = expected_exchange_session_date(now)
+    data = json.loads(FAIR_NAV.read_text(encoding="utf-8"))
+    base_anchor_fallback_used = apply_base_forward_anchor(quotes, errors, data, expected_session)
     dates = {q["date"] for q in quotes.values()}
     common_date = next(iter(dates)) if len(dates) == 1 and len(quotes) == 4 else None
-    expected_session = expected_exchange_session_date(now)
     macro_sync = False
     macro_reason = "component_quotes_not_synchronized"
-    data = None
     if common_date:
-        data = json.loads(FAIR_NAV.read_text(encoding="utf-8"))
         macro_sync, macro_reason = apply_macro_quotes_for_session(data, common_date)
     promoted = common_date == expected_session and macro_sync
     output = {
@@ -268,6 +299,7 @@ def main():
         "common_quote_date_gregorian": common_date,
         "common_quote_date_jalali": next(iter(quotes.values()))["jalali_date"] if common_date else None,
         "macro_quotes_synchronized": macro_sync,
+        "base_anchor_fallback_used": base_anchor_fallback_used,
         "macro_sync_reason": macro_reason,
         "promoted_to_valuation_model": promoted,
         "quotes": quotes,
@@ -277,6 +309,7 @@ def main():
             "All four component quotes must share the latest scheduled exchange session before promotion.",
             "USD and XAU macro quotes must also match that exchange session; the official NAV anchor is used only when the session equals the base NAV date.",
             "Thursday and Friday are mapped to the preceding Wednesday; unmodeled holidays still block promotion when quote dates differ.",
+            "A previously verified base Aske2 quote may only anchor the exact same base-NAV exchange session; it is never carried into a later session.",
             "No previous-session quote is carried forward beyond the latest scheduled exchange session.",
             "Gold-bar certificate is recorded as a market reference only; it is not treated as a separately disclosed portfolio holding."
         ],
