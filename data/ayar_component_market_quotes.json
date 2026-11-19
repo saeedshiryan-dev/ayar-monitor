@@ -1,12 +1,12 @@
 {
   "status": "synchronized_latest_exchange_session",
-  "retrieved_at": "2026-11-19T17:39:27.767610+03:30",
+  "retrieved_at": "2026-11-19T17:41:46.276575+03:30",
   "expected_session_date_gregorian": "2026-11-18",
   "calendar_rule": "Iran commodity-certificate sessions scheduled Saturday-Wednesday; Thursday/Friday resolve to the preceding Wednesday unless a holiday intervenes.",
   "common_quote_date_gregorian": "2026-11-18",
   "common_quote_date_jalali": "1405/08/27",
   "macro_quotes_synchronized": true,
-  "base_anchor_fallback_used": true,
+  "base_anchor_fallback_used": false,
   "macro_sync_reason": "same_session_base_nav_anchor",
   "promoted_to_valuation_model": true,
   "quotes": {
@@ -39,19 +39,19 @@
     },
     "coin_forward": {
       "key": "coin_forward",
-      "symbol": "عسکه۲",
+      "symbol": "عسکه2",
+      "instrument_code": "18650546575861744",
       "price": 2485152,
+      "volume": 295607,
       "unit": "rial_per_paper",
       "jalali_date": "1405/08/27",
       "date": "2026-11-18",
-      "source": "https://sahmino.com/symbol/sske?tab=chart",
-      "price_type": "same_session_base_anchor",
-      "anchor_fallback": true
+      "source": "https://cdn.tsetmc.com/api/ClosingPrice/GetClosingPriceDailyList/18650546575861744/0",
+      "price_type": "official_daily_close",
+      "source_fallback": "TSETMC_CDN"
     }
   },
-  "errors": {
-    "coin_forward_refresh_error": "RuntimeError: IME history 1405/06/21 to 1405/08/28, offset 0: HTTPSConnectionPool(host='www.ime.co.ir', port=443): Max retries exceeded with url: /subsystems/ime/bazaremali/bazaremalidata.ashx?c=0&ot=0&lang=8&order=asc&sort=LVal18AFC&"
-  },
+  "errors": {},
   "rules": [
     "Only explicitly dated last-trade/daily-close quotes are accepted.",
     "All four component quotes must share the latest scheduled exchange session before promotion.",

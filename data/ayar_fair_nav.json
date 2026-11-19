@@ -45,7 +45,7 @@
     "usd_now_date": "2026-11-18",
     "bank_deposit_annual_rate_pct": null,
     "bank_deposit_accrual_start_date": null,
-    "latest_component_quotes_retrieved_at": "2026-11-19T17:39:27.767610+03:30"
+    "latest_component_quotes_retrieved_at": "2026-11-19T17:41:46.276575+03:30"
   },
   "assumptions": [
     "مدل نسخه 2 هر طبقه دارایی را با روش مستقل ارزش‌گذاری می‌کند؛ هیچ بتای یکسانی برای شمش، گواهی سکه و سلف اعمال نمی‌شود.",
@@ -397,7 +397,7 @@
       "current_price_rial_per_paper": 2485152,
       "current_quote_date": "2026-11-18",
       "fine_gold_intrinsic_toman": 235631597.15,
-      "current_quote_source": "https://sahmino.com/symbol/sske?tab=chart"
+      "current_quote_source": "https://cdn.tsetmc.com/api/ClosingPrice/GetClosingPriceDailyList/18650546575861744/0"
     },
     "last_rechecked_at": "2026-11-19",
     "next_session": {
