@@ -18,7 +18,7 @@ def _num(value: Any) -> Optional[float]:
 
 
 def _quote_return(base_price: Any, current_price: Any,
-                  base_date: str, current_date: str):
+                  base_date: str, current_date: str, as_of_date: str):
     base = _num(base_price)
     current = _num(current_price)
     if base is None or current is None:
@@ -27,12 +27,14 @@ def _quote_return(base_price: Any, current_price: Any,
         return None, "missing_quote_date"
     if date.fromisoformat(current_date) < date.fromisoformat(base_date):
         return None, "current_quote_precedes_base_date"
+    if current_date != as_of_date:
+        return None, "quote_not_current_for_valuation_date"
     if current_date == base_date:
         return 0.0, "same_session_anchor"
     return current / base - 1.0, "direct_market_quote"
 
 
-def _gold_spot_return(inputs: Dict[str, Any]):
+def _gold_spot_return(inputs: Dict[str, Any], as_of_date: str):
     xau0 = _num(inputs.get("xau_base_usd_oz"))
     xau1 = _num(inputs.get("xau_now_usd_oz"))
     fx0 = _num(inputs.get("usd_base_toman"))
@@ -47,6 +49,8 @@ def _gold_spot_return(inputs: Dict[str, Any]):
         return None, "spot_quote_precedes_base_date"
     if d1 != fd1:
         return None, "gold_and_fx_quotes_not_synchronized"
+    if d1 != as_of_date:
+        return None, "gold_or_fx_quote_not_current_for_valuation_date"
     return (xau1 / xau0) * (fx1 / fx0) - 1.0, "fine_gold_spot_proxy_xauusd_times_usd"
 
 
@@ -79,7 +83,7 @@ def value_components(data: Dict[str, Any], as_of_date: str) -> Dict[str, Any]:
         detail = {}
 
         if kind == "gold":
-            ret, status = _gold_spot_return(inputs)
+            ret, status = _gold_spot_return(inputs, as_of_date)
             detail = {
                 "proxy": "XAUUSD × USD/IRR",
                 "purity_and_exact_fine_gold_quantity": "not_disclosed_in_monthly_portfolio_extract",
@@ -90,7 +94,7 @@ def value_components(data: Dict[str, Any], as_of_date: str) -> Dict[str, Any]:
             ret, status = _quote_return(
                 q.get("price_toman_per_certificate"),
                 q.get("current_price_toman_per_certificate"),
-                q["date"], q.get("current_quote_date", as_of_date)
+                q["date"], q.get("current_quote_date", as_of_date), as_of_date
             )
             detail = {
                 "unit": q["unit"],
@@ -119,7 +123,7 @@ def value_components(data: Dict[str, Any], as_of_date: str) -> Dict[str, Any]:
             ret, status = _quote_return(
                 q.get("closing_price_rial_per_paper"),
                 q.get("current_price_rial_per_paper"),
-                q["quote_date"], q.get("current_quote_date", as_of_date)
+                q["quote_date"], q.get("current_quote_date", as_of_date), as_of_date
             )
             detail = {
                 "symbol": q.get("symbol"),
