@@ -151,7 +151,10 @@
       "1y": 116.69
     },
     "secondary_one_year_rank": "3 از 37 صندوق طلا",
-    "caveat": "بازده‌های NAV تعدیل‌شده منبع ثانویه و NAV خام TSETMC دو سری/روش متفاوت‌اند؛ اختلاف آن‌ها حفظ شده و با هم ادغام نشده‌اند. آخرین رکورد رسمی NAV در 18 نوامبر است."
+    "caveat": "بازده‌های NAV تعدیل‌شده منبع ثانویه و NAV خام TSETMC دو سری/روش متفاوت‌اند؛ اختلاف آن‌ها حفظ شده و با هم ادغام نشده‌اند. آخرین رکورد رسمی NAV در 18 نوامبر است.",
+    "history_records": 2315,
+    "history_start_date": "2018-06-20",
+    "latest_official_record_date": "2026-11-18"
   },
   "peer_comparison": {
     "source": "Bourseeye gold-fund comparison snapshot updated 1405/08/27",
@@ -220,7 +223,11 @@
       }
     },
     "group_weighted_one_year_return_pct": 116.44,
-    "caveat": "در همان snapshot، تاریخ NAV عیار 25 آبان اعلام شده ولی NAV بعضی رقبا 28 آبان است؛ این مقایسه برای غربال نسبی است، نه رتبه‌بندی دقیق هم‌تاریخ."
+    "caveat": "در همان snapshot، تاریخ NAV عیار 25 آبان اعلام شده ولی NAV بعضی رقبا 28 آبان است؛ این مقایسه برای غربال نسبی است، نه رتبه‌بندی دقیق هم‌تاریخ.",
+    "units_outstanding_latest": 5364853896,
+    "aum_date_jalali": "1405/08/25",
+    "aum_change_vs_tsetmc_snapshot_2026_10_26_pct": -7.706,
+    "aum_comparison_caveat": "385.73 همت در snapshot TSETMC پایان مهر و 356 همت در snapshot چشم بورس 25 آبان از دو تاریخ/منبع متفاوت‌اند؛ کاهش ظاهری حدود 7.7% را نباید بدون تجزیه قیمت و جریان واحدها به خروج پول نسبت داد."
   },
   "risk_and_liquidity": {
     "annualized_volatility_pct": 41.85,
@@ -229,7 +236,14 @@
     "latest_exchange_session": "1405/08/27",
     "traded_volume_units": 41648000,
     "traded_value_toman": 2726900000000,
-    "caveat": "شاخص‌های ریسک از منبع ثانویه‌اند؛ برای بازتولید دقیق باید سری روزانه NAV تعدیل‌شده و نرخ بدون ریسک هم‌تاریخ در مدل محلی ذخیره شود."
+    "caveat": "شاخص‌های ریسک از منبع ثانویه‌اند؛ برای بازتولید دقیق باید سری روزانه NAV تعدیل‌شده و نرخ بدون ریسک هم‌تاریخ در مدل محلی ذخیره شود.",
+    "trading_session_date": "2026-11-18",
+    "orderbook_snapshot_secondary": {
+      "buy_value_toman": 871000000,
+      "sell_value_toman": 3631000000,
+      "source": "Fundbase page snapshot at 18:30",
+      "caveat": "snapshot short-term only; not a time series"
+    }
   },
   "component_valuation": {
     "anchor_date": "2026-11-18",
@@ -413,5 +427,5 @@
     "https://www.tasnimnews.ir/fa/news/1405/08/05/3733157/حد-نصاب-سرمایه-گذاری-صندوق-های-قابل-معامله-اصلاح-شد",
     "https://www.tasnimnews.ir/fa/news/1405/07/03/3705568/کاهش-سقف-دارایی-اشخاص-حقوقی-در-گواهی-سپرده-شمش-طلا"
   ],
-  "updated_at": "2026-11-19T17:00:00+03:30"
+  "updated_at": "2026-11-19T17:20:00+03:30"
 }
