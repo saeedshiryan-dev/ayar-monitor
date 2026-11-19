@@ -40,7 +40,8 @@ def clean(text):
 
 
 def number(value):
-    return int(re.sub(r"[,٬\s]", "", clean(value)))
+    raw = re.sub(r"[,٬\\s]", "", clean(value))
+    return int(float(raw)) if re.fullmatch(r"-?\\d+(?:\\.0+)?", raw) else int(raw)
 
 
 def jalali_date(day, month, year):
