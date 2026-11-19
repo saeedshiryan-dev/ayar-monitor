@@ -9,7 +9,7 @@
     "model_version": "1.0.0",
     "execution_assumption": "signal at close; position change at that close; following close-to-close return counted; no look-ahead",
     "fee_assumption_per_side_pct": 0.15,
-    "fee_assumption_note": "Assumption only; replace with verified broker/fund transaction costs before using as a live performance estimate.",
+    "fee_assumption_note": "Assumed 0.15% per side is charged on strategy position changes and on the benchmark entry/exit; replace with verified transaction costs before using as a live performance estimate.",
     "history": {
       "valid_sessions": 1977,
       "first_date": "20180609",
@@ -27,10 +27,10 @@
       },
       "buy_and_hold": {
         "sessions": 1927,
-        "total_return_pct": 4776.5665,
-        "cagr_pct": 66.2494,
-        "annualized_volatility_pct": 41.2246,
-        "sharpe_ratio_rf0": 1.4403,
+        "total_return_pct": 4761.9478,
+        "cagr_pct": 66.1842,
+        "annualized_volatility_pct": 41.2247,
+        "sharpe_ratio_rf0": 1.4394,
         "max_drawdown_pct": -50.6276
       },
       "position_changes": 21,
@@ -49,10 +49,10 @@
       },
       "buy_and_hold": {
         "sessions": 663,
-        "total_return_pct": 813.7857,
-        "cagr_pct": 131.8504,
-        "annualized_volatility_pct": 38.8721,
-        "sharpe_ratio_rf0": 2.361,
+        "total_return_pct": 811.0464,
+        "cagr_pct": 131.586,
+        "annualized_volatility_pct": 38.8727,
+        "sharpe_ratio_rf0": 2.358,
         "max_drawdown_pct": -32.3194
       },
       "position_changes": 8,
