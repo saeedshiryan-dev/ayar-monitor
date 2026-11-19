@@ -81,7 +81,7 @@ def parse_sahmino_quote_text(text, url):
     pattern = (
         r"(\d{1,2})\s+(" + "|".join(MONTHS) + r")\s+(14\d{2})"
         r"\s+([\d,٬]+)\s+([\d,٬]+)\s+([\d,٬]+)\s+([\d,٬]+)"
-        r"\s+([^\s]+)\s+([\d,٬]+)"
+        r"(?:\s+[^\s]+){1,2}\s+([\d,٬]+)"
     )
     match = re.search(pattern, text)
     if not match:
