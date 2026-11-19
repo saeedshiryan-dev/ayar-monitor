@@ -1,4 +1,5 @@
 name: Deploy Ayar Dashboard
+# Re-publish the indicator report after the audited causal backtest build.
 
 on:
   workflow_dispatch:
