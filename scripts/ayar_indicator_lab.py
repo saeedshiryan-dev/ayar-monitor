@@ -228,15 +228,28 @@ def build_report(history):
     if oos_start is None:
         raise ValueError("OOS period from 2024 is missing")
     strategy_results = {}
+    def compact_curve(result, every=5):
+        points = result["equity_curve"]
+        sampled = points[::every]
+        if points and (not sampled or sampled[-1]["date"] != points[-1]["date"]):
+            sampled.append(points[-1])
+        result["equity_curve"] = sampled
+        return result
+
     for key, signal in positions.items():
         full = simulate_long_cash(rows, signal, full_start)
-        oos = simulate_long_cash(rows, signal, max(full_start, oos_start))
-        strategy_results[key] = {"full_sample": full, "out_of_sample_from_2024": oos}
+        oos = compact_curve(simulate_long_cash(rows, signal, max(full_start, oos_start)))
+        strategy_results[key] = {
+            "full_sample": {"metrics": full["metrics"]},
+            "out_of_sample_from_2024": oos
+        }
 
     benchmark_signal = [1] * len(rows)
+    full_benchmark = simulate_long_cash(rows, benchmark_signal, full_start)
+    oos_benchmark = compact_curve(simulate_long_cash(rows, benchmark_signal, max(full_start, oos_start)))
     strategy_results["buy_and_hold"] = {
-        "full_sample": simulate_long_cash(rows, benchmark_signal, full_start),
-        "out_of_sample_from_2024": simulate_long_cash(rows, benchmark_signal, max(full_start, oos_start))
+        "full_sample": {"metrics": full_benchmark["metrics"]},
+        "out_of_sample_from_2024": oos_benchmark
     }
 
     volume_stats = {}
