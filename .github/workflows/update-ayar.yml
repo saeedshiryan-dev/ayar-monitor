@@ -5,7 +5,9 @@ on:
   push:
     paths:
       - 'scripts/update_ayar_intraday_history.py'
-      - 'scripts/ayar_validation.py'\n      - 'scripts/ayar_indicator_lab.py'\n      - 'indicator-lab.html'
+      - 'scripts/ayar_validation.py'
+      - 'scripts/ayar_indicator_lab.py'
+      - 'indicator-lab.html'
       - 'tests/test_ayar_validation.py'
       - 'validation.html'
       - 'calculate_ayar_intraday_indicators.py'
@@ -57,7 +59,8 @@ jobs:
       - name: Run statistical validation and update signal ledger
         run: |
           python -m unittest discover -s tests -p 'test_ayar_validation.py'
-          python scripts/ayar_validation.py\n          python scripts/ayar_indicator_lab.py
+          python scripts/ayar_validation.py
+          python scripts/ayar_indicator_lab.py
 
       - name: Save updated data
         run: |
