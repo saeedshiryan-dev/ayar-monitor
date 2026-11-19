@@ -1,0 +1,170 @@
+#!/usr/bin/env python3
+"""Fetch synchronized Ayar component quotes after the commodity market close.
+
+Sources: Bourseeye commodity certificates and Sahmino's Aske2 quote history.
+Only same-session, explicitly dated quotes are promoted into the fair-NAV input.
+"""
+import json
+import re
+from datetime import datetime
+from pathlib import Path
+from zoneinfo import ZoneInfo
+from html.parser import HTMLParser
+
+import jdatetime
+import requests
+
+ROOT = Path(__file__).resolve().parents[1]
+FAIR_NAV = ROOT / "data" / "ayar_fair_nav.json"
+OUT = ROOT / "data" / "ayar_component_market_quotes.json"
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml",
+}
+MONTHS = "فروردین اردیبهشت خرداد تیر مرداد شهریور مهر آبان آذر دی بهمن اسفند".split()
+DIGITS = str.maketrans("۰۱۲۳۴۵۶۷۸۹٠١٢٣٤٥٦٧٨٩", "01234567890123456789")
+
+
+class TextOnly(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.parts = []
+    def handle_data(self, data):
+        if data and data.strip():
+            self.parts.append(data.strip())
+
+
+def clean(text):
+    return re.sub(r"\s+", " ", str(text or "").translate(DIGITS).replace("ي", "ی").replace("ك", "ک")).strip()
+
+
+def number(value):
+    return int(re.sub(r"[,٬\s]", "", clean(value)))
+
+
+def jalali_date(day, month, year):
+    return jdatetime.date(int(year), MONTHS.index(month) + 1, int(day)).togregorian().isoformat()
+
+
+def get_text(url):
+    response = requests.get(url, headers=HEADERS, timeout=(10, 35))
+    response.raise_for_status()
+    parser = TextOnly()
+    parser.feed(response.text)
+    return clean(" ".join(parser.parts))
+
+
+def bourseeye_quote(url, key, price_pattern):
+    text = get_text(url)
+    date_match = re.search(r"در آخرین روز معاملاتی\s*\(\s*(\d{1,2})\s+(" + "|".join(MONTHS) + r")\s+(14\d{2})\s*\)", text)
+    price_match = re.search(price_pattern, text)
+    if not date_match or not price_match:
+        raise ValueError(f"date_or_price_not_found:{key}")
+    day, month, year = date_match.groups()
+    return {
+        "key": key,
+        "price": number(price_match.group(1)),
+        "unit": "toman_per_certificate" if key != "silver" else "toman_per_gram",
+        "jalali_date": f"{year}/{MONTHS.index(month)+1:02d}/{int(day):02d}",
+        "date": jalali_date(day, month, year),
+        "source": url,
+        "price_type": "last_trade",
+    }
+
+
+def sahmino_quote(url):
+    text = get_text(url)
+    pattern = r"(\d{1,2})\s+(" + "|".join(MONTHS) + r")\s+(14\d{2})\s+([\d,٬]+)\s+([\d,٬]+)\s+([\d,٬]+)\s+([\d,٬]+)\s+([\d,٬.%+-]+)\s+([\d,٬]+)"
+    match = re.search(pattern, text)
+    if not match:
+        raise ValueError("aske2_history_row_not_found")
+    day, month, year = match.group(1, 2, 3)
+    close = number(match.group(7))
+    return {
+        "key": "coin_forward",
+        "symbol": "عسکه۲",
+        "price": close,
+        "unit": "rial_per_paper",
+        "jalali_date": f"{year}/{MONTHS.index(month)+1:02d}/{int(day):02d}",
+        "date": jalali_date(day, month, year),
+        "source": url,
+        "price_type": "daily_close",
+    }
+
+
+def main():
+    now = datetime.now(ZoneInfo("Asia/Tehran"))
+    retrieved_at = now.isoformat()
+    sources = {
+        "coin_certificate": ("https://bourseeye.com/commodities/1504/سکه-طلا",
+            r"آخرین معامله،\s*هر گواهی\s*([\d,٬]+)\s*تومان"),
+        "gold_bar_certificate": ("https://bourseeye.com/commodities/1503/شمش-طلا",
+            r"آخرین معامله،\s*هر گواهی\s*([\d,٬]+)\s*تومان"),
+        "silver": ("https://bourseeye.com/commodities/1507/شمش-نقره",
+            r"آخرین معامله،\s*هر گواهی\s*([\d,٬]+)\s*تومان"),
+    }
+    quotes, errors = {}, {}
+    for key, (url, price_pattern) in sources.items():
+        try:
+            quotes[key] = bourseeye_quote(url, key, price_pattern)
+        except Exception as exc:
+            errors[key] = f"{type(exc).__name__}: {str(exc)[:220]}"
+    try:
+        quotes["coin_forward"] = sahmino_quote("https://sahmino.com/symbol/sske?tab=chart")
+    except Exception as exc:
+        errors["coin_forward"] = f"{type(exc).__name__}: {str(exc)[:220]}"
+
+    dates = {q["date"] for q in quotes.values()}
+    common_date = next(iter(dates)) if len(dates) == 1 and len(quotes) == 4 else None
+    today = now.date().isoformat()
+    promoted = common_date == today
+    output = {
+        "status": "synchronized_current_session" if promoted else "quotes_not_synchronized_or_not_current",
+        "retrieved_at": retrieved_at,
+        "expected_session_date_gregorian": today,
+        "common_quote_date_gregorian": common_date,
+        "common_quote_date_jalali": next(iter(quotes.values()))["jalali_date"] if common_date else None,
+        "promoted_to_valuation_model": promoted,
+        "quotes": quotes,
+        "errors": errors,
+        "rules": [
+            "Only explicitly dated last-trade/daily-close quotes are accepted.",
+            "All four component quotes must share the current Tehran calendar session before promotion.",
+            "No previous-session quote is carried forward as a current quote.",
+            "Gold-bar certificate is recorded as a market reference only; it is not treated as a separately disclosed portfolio holding."
+        ],
+    }
+    OUT.write_text(json.dumps(output, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+
+    if promoted:
+        data = json.loads(FAIR_NAV.read_text(encoding="utf-8"))
+        snap = data["component_market_snapshot"]
+        q = quotes
+        snap["coin_certificate"]["current_price_toman_per_certificate"] = q["coin_certificate"]["price"]
+        snap["coin_certificate"]["current_quote_date"] = q["coin_certificate"]["date"]
+        snap["coin_certificate"]["current_quote_source"] = q["coin_certificate"]["source"]
+        snap["gold_bar_certificate"]["current_price_toman_per_certificate"] = q["gold_bar_certificate"]["price"]
+        snap["gold_bar_certificate"]["current_quote_date"] = q["gold_bar_certificate"]["date"]
+        snap["gold_bar_certificate"]["current_quote_source"] = q["gold_bar_certificate"]["source"]
+        snap["silver_bar_certificate"]["current_price_toman_per_gram"] = q["silver"]["price"]
+        snap["silver_bar_certificate"]["current_quote_date"] = q["silver"]["date"]
+        snap["silver_bar_certificate"]["current_quote_source"] = q["silver"]["source"]
+        snap["coin_forward"]["current_price_rial_per_paper"] = q["coin_forward"]["price"]
+        snap["coin_forward"]["current_quote_date"] = q["coin_forward"]["date"]
+        snap["coin_forward"]["current_quote_source"] = q["coin_forward"]["source"]
+        snap["current_quote_session_date"] = common_date
+        snap["current_quote_session_jalali"] = q["coin_certificate"]["jalali_date"]
+        data["inputs"]["valuation_as_of_date"] = common_date
+        data["inputs"]["latest_common_exchange_session"] = common_date
+        data["inputs"]["latest_common_exchange_session_jalali"] = q["coin_certificate"]["jalali_date"]
+        data["inputs"]["next_session_quotes_available"] = True
+        data["inputs"]["latest_component_quotes_retrieved_at"] = retrieved_at
+        tmp = FAIR_NAV.with_suffix(".tmp")
+        tmp.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        tmp.replace(FAIR_NAV)
+
+    print(json.dumps(output, ensure_ascii=False, indent=2))
+
+
+if __name__ == "__main__":
+    main()
