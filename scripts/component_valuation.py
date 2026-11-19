@@ -131,7 +131,8 @@ def value_components(data: Dict[str, Any], as_of_date: str) -> Dict[str, Any]:
                 "quantity_after_month_end_confirmed": False,
             }
         elif kind == "bank":
-            rate = _num(inputs.get("bank_deposit_annual_rate_pct"))
+            rate_raw = inputs.get("bank_deposit_annual_rate_pct")
+            rate = float(rate_raw) if rate_raw is not None and float(rate_raw) >= 0 else None
             start = inputs.get("bank_deposit_accrual_start_date")
             if rate is not None and start:
                 days = (date.fromisoformat(as_of_date) - date.fromisoformat(start)).days
