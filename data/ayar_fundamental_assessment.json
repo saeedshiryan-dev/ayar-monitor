@@ -330,7 +330,30 @@
       }
     ],
     "coin_premium_compression_to_zero_nav_effect_pct": -0.5861,
-    "interpretation": "سناریوها حساسیت مکانیکی‌اند، نه پیش‌بینی قیمت؛ پریمیوم سکه، هزینه نگهداری، ریسک مقررات و همبستگی اجزای غیرشمش جداگانه اثر می‌گذارند."
+    "interpretation": "سناریوها حساسیت مکانیکی‌اند، نه پیش‌بینی قیمت؛ پریمیوم سکه، هزینه نگهداری، ریسک مقررات و همبستگی اجزای غیرشمش جداگانه اثر می‌گذارند.",
+    "current_macro_snapshot": {
+      "source": "NerkhAra public API",
+      "retrieved_at_utc": "2026-11-19T12:49:16.390274+00:00",
+      "usd_free_toman": 268237.5,
+      "usd_updated_at_utc": "2026-11-19T12:34:43+00:00",
+      "xau_usd_per_oz": 3714.94,
+      "xau_updated_at_utc": "2026-11-19T12:44:43+00:00",
+      "source_method": {
+        "usd": "average of 2 sources",
+        "xau": "lead source"
+      },
+      "cross_source_daily_close_reference": {
+        "date": "2026-11-19",
+        "usd_toman": 266300,
+        "xau_usd_per_oz": 3730.41,
+        "source": "EZRate and TGJU historical/latest snapshot"
+      },
+      "cross_source_difference_pct": {
+        "usd": 0.7274,
+        "xau": -0.4147
+      },
+      "caveat": "این دو مجموعه quote از زمان/روش متفاوت‌اند؛ تا زمانی که زمان و منبع هر دو دقیقاً هم‌جلسه نشود، در NAV مستقل با هم ترکیب نمی‌شوند."
+    }
   },
   "regulatory_watchlist": [
     {
@@ -427,5 +450,5 @@
     "https://www.tasnimnews.ir/fa/news/1405/08/05/3733157/حد-نصاب-سرمایه-گذاری-صندوق-های-قابل-معامله-اصلاح-شد",
     "https://www.tasnimnews.ir/fa/news/1405/07/03/3705568/کاهش-سقف-دارایی-اشخاص-حقوقی-در-گواهی-سپرده-شمش-طلا"
   ],
-  "updated_at": "2026-11-19T17:20:00+03:30"
+  "updated_at": "2026-11-19T17:22:00+03:30"
 }
