@@ -313,6 +313,9 @@
         "stale_quote_rejected",
         "base_allocations_reconcile"
       ]
-    }
+    },
+    "base_weight_source_date_jalali": "1405/07/30",
+    "base_nav_date": "2026-11-18",
+    "weight_staleness_warning": "وزن‌های پرتفوی پایان مهر به NAV رسمی 27 آبان تخصیص داده می‌شوند؛ این تخصیص فقط مبنای محاسباتی است و موجودی واقعی اجزا در 27 آبان را تأیید نمی‌کند."
   }
 }
