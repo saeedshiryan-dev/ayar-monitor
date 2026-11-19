@@ -42,12 +42,13 @@ def build_session():
     proxy = os.getenv("CODAL_HTTP_PROXY") or os.getenv("CODAL_MCP_PROXY")
     if proxy:
         session.proxies.update({"http": proxy, "https": proxy})
+    retry_count = 4 if proxy else 0
     retry = Retry(
-        total=4,
-        connect=4,
-        read=2,
-        status=2,
-        backoff_factor=1.5,
+        total=retry_count,
+        connect=retry_count,
+        read=2 if proxy else 0,
+        status=2 if proxy else 0,
+        backoff_factor=1.5 if proxy else 0,
         status_forcelist=(500, 502, 503, 504),
         allowed_methods=frozenset(("GET",)),
         respect_retry_after_header=True,
@@ -271,10 +272,13 @@ def main():
     title = None
     search_errors = []
     request_count = 0
-    # Search the portfolio-report category first, then broaden to all categories.
-    # Codal may paginate recent disclosures, so inspect up to three pages per pass.
-    for category in (3, -1):
-        for page in range(1, 4):
+    # Without an Iran-based proxy, make one short direct attempt and fall back;
+    # repeated non-Iranian egress timeouts add no information. With a proxy, search
+    # the portfolio category and broader categories across up to three pages.
+    categories = (3, -1) if proxy_configured else (3,)
+    pages_per_category = 3 if proxy_configured else 1
+    for category in categories:
+        for page in range(1, pages_per_category + 1):
             if request_count:
                 time.sleep(2.2)  # be gentle with Codal; rapid calls can trigger HTTP 429/captcha
             request_count += 1
