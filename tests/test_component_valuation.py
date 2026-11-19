@@ -39,6 +39,13 @@ class ComponentValuationTests(unittest.TestCase):
         self.assertAlmostEqual(gold["return_pct"], 10.0, places=5)
         self.assertAlmostEqual(gold["valued_amount_rial"], 88000, places=2)
 
+    def test_stale_direct_quote_is_rejected(self):
+        data = self.sample()
+        data["component_market_snapshot"]["coin_certificate"]["current_price_toman_per_certificate"] = 100
+        data["component_market_snapshot"]["coin_certificate"]["current_quote_date"] = "2026-11-17"
+        result = value_components(data, "2026-11-18")
+        self.assertIn("coin_certificates", result["missing_component_marks"])
+
     def test_same_day_anchor_reproduces_base_nav_when_all_quotes_present(self):
         data = self.sample()
         data["inputs"]["bank_deposit_annual_rate_pct"] = 0
