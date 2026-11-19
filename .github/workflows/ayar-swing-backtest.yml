@@ -1,0 +1,25 @@
+name: Ayar Swing Backtest
+on:
+  push:
+    paths:
+      - 'scripts/ayar_indicator_lab.py'
+      - '.github/workflows/ayar-swing-backtest.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  swing-backtest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Run validated daily backtest
+        run: python scripts/ayar_indicator_lab.py
+      - name: Upload full backtest report
+        uses: actions/upload-artifact@v4
+        with:
+          name: ayar-swing-backtest
+          path: data/ayar_indicator_lab.json
+          if-no-files-found: error
