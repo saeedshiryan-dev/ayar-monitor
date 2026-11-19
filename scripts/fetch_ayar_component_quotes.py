@@ -73,26 +73,31 @@ def bourseeye_quote(url, key, price_pattern):
 
 
 def parse_sahmino_quote_text(text, url):
-    # Sahmino's recent-history table columns are date, open, high, low,
-    # close, change text, and volume. The change cell may contain Persian
-    # direction words and the Arabic decimal separator (٫), so match it as
-    # a token rather than restricting it to ASCII numeric characters.
+    # Parse the first dated row under Sahmino's recent-history table.
+    # Its change cell contains Persian words and a decimal percentage, so
+    # extract the first four numeric fields (OHLC) and the final volume
+    # from that row instead of trying to parse the localized change string.
     text = clean(text).replace("|", " ").replace("│", " ")
-    pattern = (
-        r"(\d{1,2})\s+(" + "|".join(MONTHS) + r")\s+(14\d{2})"
-        r"\s+([\d,٬]+)\s+([\d,٬]+)\s+([\d,٬]+)\s+([\d,٬]+)"
-        r"(?:\s+[^\s]+){1,2}\s+([\d,٬]+)"
-    )
-    match = re.search(pattern, text)
-    if not match:
-        raise ValueError("aske2_history_row_not_found")
-    day, month, year = match.group(1, 2, 3)
-    close = number(match.group(7))
+    history_start = text.find("تاریخچه اخیر")
+    if history_start >= 0:
+        text = text[history_start:]
+    date_pattern = r"(\d{1,2})\s+(" + "|".join(MONTHS) + r")\s+(14\d{2})"
+    date_match = re.search(date_pattern, text)
+    if not date_match:
+        raise ValueError("aske2_history_date_not_found")
+    tail = text[date_match.end():]
+    next_date = re.search(date_pattern, tail)
+    row_text = tail[:next_date.start()] if next_date else tail
+    numeric_fields = re.findall(r"[\d,٬]+", row_text)
+    if len(numeric_fields) < 5:
+        raise ValueError("aske2_history_ohlc_volume_not_found")
+    day, month, year = date_match.groups()
+    close = number(numeric_fields[3])
     return {
         "key": "coin_forward",
         "symbol": "عسکه۲",
         "price": close,
-        "volume": number(match.group(8)),
+        "volume": number(numeric_fields[-1]),
         "unit": "rial_per_paper",
         "jalali_date": f"{year}/{MONTHS.index(month)+1:02d}/{int(day):02d}",
         "date": jalali_date(day, month, year),
