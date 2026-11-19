@@ -1,0 +1,27 @@
+name: Ayar Backtest Unit Tests
+
+on:
+  push:
+    paths:
+      - 'scripts/ayar_indicator_lab.py'
+      - 'tests/test_ayar_validation.py'
+      - '.github/workflows/test-ayar-backtest.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  backtest-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Install test dependency
+        run: python -m pip install requests
+      - name: Run validation and P&L unit tests
+        run: python -m unittest discover -s tests -p 'test_ayar_validation.py' -v
