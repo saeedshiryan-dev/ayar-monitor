@@ -82,3 +82,34 @@ class AyarPnlBacktestTests(unittest.TestCase):
         self.assertEqual(result["trades"][0]["entry_date"], "20240102")
         self.assertEqual(result["trades"][0]["exit_date"], "20240103")
         self.assertEqual(result["metrics"]["round_trips"], 1)
+
+    def test_signals_are_invariant_to_future_candle_changes(self):
+        from scripts.ayar_indicator_lab import build_positions
+        closes = [100 + i * 0.2 + ((i % 9) - 4) * 1.7 for i in range(280)]
+        volumes = [1000 + (i % 13) * 25 for i in range(280)]
+        altered = closes[:]
+        altered[240:] = [x * (1.5 if i % 2 else 0.6) for i, x in enumerate(altered[240:], 240)]
+        original_signals = build_positions(closes, volumes)
+        altered_signals = build_positions(altered, volumes)
+        for strategy in original_signals:
+            self.assertEqual(original_signals[strategy][:240], altered_signals[strategy][:240])
+
+    def test_oos_can_execute_signal_from_previous_session(self):
+        from scripts.ayar_indicator_lab import simulate_long_cash
+        rows = [
+            {"date":"20231229","open":1000,"close":1000},
+            {"date":"20240101","open":1000,"close":1000},
+            {"date":"20240102","open":1000,"close":1100},
+        ]
+        result = simulate_long_cash(rows, [1,0,0], 0, initial_capital=100000, fee=0, slippage=0)
+        self.assertEqual(result["trades"][0]["entry_date"], "20240101")
+
+    def test_final_liquidation_cost_is_in_drawdown(self):
+        from scripts.ayar_indicator_lab import simulate_long_cash
+        rows = [
+            {"date":"20240101","open":1000,"close":1000},
+            {"date":"20240102","open":1000,"close":1000},
+            {"date":"20240103","open":1000,"close":1000},
+        ]
+        result = simulate_long_cash(rows, [1,1,1], 0, initial_capital=100000, fee=0.01, slippage=0)
+        self.assertLess(result["metrics"]["max_drawdown_pct"], 0)
