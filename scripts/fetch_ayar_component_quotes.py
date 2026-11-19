@@ -18,7 +18,6 @@ ROOT = Path(__file__).resolve().parents[1]
 FAIR_NAV = ROOT / "data" / "ayar_fair_nav.json"
 OUT = ROOT / "data" / "ayar_component_market_quotes.json"
 MACRO = ROOT / "data" / "ayar_macro_live.json"
-SAHMINO_API_URL = "https://sahmino.com/api/v1/instruments/sske/prices"
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml",
@@ -203,11 +202,80 @@ def parse_ime_salaf_frame(history, source_url="https://www.ime.co.ir/standard-tr
     }
 
 
+
+def tsetmc_aske2_quote():
+    """Tokenless fallback: resolve Aske2 on TSETMC CDN, then fetch its daily closes."""
+    base = "https://cdn.tsetmc.com/api"
+    headers = {"User-Agent": "Mozilla/5.0", "Accept": "application/json"}
+    target = normalize_symbol("عسکه۲")
+    candidates = {}
+    for term in ("عسکه۲", "عسکه2", "سلف استاندارد سکه مرکزی"):
+        response = requests.get(
+            base + "/Instrument/GetInstrumentSearch/" + requests.utils.quote(term),
+            headers=headers, timeout=(8, 25))
+        response.raise_for_status()
+        items = response.json().get("instrumentSearch") or []
+        for item in items:
+            symbol = clean(item.get("lVal18AFC"))
+            name = clean(item.get("lVal30"))
+            code = str(item.get("insCode") or "").strip()
+            if code and (normalize_symbol(symbol) == target or
+                         ("عسکه" in normalize_symbol(symbol) and "سلف" in name)):
+                candidates[code] = {"symbol": symbol, "name": name, "code": code}
+    if not candidates:
+        raise ValueError("tsetmc_aske2_instrument_not_found")
+    if len(candidates) > 1:
+        exact = [x for x in candidates.values() if normalize_symbol(x["symbol"]) == target]
+        if len(exact) == 1:
+            candidates = {exact[0]["code"]: exact[0]}
+        else:
+            raise ValueError("tsetmc_aske2_instrument_ambiguous")
+    instrument = next(iter(candidates.values()))
+    history_url = base + "/ClosingPrice/GetClosingPriceDailyList/" + instrument["code"] + "/0"
+    response = requests.get(history_url, headers=headers, timeout=(8, 35))
+    response.raise_for_status()
+    rows = response.json().get("closingPriceDaily") or []
+    if not rows:
+        raise ValueError("tsetmc_aske2_history_empty")
+    dated = [row for row in rows if row.get("dEven") and row.get("pClosing") is not None]
+    if not dated:
+        raise ValueError("tsetmc_aske2_history_missing_close")
+    latest = max(dated, key=lambda row: int(row["dEven"]))
+    date_iso = datetime.strptime(str(latest["dEven"]), "%Y%m%d").date().isoformat()
+    jd = jdatetime.date.fromgregorian(date=datetime.strptime(date_iso, "%Y-%m-%d").date())
+    price = int(float(latest["pClosing"]))
+    if price <= 0:
+        raise ValueError("tsetmc_aske2_close_nonpositive")
+    return {
+        "key": "coin_forward",
+        "symbol": instrument["symbol"],
+        "instrument_code": instrument["code"],
+        "price": price,
+        "volume": int(float(latest.get("qTotTran5J") or 0)),
+        "unit": "rial_per_paper",
+        "jalali_date": "{}/{:02d}/{:02d}".format(jd.year, jd.month, jd.day),
+        "date": date_iso,
+        "source": history_url,
+        "price_type": "official_daily_close",
+        "source_fallback": "TSETMC_CDN",
+    }
+
+
 def ime_salaf_quote():
     # fima is an MIT-licensed client for public IME endpoints; no API key/token.
     from fima.IME import get_all_ime_salaf_trades
-    history = get_all_ime_salaf_trades(start_date="1405-06-21")
-    return parse_ime_salaf_frame(history)
+    try:
+        history = get_all_ime_salaf_trades(start_date="1405-06-21")
+        return parse_ime_salaf_frame(history)
+    except Exception as ime_error:
+        try:
+            return tsetmc_aske2_quote()
+        except Exception as tsetmc_error:
+            raise RuntimeError(
+                "public_sources_failed:IME={};TSETMC={}:{}".format(
+                    str(ime_error)[:160], type(tsetmc_error).__name__, str(tsetmc_error)[:160]
+                )
+            ) from tsetmc_error
 
 
 def expected_exchange_session_date(now):
