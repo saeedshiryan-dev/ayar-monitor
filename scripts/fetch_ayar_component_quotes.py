@@ -6,7 +6,7 @@ Only same-session, explicitly dated quotes are promoted into the fair-NAV input.
 """
 import json
 import re
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 from html.parser import HTMLParser
@@ -72,9 +72,17 @@ def bourseeye_quote(url, key, price_pattern):
     }
 
 
-def sahmino_quote(url):
-    text = get_text(url)
-    pattern = r"(\d{1,2})\s+(" + "|".join(MONTHS) + r")\s+(14\d{2})\s+([\d,٬]+)\s+([\d,٬]+)\s+([\d,٬]+)\s+([\d,٬]+)\s+([\d,٬.%+-]+)\s+([\d,٬]+)"
+def parse_sahmino_quote_text(text, url):
+    # Sahmino's recent-history table columns are date, open, high, low,
+    # close, change text, and volume. The change cell may contain Persian
+    # direction words and the Arabic decimal separator (٫), so match it as
+    # a token rather than restricting it to ASCII numeric characters.
+    text = clean(text)
+    pattern = (
+        r"(\d{1,2})\s+(" + "|".join(MONTHS) + r")\s+(14\d{2})"
+        r"\s+([\d,٬]+)\s+([\d,٬]+)\s+([\d,٬]+)\s+([\d,٬]+)"
+        r"\s+([^\s]+)\s+([\d,٬]+)"
+    )
     match = re.search(pattern, text)
     if not match:
         raise ValueError("aske2_history_row_not_found")
@@ -90,6 +98,22 @@ def sahmino_quote(url):
         "source": url,
         "price_type": "daily_close",
     }
+
+
+def sahmino_quote(url):
+    return parse_sahmino_quote_text(get_text(url), url)
+
+
+def expected_exchange_session_date(now):
+    # Commodity-certificate sessions are scheduled Saturday through Wednesday.
+    # Thursday and Friday use the most recent scheduled session, unless an
+    # intervening exchange holiday makes the dated quote older than this rule.
+    session_day = now.date()
+    if now.weekday() == 3:  # Thursday
+        session_day -= timedelta(days=1)
+    elif now.weekday() == 4:  # Friday
+        session_day -= timedelta(days=2)
+    return session_day.isoformat()
 
 
 def main():
@@ -116,12 +140,13 @@ def main():
 
     dates = {q["date"] for q in quotes.values()}
     common_date = next(iter(dates)) if len(dates) == 1 and len(quotes) == 4 else None
-    today = now.date().isoformat()
-    promoted = common_date == today
+    expected_session = expected_exchange_session_date(now)
+    promoted = common_date == expected_session
     output = {
-        "status": "synchronized_current_session" if promoted else "quotes_not_synchronized_or_not_current",
+        "status": "synchronized_latest_exchange_session" if promoted else "quotes_not_synchronized_or_not_current",
         "retrieved_at": retrieved_at,
-        "expected_session_date_gregorian": today,
+        "expected_session_date_gregorian": expected_session,
+        "calendar_rule": "Iran commodity-certificate sessions scheduled Saturday-Wednesday; Thursday/Friday resolve to the preceding Wednesday unless a holiday intervenes.",
         "common_quote_date_gregorian": common_date,
         "common_quote_date_jalali": next(iter(quotes.values()))["jalali_date"] if common_date else None,
         "promoted_to_valuation_model": promoted,
@@ -129,8 +154,9 @@ def main():
         "errors": errors,
         "rules": [
             "Only explicitly dated last-trade/daily-close quotes are accepted.",
-            "All four component quotes must share the current Tehran calendar session before promotion.",
-            "No previous-session quote is carried forward as a current quote.",
+            "All four component quotes must share the latest scheduled exchange session before promotion.",
+            "Thursday and Friday are mapped to the preceding Wednesday; unmodeled holidays still block promotion when quote dates differ.",
+            "No previous-session quote is carried forward beyond the latest scheduled exchange session.",
             "Gold-bar certificate is recorded as a market reference only; it is not treated as a separately disclosed portfolio holding."
         ],
     }
