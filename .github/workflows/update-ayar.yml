@@ -5,6 +5,9 @@ on:
   push:
     paths:
       - 'scripts/update_ayar_intraday_history.py'
+      - 'scripts/ayar_validation.py'
+      - 'tests/test_ayar_validation.py'
+      - 'validation.html'
       - 'calculate_ayar_intraday_indicators.py'
       - '.github/workflows/update-ayar.yml'
   schedule:
@@ -50,6 +53,11 @@ jobs:
 
       - name: Calculate 1h and 4h indicators
         run: python calculate_ayar_intraday_indicators.py
+
+      - name: Run statistical validation and update signal ledger
+        run: |
+          python -m unittest discover -s tests -p 'test_ayar_validation.py'
+          python scripts/ayar_validation.py
 
       - name: Save updated data
         run: |
