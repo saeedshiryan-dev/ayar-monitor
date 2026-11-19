@@ -185,6 +185,8 @@ def value_components(data: Dict[str, Any], as_of_date: str) -> Dict[str, Any]:
         "model_version": "2.0.0",
         "as_of_date": as_of_date,
         "base_nav_date": base_date,
+        "portfolio_weights_source_date_jalali": inputs.get("portfolio_report_date_jalali"),
+        "base_allocations_are_weighted_nav_estimates_not_confirmed_holdings": True,
         "base_official_redemption_nav_rial": nav0,
         "base_allocations_reconcile": abs(base_sum - nav0) <= 0.05,
         "portfolio_weight_sum_pct": round(total_weight, 8),
