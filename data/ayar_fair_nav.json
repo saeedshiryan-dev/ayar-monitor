@@ -77,6 +77,7 @@
   "calculation": {
     "method": "independent_component_valuation_v2_no_stale_quote_carry_forward",
     "valuation_as_of_date": "2026-11-19",
+    "official_nav_not_replaced": true,
     "indicative_nav_rial": null,
     "indicative_nav_toman": null,
     "full_nav_status": "blocked_missing_component_marks",
@@ -87,30 +88,169 @@
       "bank_deposit",
       "unclassified_residual"
     ],
-    "engine_execution_status": "isolated_engine_checks_passed; GitHub Actions/production runtime not confirmed",
-    "note": "شاخص مستقل شمش با ورودی‌های 19 نوامبر تازه شد؛ قیمت‌های مستقیم سایر اجزا هنوز quote هم‌تاریخ ندارند و NAV کامل عمداً منتشر نمی‌شود.",
-    "partial_component_marks": {
-      "gold_bullion": {
-        "base_allocated_nav_rial": 581638.83,
-        "xau_base_usd_oz": 3727.64,
-        "xau_current_usd_oz": 3730.41,
-        "xau_usd_return_pct": 0.07431,
-        "usd_base_toman": 266730,
-        "usd_current_toman": 266300,
-        "usd_toman_return_pct": -0.161212,
-        "combined_gold_local_return_pct": -0.087022,
-        "proxy_marked_value_rial": 581132.68,
-        "method": "TGJU XAU/USD × EZRate USD/IRR daily closes; same-date daily proxy",
-        "source_dates": [
-          "2026-11-18",
-          "2026-11-19"
-        ],
-        "status": "partial_mark_available",
-        "caveat": "XAU latest observation and USD daily close are on the same calendar date but not guaranteed to be identical timestamps; proxy only, not official bullion valuation."
-      }
+    "component_valuation": {
+      "model_version": "2.0.0",
+      "as_of_date": "2026-11-19",
+      "base_nav_date": "2026-11-18",
+      "portfolio_weights_source_date_jalali": "1405/07/30",
+      "base_allocations_are_weighted_nav_estimates_not_confirmed_holdings": true,
+      "base_official_redemption_nav_rial": 663527.0,
+      "base_allocations_reconcile": true,
+      "portfolio_weight_sum_pct": 100.0,
+      "components": [
+        {
+          "key": "gold_bullion",
+          "name_fa": "شمش طلا",
+          "weight_pct": 87.65865306,
+          "base_allocated_nav_rial": 581638.83,
+          "valuation_method": "spot_index_proxy",
+          "return_pct": -0.087022,
+          "valued_amount_rial": 581132.68,
+          "status": "fine_gold_spot_proxy_xauusd_times_usd",
+          "detail": {
+            "proxy": "XAUUSD × USD/IRR",
+            "purity_and_exact_fine_gold_quantity": "not_disclosed_in_monthly_portfolio_extract",
+            "premium_discount_and_transaction_costs": "not_observable"
+          }
+        },
+        {
+          "key": "coin_certificates",
+          "name_fa": "گواهی سپرده سکه",
+          "weight_pct": 11.20971945,
+          "base_allocated_nav_rial": 74379.52,
+          "valuation_method": "direct_exchange_quote",
+          "return_pct": null,
+          "valued_amount_rial": null,
+          "status": "missing_base_or_current_quote",
+          "detail": {
+            "unit": "one full new-design Bahar Azadi coin",
+            "base_price_toman": 247950130,
+            "base_quote_date": "2026-11-18",
+            "premium_vs_fine_gold_at_anchor_pct": 5.227878180873247,
+            "current_quote_date": null,
+            "current_price_toman": null
+          }
+        },
+        {
+          "key": "silver",
+          "name_fa": "شمش نقره",
+          "weight_pct": 0.61093504,
+          "base_allocated_nav_rial": 4053.72,
+          "valuation_method": "direct_exchange_quote",
+          "return_pct": null,
+          "valued_amount_rial": null,
+          "status": "missing_base_or_current_quote",
+          "detail": {
+            "unit": "toman_per_gram",
+            "base_price_toman_per_gram": 419000,
+            "base_quote_date": "2026-11-18",
+            "current_price_toman_per_gram": null,
+            "current_quote_date": null
+          }
+        },
+        {
+          "key": "coin_forward",
+          "name_fa": "سلف استاندارد سکه مرکزی",
+          "weight_pct": 0.45552608,
+          "base_allocated_nav_rial": 3022.54,
+          "valuation_method": "direct_exchange_quote_and_contract_payoff",
+          "return_pct": null,
+          "valued_amount_rial": null,
+          "status": "missing_base_or_current_quote",
+          "detail": {
+            "symbol": "عسکه۲",
+            "unit": "rial_per_paper",
+            "papers_held_at_month_end": 6645054,
+            "base_price_rial_per_paper": 2485152,
+            "current_price_rial_per_paper": null,
+            "maturity_date": "2026-12-09",
+            "conditional_maturity_floor_toman_per_coin": 252199000.0,
+            "maturity_floor_is_not_early_exit_price": true,
+            "quantity_after_month_end_confirmed": false
+          }
+        },
+        {
+          "key": "bank_deposit",
+          "name_fa": "سپرده بانکی",
+          "weight_pct": 0.00092932,
+          "base_allocated_nav_rial": 6.17,
+          "valuation_method": "accrual_yield",
+          "return_pct": null,
+          "valued_amount_rial": null,
+          "status": "not_valued",
+          "detail": {
+            "annual_rate_pct": null,
+            "accrual_start_date": null
+          }
+        },
+        {
+          "key": "unclassified_residual",
+          "name_fa": "مانده طبقه‌بندی‌نشده گزارش",
+          "weight_pct": 0.06423705,
+          "base_allocated_nav_rial": 426.23,
+          "valuation_method": "unclassified_no_mark",
+          "return_pct": null,
+          "valued_amount_rial": null,
+          "status": "unclassified_requires_source_breakdown",
+          "detail": {
+            "do_not_assume_zero_return": true
+          }
+        }
+      ],
+      "known_component_value_sum_rial": 581132.68,
+      "full_indicative_nav_rial": null,
+      "full_nav_status": "blocked_missing_component_marks",
+      "missing_component_marks": [
+        "coin_certificates",
+        "silver",
+        "coin_forward",
+        "bank_deposit",
+        "unclassified_residual"
+      ],
+      "no_stale_quote_carried_forward": true,
+      "no_unpriced_component_assigned_zero_return": true,
+      "limitations": [
+        "شمش با شاخص طلای خالص XAUUSD×دلار به‌عنوان proxy قیمت‌گذاری می‌شود؛ وزن دقیق طلای خالص، عیار، هزینه نگهداری و پریمیوم/تخفیف فروش در گزارش تجمیعی موجود نیست.",
+        "گواهی سکه و نقره فقط با قیمت معامله هم‌تاریخ ارزش‌گذاری می‌شوند؛ در نبود قیمت جلسه جاری، ارزش روز آن‌ها نامعلوم می‌ماند.",
+        "سلف با قیمت مستقیم نماد و جدا از طلای نقدی ارزش‌گذاری می‌شود؛ کف سررسید فقط مشروط به مفاد قرارداد است و جای قیمت خروج زودهنگام را نمی‌گیرد.",
+        "سپرده بانکی به نرخ و تاریخ شروع سود نیاز دارد؛ مانده طبقه‌بندی‌نشده نیز تا دریافت تفکیک رسمی قابل ارزش‌گذاری مستقل نیست.",
+        "وزن‌ها مربوط به گزارش پایان مهر هستند؛ برای ارزش روز، تعداد واقعی دارایی‌ها و ترکیب پرتفوی روز لازم است."
+      ]
     },
-    "known_component_value_sum_rial": 581132.68,
-    "full_nav_is_not_known_component_sum": true
+    "component_market_diagnostic": {
+      "coin_certificate_premium_vs_fine_gold_pct": 5.2279,
+      "gold_bar_certificate_premium_vs_fine_gold_pct": 0.7722,
+      "premium_gap_percentage_points": 4.4556,
+      "forward": {
+        "symbol": "عسکه۲",
+        "price_toman_per_coin_equivalent": 248515200.0,
+        "premium_vs_coin_certificate_pct": 0.2279,
+        "premium_vs_fine_gold_spot_pct": 5.4677,
+        "conditional_maturity_floor_toman": 252199000.0,
+        "discount_to_conditional_floor_pct": 1.4607,
+        "implied_simple_annualized_return_to_floor_pct": 25.7642,
+        "implied_compound_annualized_return_to_floor_pct": 29.1431,
+        "remaining_calendar_days": 21
+      },
+      "forward_component_directly_priced": true,
+      "current_fair_nav_refreshed": false,
+      "reason": "All three component quotes are synchronized to 2026-11-18, the same date as the last official NAV. Aske2 can now be marked to market, but no later common-session quote exists to roll NAV beyond 2026-11-18."
+    },
+    "forward_holding_quantity_confirmed": true,
+    "forward_holding_papers": 6645054,
+    "forward_holding_coin_equivalent": 6645.054,
+    "forward_market_value_if_quantity_unchanged_rial": 16513969238208,
+    "validation": {
+      "weights_sum_valid": true,
+      "base_allocations_reconcile": true,
+      "independent_component_methods_present": true,
+      "no_stale_quote_carried_forward": true,
+      "no_unpriced_component_assigned_zero_return": true,
+      "full_nav_blocked_when_component_marks_missing": true,
+      "forward_price_unit_conversion_valid": true,
+      "forward_holding_value_reproduced": true,
+      "forward_holding_mapping_high_confidence": true
+    }
   },
   "component_market_snapshot": {
     "snapshot_date": "2026-11-18",
@@ -185,19 +325,19 @@
       "total_papers_issued": 100000000,
       "coin_equivalent_issued": 100000,
       "papers_per_coin": 1000,
-      "price_toman_per_coin_equivalent": 248515200,
+      "price_toman_per_coin_equivalent": 248515200.0,
       "initial_issue_price_toman_per_coin": 235700000,
       "stated_minimum_maturity_return_pct": 7,
       "maturity_date_jalali": "1405/09/18",
       "maturity_date_gregorian": "2026-12-09",
       "remaining_calendar_days_from_quote": 21,
-      "conditional_maturity_floor_toman_per_coin": 252199000,
+      "conditional_maturity_floor_toman_per_coin": 252199000.0,
       "premium_vs_coin_certificate_pct": 0.2279,
       "premium_vs_fine_gold_spot_pct": 5.4677,
       "discount_to_conditional_floor_pct": 1.4607,
       "implied_simple_annualized_return_to_floor_pct": 25.7642,
       "implied_compound_annualized_return_to_floor_pct": 29.1431,
-      "price_difference_vs_coin_certificate_toman": 565070,
+      "price_difference_vs_coin_certificate_toman": 565070.0,
       "source_price_history": "https://sahmino.com/symbol/sske?tab=chart",
       "source_contract_terms": "https://www.tasnimnews.ir/fa/news/1405/06/17/3691813/آغاز-عرضه-100-هزار-قطعه-سکه-سلف-در-بورس-کالا-از-فردا",
       "source_unit_conversion": "https://sahmino.com/learn/read/hzar-ktaah-skh-dr-kalb-mylyon-orkh-bors-kala-gzyyat-aardh-nkhstyn-aorak-slf-skh-bank-mrkzy-dr-nmad-aaskh-ra-bray-frda-shhryor-aaalam-krd",
@@ -255,7 +395,8 @@
         }
       },
       "current_price_rial_per_paper": null,
-      "current_quote_date": null
+      "current_quote_date": null,
+      "fine_gold_intrinsic_toman": 235631597.15
     },
     "last_rechecked_at": "2026-11-19",
     "next_session": {
