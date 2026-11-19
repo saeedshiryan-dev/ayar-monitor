@@ -2,7 +2,7 @@
   "symbol": "عیار",
   "source": "TSETMC",
   "timezone": "Asia/Tehran",
-  "calculated_at": "2026-11-19T05:26:54.122241+03:30",
+  "calculated_at": "2026-11-19T06:11:45.896794+03:30",
   "method": "EMA seeded by SMA; RSI Wilder; MACD 12-26-9; volume SMA20",
   "validation": {
     "cached_days": 115,
@@ -10,7 +10,7 @@
     "live_intraday_overlay": {
       "status": "not_available",
       "date": "20261119",
-      "retrieved_at": "2026-11-19T05:26:54.045341+03:30",
+      "retrieved_at": "2026-11-19T06:11:45.824120+03:30",
       "trade_count": 0,
       "quote_trade_count": null,
       "quote_retrieved_at": null,
