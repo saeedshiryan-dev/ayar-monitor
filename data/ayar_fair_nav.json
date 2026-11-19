@@ -79,8 +79,16 @@
     "valuation_as_of_date": "2026-11-19",
     "indicative_nav_rial": null,
     "indicative_nav_toman": null,
-    "full_nav_status": "pending_engine_run",
-    "note": "The calculator now returns no full NAV while direct same-session quotes for coin certificates and silver, the current forward quote, bank accrual inputs, and residual breakdown are missing."
+    "full_nav_status": "blocked_missing_component_marks",
+    "missing_component_marks": [
+      "coin_certificates",
+      "silver",
+      "coin_forward",
+      "bank_deposit",
+      "unclassified_residual"
+    ],
+    "engine_execution_status": "code_and_unit_tests_committed; full repository runtime execution not yet confirmed",
+    "note": "شمش با شاخص طلای ریالی مستقل قابل محاسبه است؛ به‌دلیل نبود قیمت روز برای گواهی سکه، نقره و عسکه۲، نبود ورودی accrual سپرده و تفکیک مانده نامشخص، NAV کامل عمداً منتشر نمی‌شود."
   },
   "component_market_snapshot": {
     "snapshot_date": "2026-11-18",
