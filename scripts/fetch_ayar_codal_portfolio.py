@@ -275,8 +275,10 @@ def main():
     # Without an Iran-based proxy, make one short direct attempt and fall back;
     # repeated non-Iranian egress timeouts add no information. With a proxy, search
     # the portfolio category and broader categories across up to three pages.
-    categories = (3, -1) if proxy_configured else (3,)
-    pages_per_category = 3 if proxy_configured else 1
+    if not proxy_configured:
+        search_errors.append("CODAL_HTTP_PROXY is unset; direct Codal search skipped to avoid repeated non-Iranian runner timeouts.")
+    categories = (3, -1) if proxy_configured else ()
+    pages_per_category = 3
     for category in categories:
         for page in range(1, pages_per_category + 1):
             if request_count:
