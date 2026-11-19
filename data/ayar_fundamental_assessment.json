@@ -434,9 +434,13 @@
     }
   ],
   "unresolved_access": {
-    "required_for_automated_official_codal": "GitHub Actions secret CODAL_HTTP_PROXY containing a valid Iran-based HTTP/HTTPS proxy endpoint",
-    "current_observed_error": "GitHub-hosted runner direct egress to search.codal.ir timed out; CODAL_HTTP_PROXY is unset",
-    "security_note": "Proxy credentials should be entered directly in GitHub repository Actions secrets, not pasted into chat."
+    "required_for_automated_official_codal": "GitHub Actions secret CODAL_HTTP_PROXY containing a valid Iran-based HTTP/HTTPS proxy endpoint. Without it, direct Codal search is skipped and the last uploaded official report is preserved.",
+    "required_for_automated_aske2_quotes": "GitHub Actions secret SAHMINO_API_TOKEN, minted from Sahmino with api:prices scope. The current Aske2 base quote is retained only for the exact 2026-11-18 anchor session; no future-session quote is carried forward without the API.",
+    "current_observed_errors": {
+      "codal": "CODAL_HTTP_PROXY is unset; direct Codal search is skipped to avoid repeated non-Iranian runner timeouts.",
+      "sahmino": "Public Sahmino HTML does not expose the history rows to the requests parser; the authenticated prices API is now wired but no API token is configured."
+    },
+    "security_note": "Enter both values directly in GitHub repository Actions secrets; never paste credentials into chat or commit them to the repository."
   },
   "sources": [
     "https://bourseeye.com/funds/1521/صندوق-طلای-عیار-مفید",
@@ -450,5 +454,5 @@
     "https://www.tasnimnews.ir/fa/news/1405/08/05/3733157/حد-نصاب-سرمایه-گذاری-صندوق-های-قابل-معامله-اصلاح-شد",
     "https://www.tasnimnews.ir/fa/news/1405/07/03/3705568/کاهش-سقف-دارایی-اشخاص-حقوقی-در-گواهی-سپرده-شمش-طلا"
   ],
-  "updated_at": "2026-11-19T17:22:00+03:30"
+  "updated_at": "2026-11-19T17:32:00+03:30"
 }
