@@ -38,7 +38,24 @@
         "name": "سلف استاندارد سکه مرکزی (درآمد ثابت/علی‌الحساب)",
         "market_value_rial": 17808981048023,
         "market_value_toman": 1780898104802.3,
-        "percent": 0.45552607909087467
+        "percent": 0.45552607909087467,
+        "symbol": "عسکه۲",
+        "symbol_mapping_confidence": "high",
+        "symbol_mapping_basis": "Exact instrument-name match with Sahmino's عسکه۲ instrument description; symbol itself is not printed in the workbook.",
+        "quantity_papers": 6645054,
+        "market_price_rial_per_paper_at_report_date": 2671158,
+        "book_cost_rial": 15837071677862,
+        "net_market_value_rial": 17808981048023,
+        "report_sheet": "اوراق",
+        "report_row": 9,
+        "report_columns": {
+          "quantity": "Q",
+          "market_price": "S",
+          "book_cost": "U",
+          "net_market_value": "W",
+          "weight": "Y"
+        },
+        "reconciliation_note": "Quantity × displayed per-paper market price differs from reported net market value by 58,991,895,491 rial (0.33235%); both reported values are retained without silent adjustment."
       },
       {
         "name": "سپرده بانکی",
@@ -94,15 +111,16 @@
     "این فایل، گزارش عملکرد/صورت وضعیت پرتفوی و درآمدهای مهر ۱۴۰۵ است و داده‌های استخراج‌شده از خود فایل‌اند.",
     "درصدها از ستون «درصد به کل دارایی‌ها» در برگه‌های پرتفوی خوانده شده‌اند.",
     "جمع درصدهای ردیف‌های قابل استخراج ۹۹٫۹۳۵۸٪ است؛ مانده ۰٫۰۶۴۲٪ نامشخص باقی گذاشته شده است.",
-    "درآمد شناسایی‌شده مهر عمدتاً ناشی از تغییر ارزش دارایی‌هاست و به‌تنهایی بازده NAV واحدها را نشان نمی‌دهد."
+    "درآمد شناسایی‌شده مهر عمدتاً ناشی از تغییر ارزش دارایی‌هاست و به‌تنهایی بازده NAV واحدها را نشان نمی‌دهد.",
+    "تعداد دارایی سلف استاندارد سکه مرکزی در شیت اوراق، ردیف 9، برابر 6,645,054 ورقه است. نگاشت به نماد عسکه۲ بر اساس تطبیق دقیق نام ابزار با صفحه سهمینو و با اطمینان بالا ثبت شده؛ نماد در خود گزارش چاپ نشده است."
   ],
   "secondary_snapshot": {
     "page_url": "https://bourseeye.com/funds/1521/صندوق-طلای-عیار-مفید",
     "page_updated_date": null,
-    "nav_redemption_toman": 66365.0,
-    "nav_subscription_toman": 66666.0,
+    "nav_redemption_toman": 66365,
+    "nav_subscription_toman": 66666,
     "nav_report_date": "۲۵ آبان ۱۴۰۵",
-    "aum_hamt": 356.0,
+    "aum_hamt": 356,
     "units": 5364853896,
     "composition_report_date": "۲۵ آبان ۱۴۰۵",
     "composition": [
@@ -116,7 +134,7 @@
       },
       {
         "name": "پنج سهم بزرگ",
-        "percent": 0.0
+        "percent": 0
       }
     ],
     "composition_categories_count": 3,
@@ -127,5 +145,23 @@
   },
   "secondary_source_status": "partial_secondary",
   "secondary_checked_at": "2026-11-18T23:18:18.678333+00:00",
-  "official_source_error": "Codal search failed: category=3,page=1: ConnectTimeout: HTTPSConnectionPool(host='search.codal.ir', port=443): Max retries exceeded with url: /api/search/v2/q?PageNumber=1&PageSize=100&Symbol=%D8%B9%DB%8C%D8%A7%D8%B1&Category=3&LetterType=-1&Length=-1&Audited=true&NotAudited=; category=-1,page=1: ConnectTimeout: HTTPSConnectionPool(host='search.codal.ir', port=443): Max retries exceeded with url: /api/search/v2/q?PageNumber=1&PageSize=100&Symbol=%D8%B9%DB%8C%D8%A7%D8%B1&Category=-1&LetterType=-1&Length=-1&Audited=true&NotAudited; Excel download failed: ConnectTimeout: HTTPSConnectionPool(host='excel.codal.ir', port=443): Max retries exceeded with url: /service/Excel/GetAll/ufnsMFNlCf60hOOObOOO9l4CQQQaQQQQ8w%3D%3D/0 (Caused by ConnectTimeoutError(<HTTPSConnection(host='excel.codal.ir', port=443) at 0x7943cb12d130>, 'Connection to excel.codal.ir timed out. (connect timeout=15)'))"
+  "official_source_error": "Codal search failed: category=3,page=1: ConnectTimeout: HTTPSConnectionPool(host='search.codal.ir', port=443): Max retries exceeded with url: /api/search/v2/q?PageNumber=1&PageSize=100&Symbol=%D8%B9%DB%8C%D8%A7%D8%B1&Category=3&LetterType=-1&Length=-1&Audited=true&NotAudited=; category=-1,page=1: ConnectTimeout: HTTPSConnectionPool(host='search.codal.ir', port=443): Max retries exceeded with url: /api/search/v2/q?PageNumber=1&PageSize=100&Symbol=%D8%B9%DB%8C%D8%A7%D8%B1&Category=-1&LetterType=-1&Length=-1&Audited=true&NotAudited; Excel download failed: ConnectTimeout: HTTPSConnectionPool(host='excel.codal.ir', port=443): Max retries exceeded with url: /service/Excel/GetAll/ufnsMFNlCf60hOOObOOO9l4CQQQaQQQQ8w%3D%3D/0 (Caused by ConnectTimeoutError(<HTTPSConnection(host='excel.codal.ir', port=443) at 0x7943cb12d130>, 'Connection to excel.codal.ir timed out. (connect timeout=15)'))",
+  "forward_holding_detail": {
+    "report_date_jalali": "1405/07/30",
+    "symbol": "عسکه۲",
+    "quantity_papers": 6645054,
+    "papers_per_coin": 1000,
+    "coin_equivalent": 6645.054,
+    "mapping_confidence": "high",
+    "ticker_explicitly_printed_in_report": false,
+    "latest_quote_date": "2026-11-18",
+    "latest_quote_jalali": "1405/08/27",
+    "latest_quote_rial_per_paper": 2485152,
+    "mark_to_market_rial_if_quantity_unchanged": 16513969238208,
+    "mark_to_market_toman_if_quantity_unchanged": 1651396923820.8,
+    "quantity_unchanged_since_report_assumption": true,
+    "next_session_jalali": "1405/08/30",
+    "next_session_gregorian": "2026-11-21",
+    "next_session_quote_available": false
+  }
 }
