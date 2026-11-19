@@ -72,6 +72,28 @@ def macd(values):
             j += 1
     return line, signal
 
+def build_positions(closes, volumes):
+    """Causal daily-close signals: each position[i] uses data no later than i."""
+    e20, e50, e200 = ema(closes, 20), ema(closes, 50), ema(closes, 200)
+    r14 = rsi(closes, 14)
+    mline, msig = macd(closes)
+    positions = {
+        "ema20_50": [int(a is not None and b is not None and a > b) for a, b in zip(e20, e50)],
+        "price_ema200": [int(a is not None and closes[i] > a) for i, a in enumerate(e200)],
+        "rsi14_above50": [int(a is not None and a > 50) for a in r14],
+        "macd_above_signal": [int(a is not None and b is not None and a > b) for a, b in zip(mline, msig)],
+        "breakout_20": [int(i >= 20 and closes[i] > max(closes[i-20:i])) for i in range(len(closes))],
+    }
+    rsi3070, state = [], 0
+    for value in r14:
+        if value is not None and value < 30:
+            state = 1
+        elif value is not None and value > 70:
+            state = 0
+        rsi3070.append(state)
+    positions["rsi30_70_hold"] = rsi3070
+    return positions
+
 
 def _metrics(equity_curve, dates, trades, start_capital, max_dd_pct, max_dd_toman, exposure, sessions):
     ending = equity_curve[-1]["equity_toman"] if equity_curve else start_capital
@@ -193,6 +215,14 @@ def simulate_long_cash(rows, positions, start_index, initial_capital=INITIAL_CAP
         })
         if curve:
             curve[-1]["equity_toman"] = round(cash, 2)
+    # Recalculate drawdown after final liquidation so exit costs are reflected.
+    peak, max_dd_pct, max_dd_toman = initial_capital, 0.0, 0.0
+    for point in curve:
+        equity = point["equity_toman"]
+        peak = max(peak, equity)
+        dd = equity / peak - 1 if peak else 0
+        max_dd_pct = min(max_dd_pct, dd)
+        max_dd_toman = max(max_dd_toman, peak - equity)
     metrics = _metrics(curve, [x["date"] for x in rows], trades, initial_capital,
                        max_dd_pct, max_dd_toman, exposure, len(curve))
     return {"metrics": metrics, "trades": trades, "equity_curve": curve}
@@ -203,25 +233,8 @@ def build_report(history):
     dates = [str(x["date"]) for x in rows]
     closes = [float(x["close"]) for x in rows]
     volumes = [float(x.get("volume", 0)) for x in rows]
-    e20, e50, e200 = ema(closes, 20), ema(closes, 50), ema(closes, 200)
-    r14 = rsi(closes, 14)
-    mline, msig = macd(closes)
     vma = sma(volumes, 20)
-    positions = {
-        "ema20_50": [int(a is not None and b is not None and a > b) for a, b in zip(e20, e50)],
-        "price_ema200": [int(a is not None and c > a) for a, c in zip(e200, closes)],
-        "rsi14_above50": [int(a is not None and a > 50) for a in r14],
-        "macd_above_signal": [int(a is not None and b is not None and a > b) for a, b in zip(mline, msig)],
-        "breakout_20": [int(i >= 20 and closes[i] > max(closes[i-20:i])) for i in range(len(closes))],
-    }
-    rsi3070, state = [], 0
-    for value in r14:
-        if value is not None and value < 30:
-            state = 1
-        elif value is not None and value > 70:
-            state = 0
-        rsi3070.append(state)
-    positions["rsi30_70_hold"] = rsi3070
+    positions = build_positions(closes, volumes)
 
     full_start = WARMUP
     oos_start = next((i for i, d in enumerate(dates) if d >= OOS_START), None)
@@ -238,7 +251,7 @@ def build_report(history):
 
     for key, signal in positions.items():
         full = simulate_long_cash(rows, signal, full_start)
-        oos = compact_curve(simulate_long_cash(rows, signal, max(full_start, oos_start)))
+        oos = compact_curve(simulate_long_cash(rows, signal, max(full_start, oos_start - 1)))
         strategy_results[key] = {
             "full_sample": {"metrics": full["metrics"]},
             "out_of_sample_from_2024": oos
@@ -246,7 +259,7 @@ def build_report(history):
 
     benchmark_signal = [1] * len(rows)
     full_benchmark = simulate_long_cash(rows, benchmark_signal, full_start)
-    oos_benchmark = compact_curve(simulate_long_cash(rows, benchmark_signal, max(full_start, oos_start)))
+    oos_benchmark = compact_curve(simulate_long_cash(rows, benchmark_signal, max(full_start, oos_start - 1)))
     strategy_results["buy_and_hold"] = {
         "full_sample": {"metrics": full_benchmark["metrics"]},
         "out_of_sample_from_2024": oos_benchmark
@@ -266,7 +279,7 @@ def build_report(history):
             }
 
     return {
-        "model_version": "2.0.0",
+        "model_version": "2.1.0",
         "generated_at": datetime.now(ZoneInfo("Asia/Tehran")).isoformat(),
         "history": {"valid_sessions": len(rows), "first_date": dates[0], "last_date": dates[-1], "warmup_sessions": WARMUP},
         "assumptions": {
@@ -278,6 +291,7 @@ def build_report(history):
             "position_sizing": "long/cash, integer fund units, all available cash, no leverage",
             "end_of_period": "any open position is liquidated at the final close and exit costs are charged",
             "oos_start": OOS_START,
+            "oos_execution": "first OOS session may execute a signal generated at the immediately preceding close; portfolio starts in cash",
             "annualization_sessions": 252
         },
         "strategies": strategy_results,
@@ -287,7 +301,8 @@ def build_report(history):
             "Commission and slippage are estimates, not verified current broker/fund tariffs; results should be rerun with the user's actual costs.",
             "The model assumes integer fund units, all-in long-only positions, no leverage, no tax, no order queue, no partial fills and no liquidity/market-impact constraints.",
             "When next-session open is absent or zero, next-session close is used as an execution proxy; this is less realistic than tick-level execution.",
-            "Signals are generated from daily closing prices and executed no earlier than the next session.",
+            "Signals are generated from daily closing prices and executed no earlier than the next session; each indicator is computed causally using only current and prior observations.",
+            "No confirmed local-bottom/local-top strategy is tested; indicator strategies do not buy at hindsight-identified lows or sell at hindsight-identified highs.",
             "A strategy and buy-and-hold each start independently in cash at the beginning of each test period; inherited positions are not carried into OOS.",
             "Open positions are liquidated at the end of the test period and the exit fee/slippage are included.",
             "OOS from 2024 covers one particular market regime and does not establish future predictive power; avoid selecting a strategy solely by historical CAGR."
