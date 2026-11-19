@@ -10,6 +10,7 @@ on:
       - 'scripts/calculate_ayar_fair_nav.py'
       - 'scripts/component_valuation.py'
       - 'tests/test_component_quotes.py'
+      - 'tests/test_component_valuation.py'
   schedule:
     # 18:15 Tehran time, after the 18:00 commodity-certificate session.
     # Saturday through Wednesday (Iran trading week).
@@ -20,7 +21,7 @@ permissions:
 
 concurrency:
   group: ayar-codal-component-refresh
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 jobs:
   refresh:
