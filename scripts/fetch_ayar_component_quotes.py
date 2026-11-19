@@ -1,11 +1,10 @@
 #!/usr/bin/env python3
 """Fetch synchronized Ayar component quotes after the commodity market close.
 
-Sources: Bourseeye commodity certificates and Sahmino's Aske2 quote history.
+Sources: Bourseeye commodity certificates and the public Iran Mercantile Exchange standard-salaf history.
 Only same-session, explicitly dated quotes are promoted into the fair-NAV input.
 """
 import json
-import os
 import re
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -177,6 +176,57 @@ def sahmino_quote(url):
     return parse_sahmino_quote_text(get_text(url), url)
 
 
+
+def normalize_symbol(value):
+    return clean(value).replace(" ", "").replace("‌", "")
+
+
+def parse_ime_salaf_frame(history, source_url="https://www.ime.co.ir/standard-transactions.html"):
+    """Select the exact Aske2 instrument from public IME daily salaf history."""
+    if history is None or getattr(history, "empty", True):
+        raise ValueError("ime_salaf_history_empty")
+    required = {"Symbol", "Code", "GregorianDate", "JalaliDate", "ClosingPrice", "TradeVolume"}
+    missing = required - set(history.columns)
+    if missing:
+        raise ValueError(f"ime_salaf_schema_missing:{','.join(sorted(missing))}")
+    target = normalize_symbol("عسکه۲")
+    matches = history[history["Symbol"].map(normalize_symbol) == target].copy()
+    if matches.empty:
+        symbols = sorted({clean(x) for x in history["Symbol"].dropna().tolist()})
+        raise ValueError("ime_aske2_symbol_not_found:" + ",".join(symbols[:20]))
+    matches["_date"] = matches["GregorianDate"].astype(str).str[:10]
+    latest_date = matches["_date"].max()
+    latest = matches[matches["_date"] == latest_date]
+    if len(latest) != 1:
+        raise ValueError(f"ime_aske2_duplicate_daily_rows:{latest_date}:{len(latest)}")
+    row = latest.iloc[0]
+    date_iso = str(row["_date"])
+    if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", date_iso):
+        raise ValueError("ime_aske2_gregorian_date_invalid")
+    price = number(row["ClosingPrice"])
+    if price <= 0:
+        raise ValueError("ime_aske2_close_nonpositive")
+    return {
+        "key": "coin_forward",
+        "symbol": clean(row["Symbol"]),
+        "instrument_code": clean(row["Code"]),
+        "price": price,
+        "volume": number(row["TradeVolume"]),
+        "unit": "rial_per_paper",
+        "jalali_date": clean(row["JalaliDate"]).replace("-", "/"),
+        "date": date_iso,
+        "source": source_url,
+        "price_type": "official_daily_close",
+    }
+
+
+def ime_salaf_quote():
+    # fima is an MIT-licensed client for public IME endpoints; no API key/token.
+    from fima.IME import get_all_ime_salaf_trades
+    history = get_all_ime_salaf_trades(start_date="1405-06-21")
+    return parse_ime_salaf_frame(history)
+
+
 def expected_exchange_session_date(now):
     # Commodity-certificate sessions are scheduled Saturday through Wednesday.
     # Thursday and Friday use the most recent scheduled session, unless an
@@ -251,7 +301,7 @@ def apply_base_forward_anchor(quotes, errors, data, expected_session):
         "unit": "rial_per_paper",
         "jalali_date": snapshot.get("quote_jalali"),
         "date": anchor_date,
-        "source": snapshot.get("source_price_history", "https://sahmino.com/symbol/sske?tab=chart"),
+        "source": snapshot.get("source_price_history", "https://www.ime.co.ir/standard-transactions.html"),
         "price_type": "same_session_base_anchor",
         "anchor_fallback": True,
     }
@@ -277,7 +327,7 @@ def main():
         except Exception as exc:
             errors[key] = f"{type(exc).__name__}: {str(exc)[:220]}"
     try:
-        quotes["coin_forward"] = sahmino_quote("https://sahmino.com/symbol/sske?tab=chart")
+        quotes["coin_forward"] = ime_salaf_quote()
     except Exception as exc:
         errors["coin_forward"] = f"{type(exc).__name__}: {str(exc)[:220]}"
 
