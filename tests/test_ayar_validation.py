@@ -67,7 +67,7 @@ class AyarPnlBacktestTests(unittest.TestCase):
             {"date":"20240102","open":1000,"close":1100},
             {"date":"20240103","open":1200,"close":1200},
         ]
-        free = simulate_long_cash(rows, [0,1,0], 0, initial_capital=100000, fee=0, slippage=0)
+        free = simulate_long_cash(rows, [1,0,0], 0, initial_capital=100000, fee=0, slippage=0)
         costly = simulate_long_cash(rows, [1,0,0], 0, initial_capital=100000, fee=0.002, slippage=0.001)
         self.assertGreater(free["metrics"]["net_pnl_toman"], costly["metrics"]["net_pnl_toman"])
 
