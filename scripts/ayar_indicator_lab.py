@@ -83,7 +83,7 @@ def performance(returns, positions, dates, closes, start_i, fee=FEE):
     net_returns = []
     for i in range(start_i, len(closes)):
         signal = int(positions[i - 1])
-        prior = int(positions[i - 2]) if i >= 2 else 0
+        prior = 0 if i == WARMUP + 1 else (int(positions[i - 2]) if i >= 2 else 0)
         change = abs(signal - prior)
         raw = closes[i] / closes[i - 1] - 1
         final_exit = int(i == len(closes) - 1 and signal == 1)
