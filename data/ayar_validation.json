@@ -7,9 +7,9 @@
   "technical": {
     "model": "EMA20_above_EMA50_long_or_cash",
     "model_version": "1.0.0",
-    "execution_assumption": "signal at close; position change at that close; following close-to-close return counted; no look-ahead",
+    "execution_assumption": "signal at close; position change at that close; following close-to-close return counted; no look-ahead; final positions liquidated for comparison",
     "fee_assumption_per_side_pct": 0.15,
-    "fee_assumption_note": "Assumed 0.15% per side is charged on strategy position changes and on the benchmark entry/exit; replace with verified transaction costs before using as a live performance estimate.",
+    "fee_assumption_note": "Assumed 0.15% per side is charged on strategy position changes and benchmark entry/exit; replace with verified transaction costs before using as a live performance estimate.",
     "history": {
       "valid_sessions": 1977,
       "first_date": "20180609",
@@ -19,10 +19,10 @@
     "full_sample": {
       "strategy": {
         "sessions": 1927,
-        "total_return_pct": 4625.2371,
-        "cagr_pct": 65.5655,
+        "total_return_pct": 4618.1493,
+        "cagr_pct": 65.533,
         "annualized_volatility_pct": 41.2328,
-        "sharpe_ratio_rf0": 1.4301,
+        "sharpe_ratio_rf0": 1.4296,
         "max_drawdown_pct": -50.7017
       },
       "buy_and_hold": {
@@ -34,17 +34,17 @@
         "max_drawdown_pct": -50.6276
       },
       "position_changes": 21,
-      "completed_round_trips": 10,
-      "trade_win_rate_pct": 80,
-      "average_closed_trade_return_pct": 48.8472
+      "completed_round_trips": 11,
+      "trade_win_rate_pct": 81.82,
+      "average_closed_trade_return_pct": 46.8714
     },
     "out_of_sample_from_2024": {
       "strategy": {
         "sessions": 663,
-        "total_return_pct": 802.8776,
-        "cagr_pct": 130.7945,
-        "annualized_volatility_pct": 38.8787,
-        "sharpe_ratio_rf0": 2.3489,
+        "total_return_pct": 801.5233,
+        "cagr_pct": 130.6629,
+        "annualized_volatility_pct": 38.8789,
+        "sharpe_ratio_rf0": 2.3474,
         "max_drawdown_pct": -32.3194
       },
       "buy_and_hold": {
@@ -56,9 +56,9 @@
         "max_drawdown_pct": -32.3194
       },
       "position_changes": 8,
-      "completed_round_trips": 3,
-      "trade_win_rate_pct": 66.67,
-      "average_closed_trade_return_pct": 67.0648
+      "completed_round_trips": 4,
+      "trade_win_rate_pct": 75,
+      "average_closed_trade_return_pct": 57.0769
     },
     "forward_signal_hit_rates": {
       "1": {
