@@ -16,18 +16,18 @@
       "bank_deposit": 0.0009293248536181528
     },
     "unclassified_weight_pct": 0.06423705081552988,
-    "xau_base_usd_oz": 3753.9,
+    "xau_base_usd_oz": 3727.64,
     "xau_base_date": "2026-11-18",
-    "xau_base_source": "FXEmpire historical XAU close; https://www.fxempire.com/commodities/gold/history",
-    "xau_now_usd_oz": 3732.38,
+    "xau_base_source": "TGJU XAU/USD history close 2026-11-18; https://english.tgju.org/profile/forex-xau-usd/history",
+    "xau_now_usd_oz": 3730.41,
     "xau_now_date": "2026-11-19",
-    "xau_now_source": "FXEmpire XAU daily quote; https://www.fxempire.com/commodities/gold/history",
-    "usd_base_toman": 266629,
+    "xau_now_source": "TGJU XAU/USD latest observed quote on 2026-11-19; https://english.tgju.org/profile/forex-xau-usd/history",
+    "usd_base_toman": 266730,
     "usd_base_date_jalali": "1405/08/27",
-    "usd_base_source": "NerkhAra daily historical quote; https://nerkhara.com/dollar/",
-    "usd_now_toman": 266315,
+    "usd_base_source": "EZRate daily close 2026-11-18; https://ezrate.me/history/en",
+    "usd_now_toman": 266300,
     "usd_now_date_jalali": "1405/08/28",
-    "usd_now_source": "NerkhAra free-market USD; https://nerkhara.com/dollar/",
+    "usd_now_source": "EZRate daily close 2026-11-19; https://ezrate.me/history/en",
     "silver_usd_change_pct": 0.42,
     "silver_change_date": "2026-11-19",
     "silver_source": "Kalameh market snapshot; https://www.kalamehfarsi.tv/en/economy/",
@@ -88,19 +88,28 @@
       "unclassified_residual"
     ],
     "engine_execution_status": "isolated_engine_checks_passed; GitHub Actions/production runtime not confirmed",
-    "note": "شمش با شاخص طلای ریالی مستقل قابل محاسبه است؛ به‌دلیل نبود قیمت روز برای گواهی سکه، نقره و عسکه۲، نبود ورودی accrual سپرده و تفکیک مانده نامشخص، NAV کامل عمداً منتشر نمی‌شود.",
+    "note": "شاخص مستقل شمش با ورودی‌های 19 نوامبر تازه شد؛ قیمت‌های مستقیم سایر اجزا هنوز quote هم‌تاریخ ندارند و NAV کامل عمداً منتشر نمی‌شود.",
     "partial_component_marks": {
       "gold_bullion": {
         "base_allocated_nav_rial": 581638.83,
-        "xau_usd_return_pct": -0.57327,
-        "usd_toman_return_pct": -0.117767,
-        "combined_gold_local_return_pct": -0.690362,
-        "proxy_marked_value_rial": 577623.42,
-        "method": "XAUUSD × USD/IRR; spot proxy only",
-        "status": "partial_mark_available"
+        "xau_base_usd_oz": 3727.64,
+        "xau_current_usd_oz": 3730.41,
+        "xau_usd_return_pct": 0.07431,
+        "usd_base_toman": 266730,
+        "usd_current_toman": 266300,
+        "usd_toman_return_pct": -0.161212,
+        "combined_gold_local_return_pct": -0.087022,
+        "proxy_marked_value_rial": 581132.68,
+        "method": "TGJU XAU/USD × EZRate USD/IRR daily closes; same-date daily proxy",
+        "source_dates": [
+          "2026-11-18",
+          "2026-11-19"
+        ],
+        "status": "partial_mark_available",
+        "caveat": "XAU latest observation and USD daily close are on the same calendar date but not guaranteed to be identical timestamps; proxy only, not official bullion valuation."
       }
     },
-    "known_component_value_sum_rial": 577623.42,
+    "known_component_value_sum_rial": 581132.68,
     "full_nav_is_not_known_component_sum": true
   },
   "component_market_snapshot": {
@@ -153,7 +162,9 @@
       "https://www.tgju.org/coin",
       "https://sahmino.com/symbol/sske?tab=chart",
       "https://bourseeye.com/commodities/1504/سکه-طلا",
-      "https://bourseeye.com/commodities/1503/شمش-طلا"
+      "https://bourseeye.com/commodities/1503/شمش-طلا",
+      "https://english.tgju.org/profile/forex-xau-usd/history",
+      "https://ezrate.me/history/en"
     ],
     "caveats": [
       "Coin and gold-bar certificate quotes are the last available trades on 27 Aban/18 Nov, not live 19 Nov quotes.",
@@ -162,7 +173,7 @@
       "Point-in-time premiums cannot be applied as daily changes without a second synchronized quote.",
       "No reliable direct quote for the fund's coin-forward position was found."
     ],
-    "market_session_note": "آخرین جلسه مشترک قابل اتکا برای گواهی سکه، گواهی شمش و عسکه۲، 27 آبان 1405 / 2026-11-18 است. 28 و 29 آبان 1405 پنجشنبه و جمعه و تعطیلی هفتگی بازار ایران‌اند؛ جلسه معاملاتی بعدی شنبه 30 آبان / 2026-11-21 است و هنوز قیمت آن جلسه وجود ندارد.",
+    "market_session_note": "قیمت‌های مستقیم آخرین جلسه قابل اتکای گواهی سکه، شمش و نقره و عسکه۲ همچنان 27 آبان 1405 / 18 نوامبر هستند. قیمت‌های مستقیم جدیدتر برای این ابزارها پیدا نشد؛ بنابراین در مدل نسخه 2 قیمت قدیمی به‌عنوان quote روز جاری حمل نمی‌شود.",
     "coin_forward": {
       "symbol": "عسکه۲",
       "issuer": "بانک مرکزی جمهوری اسلامی ایران",
@@ -297,7 +308,7 @@
         "limitation": "0.064237% of portfolio remains unclassified"
       }
     ],
-    "current_status": "partial_inputs_no_full_nav",
+    "current_status": "gold_spot_proxy_refreshed_other_components_waiting_for_same_day_quotes",
     "full_nav_allowed_only_if": "all non-zero-weight components have valid valuation inputs for the same as-of date and portfolio holdings/weights are current",
     "no_stale_quote_carry_forward": true,
     "no_unpriced_component_assigned_zero_return": true,
