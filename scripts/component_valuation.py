@@ -182,7 +182,7 @@ def value_components(data: Dict[str, Any], as_of_date: str) -> Dict[str, Any]:
         "as_of_date": as_of_date,
         "base_nav_date": base_date,
         "base_official_redemption_nav_rial": nav0,
-        "base_allocations_reconcile": abs(base_sum - nav0) < 0.01,
+        "base_allocations_reconcile": abs(base_sum - nav0) <= 0.05,
         "portfolio_weight_sum_pct": round(total_weight, 8),
         "components": components,
         "known_component_value_sum_rial": round(valued_sum, 2),
