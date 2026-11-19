@@ -101,15 +101,29 @@
       "calculation_reproduced": true,
       "official_nav_not_replaced": true,
       "current_market_premium_not_calculated_due_to_non_synchronous_quote": true,
-      "component_premiums_reproduced": true
+      "component_premiums_reproduced": true,
+      "forward_price_unit_conversion_valid": true,
+      "forward_mark_to_market_reproduced": true,
+      "current_fair_nav_refreshed": false
     },
     "component_market_diagnostic": {
-      "coin_certificate_premium_pct": 5.2279,
-      "gold_bar_certificate_premium_pct": 0.7722,
+      "coin_certificate_premium_vs_fine_gold_pct": 5.2279,
+      "gold_bar_certificate_premium_vs_fine_gold_pct": 0.7722,
       "premium_gap_percentage_points": 4.4556,
-      "forward_component_directly_priced": false,
+      "forward": {
+        "symbol": "عسکه۲",
+        "price_toman_per_coin_equivalent": 248515200,
+        "premium_vs_coin_certificate_pct": 0.2279,
+        "premium_vs_fine_gold_spot_pct": 5.4677,
+        "conditional_maturity_floor_toman": 252199000,
+        "discount_to_conditional_floor_pct": 1.4607,
+        "implied_simple_annualized_return_to_floor_pct": 25.7642,
+        "implied_compound_annualized_return_to_floor_pct": 29.1431,
+        "remaining_calendar_days": 21
+      },
+      "forward_component_directly_priced": true,
       "current_fair_nav_refreshed": false,
-      "reason": "Latest component quotes are dated 2026-11-18, the same date as the base official NAV; no synchronized newer commodity quote was available to update the 2026-11-19 estimate."
+      "reason": "All three component quotes are synchronized to 2026-11-18, the same date as the last official NAV. Aske2 can now be marked to market, but no later common-session quote exists to roll NAV beyond 2026-11-18."
     }
   },
   "component_market_snapshot": {
