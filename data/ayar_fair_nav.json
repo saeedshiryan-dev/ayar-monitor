@@ -19,13 +19,13 @@
     "xau_base_usd_oz": 3727.64,
     "xau_base_date": "2026-11-18",
     "xau_base_source": "TGJU XAU/USD history close 2026-11-18; https://english.tgju.org/profile/forex-xau-usd/history",
-    "xau_now_usd_oz": 3730.41,
-    "xau_now_date": "2026-11-19",
+    "xau_now_usd_oz": 3727.64,
+    "xau_now_date": "2026-11-18",
     "xau_now_source": "TGJU XAU/USD latest observed quote on 2026-11-19; https://english.tgju.org/profile/forex-xau-usd/history",
     "usd_base_toman": 266730,
     "usd_base_date_jalali": "1405/08/27",
     "usd_base_source": "EZRate daily close 2026-11-18; https://ezrate.me/history/en",
-    "usd_now_toman": 266300,
+    "usd_now_toman": 266730,
     "usd_now_date_jalali": "1405/08/28",
     "usd_now_source": "EZRate daily close 2026-11-19; https://ezrate.me/history/en",
     "silver_usd_change_pct": 0.42,
@@ -34,17 +34,18 @@
     "latest_market_quote_check_date": "2026-11-19",
     "latest_common_exchange_session": "2026-11-18",
     "latest_common_exchange_session_jalali": "1405/08/27",
-    "next_session_quotes_available": false,
+    "next_session_quotes_available": true,
     "forward_holding_mapping_confirmed": true,
     "forward_holding_quantity_confirmed": true,
     "next_scheduled_exchange_session_jalali": "1405/08/30",
     "next_scheduled_exchange_session_gregorian": "2026-11-21",
     "next_session_market_status": "not_yet_traded_weekend_closure_on_1405/08/28_and_1405/08/29",
-    "valuation_as_of_date": "2026-11-19",
+    "valuation_as_of_date": "2026-11-18",
     "usd_base_date": "2026-11-18",
-    "usd_now_date": "2026-11-19",
+    "usd_now_date": "2026-11-18",
     "bank_deposit_annual_rate_pct": null,
-    "bank_deposit_accrual_start_date": null
+    "bank_deposit_accrual_start_date": null,
+    "latest_component_quotes_retrieved_at": "2026-11-19T17:26:43.011531+03:30"
   },
   "assumptions": [
     "مدل نسخه 2 هر طبقه دارایی را با روش مستقل ارزش‌گذاری می‌کند؛ هیچ بتای یکسانی برای شمش، گواهی سکه و سلف اعمال نمی‌شود.",
@@ -76,21 +77,18 @@
   ],
   "calculation": {
     "method": "independent_component_valuation_v2_no_stale_quote_carry_forward",
-    "valuation_as_of_date": "2026-11-19",
+    "valuation_as_of_date": "2026-11-18",
     "official_nav_not_replaced": true,
     "indicative_nav_rial": null,
     "indicative_nav_toman": null,
     "full_nav_status": "blocked_missing_component_marks",
     "missing_component_marks": [
-      "coin_certificates",
-      "silver",
-      "coin_forward",
       "bank_deposit",
       "unclassified_residual"
     ],
     "component_valuation": {
       "model_version": "2.0.0",
-      "as_of_date": "2026-11-19",
+      "as_of_date": "2026-11-18",
       "base_nav_date": "2026-11-18",
       "portfolio_weights_source_date_jalali": "1405/07/30",
       "base_allocations_are_weighted_nav_estimates_not_confirmed_holdings": true,
@@ -104,8 +102,8 @@
           "weight_pct": 87.65865306,
           "base_allocated_nav_rial": 581638.83,
           "valuation_method": "spot_index_proxy",
-          "return_pct": -0.087022,
-          "valued_amount_rial": 581132.68,
+          "return_pct": 0.0,
+          "valued_amount_rial": 581638.83,
           "status": "fine_gold_spot_proxy_xauusd_times_usd",
           "detail": {
             "proxy": "XAUUSD × USD/IRR",
@@ -119,16 +117,16 @@
           "weight_pct": 11.20971945,
           "base_allocated_nav_rial": 74379.52,
           "valuation_method": "direct_exchange_quote",
-          "return_pct": null,
-          "valued_amount_rial": null,
-          "status": "missing_base_or_current_quote",
+          "return_pct": 0.0,
+          "valued_amount_rial": 74379.52,
+          "status": "same_session_anchor",
           "detail": {
             "unit": "one full new-design Bahar Azadi coin",
             "base_price_toman": 247950130,
             "base_quote_date": "2026-11-18",
             "premium_vs_fine_gold_at_anchor_pct": 5.227878180873247,
-            "current_quote_date": null,
-            "current_price_toman": null
+            "current_quote_date": "2026-11-18",
+            "current_price_toman": 247950130
           }
         },
         {
@@ -137,15 +135,15 @@
           "weight_pct": 0.61093504,
           "base_allocated_nav_rial": 4053.72,
           "valuation_method": "direct_exchange_quote",
-          "return_pct": null,
-          "valued_amount_rial": null,
-          "status": "missing_base_or_current_quote",
+          "return_pct": 0.0,
+          "valued_amount_rial": 4053.72,
+          "status": "same_session_anchor",
           "detail": {
             "unit": "toman_per_gram",
             "base_price_toman_per_gram": 419000,
             "base_quote_date": "2026-11-18",
-            "current_price_toman_per_gram": null,
-            "current_quote_date": null
+            "current_price_toman_per_gram": 419000,
+            "current_quote_date": "2026-11-18"
           }
         },
         {
@@ -154,15 +152,15 @@
           "weight_pct": 0.45552608,
           "base_allocated_nav_rial": 3022.54,
           "valuation_method": "direct_exchange_quote_and_contract_payoff",
-          "return_pct": null,
-          "valued_amount_rial": null,
-          "status": "missing_base_or_current_quote",
+          "return_pct": 0.0,
+          "valued_amount_rial": 3022.54,
+          "status": "same_session_anchor",
           "detail": {
             "symbol": "عسکه۲",
             "unit": "rial_per_paper",
             "papers_held_at_month_end": 6645054,
             "base_price_rial_per_paper": 2485152,
-            "current_price_rial_per_paper": null,
+            "current_price_rial_per_paper": 2485152,
             "maturity_date": "2026-12-09",
             "conditional_maturity_floor_toman_per_coin": 252199000.0,
             "maturity_floor_is_not_early_exit_price": true,
@@ -197,13 +195,10 @@
           }
         }
       ],
-      "known_component_value_sum_rial": 581132.68,
+      "known_component_value_sum_rial": 663094.61,
       "full_indicative_nav_rial": null,
       "full_nav_status": "blocked_missing_component_marks",
       "missing_component_marks": [
-        "coin_certificates",
-        "silver",
-        "coin_forward",
         "bank_deposit",
         "unclassified_residual"
       ],
@@ -268,8 +263,9 @@
       "price_type": "last_trade",
       "trade_date": "2026-11-18",
       "source": "https://bourseeye.com/commodities/1504/سکه-طلا",
-      "current_price_toman_per_certificate": null,
-      "current_quote_date": null
+      "current_price_toman_per_certificate": 247950130,
+      "current_quote_date": "2026-11-18",
+      "current_quote_source": "https://bourseeye.com/commodities/1504/سکه-طلا"
     },
     "gold_bar_certificate": {
       "price_toman_per_certificate": 3226600,
@@ -280,15 +276,19 @@
       "premium_pct": 0.7722379584760741,
       "price_type": "last_trade",
       "trade_date": "2026-11-18",
-      "source": "https://bourseeye.com/commodities/1503/شمش-طلا"
+      "source": "https://bourseeye.com/commodities/1503/شمش-طلا",
+      "current_price_toman_per_certificate": 3226600,
+      "current_quote_date": "2026-11-18",
+      "current_quote_source": "https://bourseeye.com/commodities/1503/شمش-طلا"
     },
     "silver_bar_certificate": {
       "price_toman_per_gram": 419000,
       "daily_change_pct": -1.28,
       "date": "2026-11-18",
       "note": "Exchange quote; no synchronized USD silver close captured for direct premium calculation.",
-      "current_price_toman_per_gram": null,
-      "current_quote_date": null
+      "current_price_toman_per_gram": 419000,
+      "current_quote_date": "2026-11-18",
+      "current_quote_source": "https://bourseeye.com/commodities/1507/شمش-نقره"
     },
     "forward_coin": {
       "status": "legacy_alias_not_used_for_valuation",
@@ -394,9 +394,10 @@
           "quantity_unchanged_is_assumption": true
         }
       },
-      "current_price_rial_per_paper": null,
-      "current_quote_date": null,
-      "fine_gold_intrinsic_toman": 235631597.15
+      "current_price_rial_per_paper": 2485152,
+      "current_quote_date": "2026-11-18",
+      "fine_gold_intrinsic_toman": 235631597.15,
+      "current_quote_source": "https://sahmino.com/symbol/sske?tab=chart"
     },
     "last_rechecked_at": "2026-11-19",
     "next_session": {
@@ -405,7 +406,9 @@
       "status": "scheduled_not_yet_traded",
       "quotes_available": false,
       "reason": "28 and 29 Aban are the Iranian Thursday-Friday weekly market closure."
-    }
+    },
+    "current_quote_session_date": "2026-11-18",
+    "current_quote_session_jalali": "1405/08/27"
   },
   "component_valuation_model": {
     "version": "2.0.0",

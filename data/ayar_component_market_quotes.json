@@ -1,13 +1,14 @@
 {
-  "status": "quotes_not_synchronized_or_not_current",
-  "retrieved_at": "2026-11-19T17:22:49.844487+03:30",
+  "status": "synchronized_latest_exchange_session",
+  "retrieved_at": "2026-11-19T17:26:43.011531+03:30",
   "expected_session_date_gregorian": "2026-11-18",
   "calendar_rule": "Iran commodity-certificate sessions scheduled Saturday-Wednesday; Thursday/Friday resolve to the preceding Wednesday unless a holiday intervenes.",
-  "common_quote_date_gregorian": null,
-  "common_quote_date_jalali": null,
-  "macro_quotes_synchronized": false,
-  "macro_sync_reason": "component_quotes_not_synchronized",
-  "promoted_to_valuation_model": false,
+  "common_quote_date_gregorian": "2026-11-18",
+  "common_quote_date_jalali": "1405/08/27",
+  "macro_quotes_synchronized": true,
+  "base_anchor_fallback_used": true,
+  "macro_sync_reason": "same_session_base_nav_anchor",
+  "promoted_to_valuation_model": true,
   "quotes": {
     "coin_certificate": {
       "key": "coin_certificate",
@@ -35,16 +36,28 @@
       "date": "2026-11-18",
       "source": "https://bourseeye.com/commodities/1507/شمش-نقره",
       "price_type": "last_trade"
+    },
+    "coin_forward": {
+      "key": "coin_forward",
+      "symbol": "عسکه۲",
+      "price": 2485152,
+      "unit": "rial_per_paper",
+      "jalali_date": "1405/08/27",
+      "date": "2026-11-18",
+      "source": "https://sahmino.com/symbol/sske?tab=chart",
+      "price_type": "same_session_base_anchor",
+      "anchor_fallback": true
     }
   },
   "errors": {
-    "coin_forward": "ValueError: aske2_history_date_not_found"
+    "coin_forward_refresh_error": "ValueError: aske2_history_date_not_found"
   },
   "rules": [
     "Only explicitly dated last-trade/daily-close quotes are accepted.",
     "All four component quotes must share the latest scheduled exchange session before promotion.",
     "USD and XAU macro quotes must also match that exchange session; the official NAV anchor is used only when the session equals the base NAV date.",
     "Thursday and Friday are mapped to the preceding Wednesday; unmodeled holidays still block promotion when quote dates differ.",
+    "A previously verified base Aske2 quote may only anchor the exact same base-NAV exchange session; it is never carried into a later session.",
     "No previous-session quote is carried forward beyond the latest scheduled exchange session.",
     "Gold-bar certificate is recorded as a market reference only; it is not treated as a separately disclosed portfolio holding."
   ]
