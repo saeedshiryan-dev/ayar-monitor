@@ -37,9 +37,9 @@ jobs:
           python-version: "3.12"
 
       - name: Install data dependencies
-        run: python -m pip install --upgrade requests openpyxl jdatetime
+        run: python -m pip install --upgrade requests openpyxl jdatetime 'fima==0.17.0'
 
-      # Includes Aske2 API parsing, exact-session anchor fallback, and stale-data guards.
+      # Includes public IME Aske2 parsing, exact-session anchor fallback, and stale-data guards.
       - name: Validate fundamental data parsers and valuation guards
         run: python -m unittest discover -s tests -p 'test_*.py'
 
@@ -48,9 +48,7 @@ jobs:
           CODAL_HTTP_PROXY: ${{ secrets.CODAL_HTTP_PROXY }}
         run: python scripts/fetch_ayar_codal_portfolio.py
 
-      - name: Fetch dated component market quotes
-        env:
-          SAHMINO_API_TOKEN: ${{ secrets.SAHMINO_API_TOKEN }}
+      - name: Fetch dated component market quotes (public IME, no token)
         run: python scripts/fetch_ayar_component_quotes.py
 
       - name: Recalculate component valuation with stale-quote gate
