@@ -1,7 +1,8 @@
 """Independent, component-level valuation engine for Ayar fund.
 
-No stale quote is treated as a current quote. The engine returns a full NAV
-only when every non-zero portfolio component has a valid valuation for as_of.
+No stale quote is treated as current. Non-market balance-sheet items can be
+anchored to the official NAV only on the exact official NAV date; later dates
+require a disclosed accrual or a refreshed balance-sheet breakdown.
 """
 from datetime import date
 from typing import Any, Dict, Optional
@@ -145,9 +146,15 @@ def value_components(data: Dict[str, Any], as_of_date: str) -> Dict[str, Any]:
                 if days >= 0:
                     ret = rate / 100.0 * days / 365.0
                     status = "simple_daily_accrual_from_disclosed_rate"
+            if ret is None and as_of_date == base_date:
+                # The official redemption NAV already includes deposits and their
+                # accrued interest on this exact date. This is an anchor, not a
+                # zero-return assumption for any later session.
+                ret, status = 0.0, "official_nav_same_session_anchor"
             detail = {
                 "annual_rate_pct": inputs.get("bank_deposit_annual_rate_pct"),
                 "accrual_start_date": inputs.get("bank_deposit_accrual_start_date"),
+                "anchor_rule": "official NAV absorbs the balance and accrued interest only on base_nav_date",
             }
 
         value = base_value * (1.0 + ret) if ret is not None else None
@@ -156,7 +163,7 @@ def value_components(data: Dict[str, Any], as_of_date: str) -> Dict[str, Any]:
             "name_fa": label,
             "weight_pct": round(weight, 8),
             "base_allocated_nav_rial": round(base_value, 2),
-            "valuation_method": method,
+            "valuation_method": "official_nav_same_session_anchor" if status == "official_nav_same_session_anchor" else method,
             "return_pct": round(ret * 100.0, 6) if ret is not None else None,
             "valued_amount_rial": round(value, 2) if value is not None else None,
             "status": status,
@@ -165,16 +172,20 @@ def value_components(data: Dict[str, Any], as_of_date: str) -> Dict[str, Any]:
 
     residual_weight = float(inputs["unclassified_weight_pct"])
     residual_value = nav0 * residual_weight / 100.0
+    residual_is_base_anchor = as_of_date == base_date
     components.append({
         "key": "unclassified_residual",
         "name_fa": "مانده طبقه‌بندی‌نشده گزارش",
         "weight_pct": round(residual_weight, 8),
         "base_allocated_nav_rial": round(residual_value, 2),
-        "valuation_method": "unclassified_no_mark",
-        "return_pct": None,
-        "valued_amount_rial": None,
-        "status": "unclassified_requires_source_breakdown",
-        "detail": {"do_not_assume_zero_return": True},
+        "valuation_method": "official_nav_same_session_anchor" if residual_is_base_anchor else "unclassified_no_mark",
+        "return_pct": 0.0 if residual_is_base_anchor else None,
+        "valued_amount_rial": round(residual_value, 2) if residual_is_base_anchor else None,
+        "status": "official_nav_same_session_anchor" if residual_is_base_anchor else "unclassified_requires_source_breakdown",
+        "detail": {
+            "do_not_assume_zero_return_after_base_date": True,
+            "anchor_rule": "official NAV includes the entire residual balance only on the exact base NAV date",
+        },
     })
 
     missing = [c["key"] for c in components if c["weight_pct"] > 0 and c["valued_amount_rial"] is None]
@@ -182,7 +193,7 @@ def value_components(data: Dict[str, Any], as_of_date: str) -> Dict[str, Any]:
     valued_sum = sum(c["valued_amount_rial"] for c in components if c["valued_amount_rial"] is not None)
     base_sum = sum(c["base_allocated_nav_rial"] for c in components)
     return {
-        "model_version": "2.0.0",
+        "model_version": "2.1.0",
         "as_of_date": as_of_date,
         "base_nav_date": base_date,
         "portfolio_weights_source_date_jalali": inputs.get("portfolio_report_date_jalali"),
@@ -201,7 +212,7 @@ def value_components(data: Dict[str, Any], as_of_date: str) -> Dict[str, Any]:
             "شمش با شاخص طلای خالص XAUUSD×دلار به‌عنوان proxy قیمت‌گذاری می‌شود؛ وزن دقیق طلای خالص، عیار، هزینه نگهداری و پریمیوم/تخفیف فروش در گزارش تجمیعی موجود نیست.",
             "گواهی سکه و نقره فقط با قیمت معامله هم‌تاریخ ارزش‌گذاری می‌شوند؛ در نبود قیمت جلسه جاری، ارزش روز آن‌ها نامعلوم می‌ماند.",
             "سلف با قیمت مستقیم نماد و جدا از طلای نقدی ارزش‌گذاری می‌شود؛ کف سررسید فقط مشروط به مفاد قرارداد است و جای قیمت خروج زودهنگام را نمی‌گیرد.",
-            "سپرده بانکی به نرخ و تاریخ شروع سود نیاز دارد؛ مانده طبقه‌بندی‌نشده نیز تا دریافت تفکیک رسمی قابل ارزش‌گذاری مستقل نیست.",
+            "سپرده بانکی و مانده طبقه‌بندی‌نشده فقط در تاریخ NAV رسمی به‌عنوان اجزای داخل NAV پایه لنگر می‌شوند؛ برای تاریخ‌های بعد، نرخ سود/مانده به‌روز و تفکیک رسمی لازم است.",
             "وزن‌ها مربوط به گزارش پایان مهر هستند؛ برای ارزش روز، تعداد واقعی دارایی‌ها و ترکیب پرتفوی روز لازم است."
         ],
     }
