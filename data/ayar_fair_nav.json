@@ -328,5 +328,17 @@
     "base_weight_source_date_jalali": "1405/07/30",
     "base_nav_date": "2026-11-18",
     "weight_staleness_warning": "وزن‌های پرتفوی پایان مهر به NAV رسمی 27 آبان تخصیص داده می‌شوند؛ این تخصیص فقط مبنای محاسباتی است و موجودی واقعی اجزا در 27 آبان را تأیید نمی‌کند."
+  },
+  "market_price_snapshot": {
+    "date_gregorian": "2026-11-19",
+    "date_jalali": "1405/08/28",
+    "close_price_rial": 654750,
+    "close_price_toman": 65475,
+    "last_trade_toman": 65560,
+    "latest_nav_rial": 663527,
+    "latest_nav_date": "2026-11-18",
+    "discount_vs_latest_known_nav_pct": -1.32278,
+    "source": "https://alanchand.com/gold-fund/ayar",
+    "source_note": "Secondary market-data page reports 28 Aban closing price 65,475 toman; its latest NAV reference is 27 Aban. This is a market close compared with the latest known NAV, not a same-timestamp premium/discount."
   }
 }
