@@ -109,7 +109,7 @@ def value_components(data: Dict[str, Any], as_of_date: str) -> Dict[str, Any]:
             ret, status = _quote_return(
                 q.get("price_toman_per_gram"),
                 q.get("current_price_toman_per_gram"),
-                q["date"], q.get("current_quote_date", as_of_date)
+                q["date"], q.get("current_quote_date", as_of_date), as_of_date
             )
             detail = {
                 "unit": "toman_per_gram",
