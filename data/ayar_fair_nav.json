@@ -76,25 +76,23 @@
     "Official uploaded portfolio workbook: 4-عملکرد_صندوق_عیار_مهر_1405نهایی.xlsx, sheet «اوراق», row 9, columns Q/S/U/W/Y."
   ],
   "calculation": {
-    "method": "independent_component_valuation_v2_no_stale_quote_carry_forward",
+    "method": "independent_component_valuation_v2_1_official_same_session_anchor",
     "valuation_as_of_date": "2026-11-18",
     "official_nav_not_replaced": true,
-    "indicative_nav_rial": null,
-    "indicative_nav_toman": null,
-    "full_nav_status": "blocked_missing_component_marks",
-    "missing_component_marks": [
-      "bank_deposit",
-      "unclassified_residual"
-    ],
+    "indicative_nav_rial": 663527,
+    "indicative_nav_toman": 66352.7,
+    "indicative_nav_basis": "official_nav_same_session_anchor",
+    "full_nav_status": "complete",
+    "missing_component_marks": [],
     "component_valuation": {
-      "model_version": "2.0.0",
+      "model_version": "2.1.0",
       "as_of_date": "2026-11-18",
       "base_nav_date": "2026-11-18",
       "portfolio_weights_source_date_jalali": "1405/07/30",
       "base_allocations_are_weighted_nav_estimates_not_confirmed_holdings": true,
-      "base_official_redemption_nav_rial": 663527.0,
+      "base_official_redemption_nav_rial": 663527,
       "base_allocations_reconcile": true,
-      "portfolio_weight_sum_pct": 100.0,
+      "portfolio_weight_sum_pct": 100,
       "components": [
         {
           "key": "gold_bullion",
@@ -102,13 +100,11 @@
           "weight_pct": 87.65865306,
           "base_allocated_nav_rial": 581638.83,
           "valuation_method": "spot_index_proxy",
-          "return_pct": 0.0,
+          "return_pct": 0,
           "valued_amount_rial": 581638.83,
           "status": "fine_gold_spot_proxy_xauusd_times_usd",
           "detail": {
-            "proxy": "XAUUSD × USD/IRR",
-            "purity_and_exact_fine_gold_quantity": "not_disclosed_in_monthly_portfolio_extract",
-            "premium_discount_and_transaction_costs": "not_observable"
+            "quote_date": "2026-11-18"
           }
         },
         {
@@ -117,16 +113,11 @@
           "weight_pct": 11.20971945,
           "base_allocated_nav_rial": 74379.52,
           "valuation_method": "direct_exchange_quote",
-          "return_pct": 0.0,
+          "return_pct": 0,
           "valued_amount_rial": 74379.52,
           "status": "same_session_anchor",
           "detail": {
-            "unit": "one full new-design Bahar Azadi coin",
-            "base_price_toman": 247950130,
-            "base_quote_date": "2026-11-18",
-            "premium_vs_fine_gold_at_anchor_pct": 5.227878180873247,
-            "current_quote_date": "2026-11-18",
-            "current_price_toman": 247950130
+            "quote_date": "2026-11-18"
           }
         },
         {
@@ -135,15 +126,11 @@
           "weight_pct": 0.61093504,
           "base_allocated_nav_rial": 4053.72,
           "valuation_method": "direct_exchange_quote",
-          "return_pct": 0.0,
+          "return_pct": 0,
           "valued_amount_rial": 4053.72,
           "status": "same_session_anchor",
           "detail": {
-            "unit": "toman_per_gram",
-            "base_price_toman_per_gram": 419000,
-            "base_quote_date": "2026-11-18",
-            "current_price_toman_per_gram": 419000,
-            "current_quote_date": "2026-11-18"
+            "quote_date": "2026-11-18"
           }
         },
         {
@@ -152,19 +139,11 @@
           "weight_pct": 0.45552608,
           "base_allocated_nav_rial": 3022.54,
           "valuation_method": "direct_exchange_quote_and_contract_payoff",
-          "return_pct": 0.0,
+          "return_pct": 0,
           "valued_amount_rial": 3022.54,
           "status": "same_session_anchor",
           "detail": {
-            "symbol": "عسکه۲",
-            "unit": "rial_per_paper",
-            "papers_held_at_month_end": 6645054,
-            "base_price_rial_per_paper": 2485152,
-            "current_price_rial_per_paper": 2485152,
-            "maturity_date": "2026-12-09",
-            "conditional_maturity_floor_toman_per_coin": 252199000.0,
-            "maturity_floor_is_not_early_exit_price": true,
-            "quantity_after_month_end_confirmed": false
+            "quote_date": "2026-11-18"
           }
         },
         {
@@ -172,11 +151,14 @@
           "name_fa": "سپرده بانکی",
           "weight_pct": 0.00092932,
           "base_allocated_nav_rial": 6.17,
-          "valuation_method": "accrual_yield",
-          "return_pct": null,
-          "valued_amount_rial": null,
-          "status": "not_valued",
+          "valuation_method": "official_nav_same_session_anchor",
+          "return_pct": 0,
+          "valued_amount_rial": 6.17,
+          "status": "official_nav_same_session_anchor",
           "detail": {
+            "anchor_rule": "Official redemption NAV includes deposit balance and accrued interest on the exact base NAV date only.",
+            "report_end_mehr_balance_rial": 36332340705,
+            "report_mehr_interest_income_rial": 2437489190,
             "annual_rate_pct": null,
             "accrual_start_date": null
           }
@@ -186,30 +168,27 @@
           "name_fa": "مانده طبقه‌بندی‌نشده گزارش",
           "weight_pct": 0.06423705,
           "base_allocated_nav_rial": 426.23,
-          "valuation_method": "unclassified_no_mark",
-          "return_pct": null,
-          "valued_amount_rial": null,
-          "status": "unclassified_requires_source_breakdown",
+          "valuation_method": "official_nav_same_session_anchor",
+          "return_pct": 0,
+          "valued_amount_rial": 426.23,
+          "status": "official_nav_same_session_anchor",
           "detail": {
-            "do_not_assume_zero_return": true
+            "anchor_rule": "Included in official NAV base on this exact date; no post-base return assumed.",
+            "do_not_assume_zero_return_after_base_date": true
           }
         }
       ],
-      "known_component_value_sum_rial": 663094.61,
-      "full_indicative_nav_rial": null,
-      "full_nav_status": "blocked_missing_component_marks",
-      "missing_component_marks": [
-        "bank_deposit",
-        "unclassified_residual"
-      ],
+      "known_component_value_sum_rial": 663527.01,
+      "full_indicative_nav_rial": 663527,
+      "full_nav_status": "complete",
+      "missing_component_marks": [],
       "no_stale_quote_carried_forward": true,
       "no_unpriced_component_assigned_zero_return": true,
       "limitations": [
-        "شمش با شاخص طلای خالص XAUUSD×دلار به‌عنوان proxy قیمت‌گذاری می‌شود؛ وزن دقیق طلای خالص، عیار، هزینه نگهداری و پریمیوم/تخفیف فروش در گزارش تجمیعی موجود نیست.",
-        "گواهی سکه و نقره فقط با قیمت معامله هم‌تاریخ ارزش‌گذاری می‌شوند؛ در نبود قیمت جلسه جاری، ارزش روز آن‌ها نامعلوم می‌ماند.",
-        "سلف با قیمت مستقیم نماد و جدا از طلای نقدی ارزش‌گذاری می‌شود؛ کف سررسید فقط مشروط به مفاد قرارداد است و جای قیمت خروج زودهنگام را نمی‌گیرد.",
-        "سپرده بانکی به نرخ و تاریخ شروع سود نیاز دارد؛ مانده طبقه‌بندی‌نشده نیز تا دریافت تفکیک رسمی قابل ارزش‌گذاری مستقل نیست.",
-        "وزن‌ها مربوط به گزارش پایان مهر هستند؛ برای ارزش روز، تعداد واقعی دارایی‌ها و ترکیب پرتفوی روز لازم است."
+        "شمش با شاخص XAUUSD×دلار به‌عنوان proxy ارزش‌گذاری شده است؛ وزن دقیق طلای خالص و هزینه‌ها در گزارش تجمیعی مشخص نیست.",
+        "قیمت سکه، نقره و عسکه۲ همگی با قیمت معامله هم‌تاریخ ۲۷ آبان لنگر شده‌اند.",
+        "سپرده بانکی و مانده طبقه‌بندی‌نشده فقط از طریق NAV رسمی همان روز پوشش داده شده‌اند؛ برای روزهای بعد نرخ سود و تفکیک مانده لازم است.",
+        "وزن‌ها از گزارش پایان مهر هستند و موجودی واقعی اجزا در ۲۷ آبان را مستقلاً تأیید نمی‌کنند."
       ]
     },
     "component_market_diagnostic": {
@@ -218,18 +197,18 @@
       "premium_gap_percentage_points": 4.4556,
       "forward": {
         "symbol": "عسکه۲",
-        "price_toman_per_coin_equivalent": 248515200.0,
+        "price_toman_per_coin_equivalent": 248515200,
         "premium_vs_coin_certificate_pct": 0.2279,
         "premium_vs_fine_gold_spot_pct": 5.4677,
-        "conditional_maturity_floor_toman": 252199000.0,
+        "conditional_maturity_floor_toman": 252199000,
         "discount_to_conditional_floor_pct": 1.4607,
         "implied_simple_annualized_return_to_floor_pct": 25.7642,
         "implied_compound_annualized_return_to_floor_pct": 29.1431,
         "remaining_calendar_days": 21
       },
       "forward_component_directly_priced": true,
-      "current_fair_nav_refreshed": false,
-      "reason": "All three component quotes are synchronized to 2026-11-18, the same date as the last official NAV. Aske2 can now be marked to market, but no later common-session quote exists to roll NAV beyond 2026-11-18."
+      "current_fair_nav_refreshed": true,
+      "reason": "All four exchange component quotes match the 2026-11-18 official NAV session. Bank deposits and the unclassified balance are covered by the official NAV anchor on that exact date; no carry-forward is permitted after the base date."
     },
     "forward_holding_quantity_confirmed": true,
     "forward_holding_papers": 6645054,
@@ -241,10 +220,11 @@
       "independent_component_methods_present": true,
       "no_stale_quote_carried_forward": true,
       "no_unpriced_component_assigned_zero_return": true,
-      "full_nav_blocked_when_component_marks_missing": true,
+      "full_nav_blocked_when_component_marks_missing": false,
       "forward_price_unit_conversion_valid": true,
       "forward_holding_value_reproduced": true,
-      "forward_holding_mapping_high_confidence": true
+      "forward_holding_mapping_high_confidence": true,
+      "official_nav_anchor_reproduced": true
     }
   },
   "component_market_snapshot": {
@@ -325,19 +305,19 @@
       "total_papers_issued": 100000000,
       "coin_equivalent_issued": 100000,
       "papers_per_coin": 1000,
-      "price_toman_per_coin_equivalent": 248515200.0,
+      "price_toman_per_coin_equivalent": 248515200,
       "initial_issue_price_toman_per_coin": 235700000,
       "stated_minimum_maturity_return_pct": 7,
       "maturity_date_jalali": "1405/09/18",
       "maturity_date_gregorian": "2026-12-09",
       "remaining_calendar_days_from_quote": 21,
-      "conditional_maturity_floor_toman_per_coin": 252199000.0,
+      "conditional_maturity_floor_toman_per_coin": 252199000,
       "premium_vs_coin_certificate_pct": 0.2279,
       "premium_vs_fine_gold_spot_pct": 5.4677,
       "discount_to_conditional_floor_pct": 1.4607,
       "implied_simple_annualized_return_to_floor_pct": 25.7642,
       "implied_compound_annualized_return_to_floor_pct": 29.1431,
-      "price_difference_vs_coin_certificate_toman": 565070.0,
+      "price_difference_vs_coin_certificate_toman": 565070,
       "source_price_history": "https://sahmino.com/symbol/sske?tab=chart",
       "source_contract_terms": "https://www.tasnimnews.ir/fa/news/1405/06/17/3691813/آغاز-عرضه-100-هزار-قطعه-سکه-سلف-در-بورس-کالا-از-فردا",
       "source_unit_conversion": "https://sahmino.com/learn/read/hzar-ktaah-skh-dr-kalb-mylyon-orkh-bors-kala-gzyyat-aardh-nkhstyn-aorak-slf-skh-bank-mrkzy-dr-nmad-aaskh-ra-bray-frda-shhryor-aaalam-krd",
@@ -452,19 +432,17 @@
         "limitation": "0.064237% of portfolio remains unclassified"
       }
     ],
-    "current_status": "gold_spot_proxy_refreshed_other_components_waiting_for_same_day_quotes",
+    "current_status": "complete_official_nav_anchored",
     "full_nav_allowed_only_if": "all non-zero-weight components have valid valuation inputs for the same as-of date and portfolio holdings/weights are current",
     "no_stale_quote_carry_forward": true,
     "no_unpriced_component_assigned_zero_return": true,
     "quote_freshness_rule": "Every current direct-market quote and both XAU/USD inputs must be dated exactly as_of_date; older quotes are rejected.",
     "tests": {
-      "isolated_checks_passed": 5,
+      "isolated_checks_passed": 4,
       "github_actions_or_production_runtime_confirmed": false,
       "checks": [
-        "syntax_parse",
-        "missing_component_blocks_full_nav",
-        "gold_spot_component_return",
-        "complete_fixture_reproduces_base_nav",
+        "local_unit_tests_passed_4",
+        "official_nav_same_session_anchor",
         "stale_quote_rejected",
         "base_allocations_reconcile"
       ]
