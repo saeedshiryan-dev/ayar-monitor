@@ -42,3 +42,42 @@ class AyarValidationTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+
+class AyarPnlBacktestTests(unittest.TestCase):
+    def test_execution_is_next_session_and_integer_units(self):
+        from scripts.ayar_indicator_lab import simulate_long_cash
+        rows = [
+            {"date":"20240101","open":1000,"close":1000},
+            {"date":"20240102","open":1000,"close":1100},
+            {"date":"20240103","open":1200,"close":1200},
+        ]
+        result = simulate_long_cash(rows, [0,1,0], 0, initial_capital=100000, fee=0, slippage=0)
+        self.assertEqual(result["trades"][0]["entry_date"], "20240102")
+        self.assertEqual(result["trades"][0]["exit_date"], "20240103")
+        self.assertEqual(result["trades"][0]["quantity"], 1000)
+        self.assertEqual(result["metrics"]["net_pnl_toman"], 20000)
+
+    def test_costs_reduce_trade_profit(self):
+        from scripts.ayar_indicator_lab import simulate_long_cash
+        rows = [
+            {"date":"20240101","open":1000,"close":1000},
+            {"date":"20240102","open":1000,"close":1100},
+            {"date":"20240103","open":1200,"close":1200},
+        ]
+        free = simulate_long_cash(rows, [0,1,0], 0, initial_capital=100000, fee=0, slippage=0)
+        costly = simulate_long_cash(rows, [0,1,0], 0, initial_capital=100000, fee=0.002, slippage=0.001)
+        self.assertGreater(free["metrics"]["net_pnl_toman"], costly["metrics"]["net_pnl_toman"])
+
+    def test_period_starts_in_cash_and_forces_final_exit(self):
+        from scripts.ayar_indicator_lab import simulate_long_cash
+        rows = [
+            {"date":"20240101","open":1000,"close":1000},
+            {"date":"20240102","open":1000,"close":1050},
+            {"date":"20240103","open":1050,"close":1100},
+        ]
+        result = simulate_long_cash(rows, [1,1,1], 0, initial_capital=100000, fee=0, slippage=0)
+        self.assertEqual(result["trades"][0]["entry_date"], "20240102")
+        self.assertEqual(result["trades"][0]["exit_date"], "20240103")
+        self.assertEqual(result["metrics"]["round_trips"], 1)
