@@ -35,7 +35,11 @@
     "latest_common_exchange_session": "2026-11-18",
     "latest_common_exchange_session_jalali": "1405/08/27",
     "next_session_quotes_available": false,
-    "forward_holding_mapping_confirmed": false
+    "forward_holding_mapping_confirmed": true,
+    "forward_holding_quantity_confirmed": true,
+    "next_scheduled_exchange_session_jalali": "1405/08/30",
+    "next_scheduled_exchange_session_gregorian": "2026-11-21",
+    "next_session_market_status": "not_yet_traded_weekend_closure_on_1405/08/28_and_1405/08/29"
   },
   "assumptions": [
     "شمش طلا در برآورد NAV یک‌روزه قبلی با شاخص طلای ریالی مدل شده است؛ برای گواهی سکه و سلف، قیمت مستقل هم‌تاریخ 2026-11-18 اکنون در component_market_snapshot ثبت شده، اما چون quote جدیدتری از 2026-11-19 در دست نیست، بازده روز بعد از آن‌ها ساخته نشده است.",
@@ -44,21 +48,24 @@
     "وزن‌ها از گزارش رسمی پرتفوی پایان مهر 1405 هستند؛ تغییرات پرتفوی پس از آن به‌طور کامل معلوم نیست.",
     "قیمت‌های گواهی شمش، گواهی سکه و عسکه2 در 27 آبان/18 نوامبر 2026 هم‌تاریخ‌اند؛ این‌ها قیمت‌گذاری مستقل همان جلسه‌اند، نه قیمت زنده 28 آبان.",
     "کف بازده 7 درصدی عسکه2 یک شرط سررسیدی طبق شرایط قرارداد است و نباید به‌عنوان قیمت تضمین‌شده فروش مجدد قبل از سررسید تلقی شود.",
-    "آخرین بازبینی بازار در 2026-11-19 تأیید کرد که قیمت پایانی گواهی سکه، گواهی شمش و عسکه۲ برای جلسه مشترک 2026-11-18/1405-08-27 قابل استفاده است؛ برای جلسه بعد quote مشترک جدیدی در منابع بررسی‌شده موجود نبود."
+    "آخرین بازبینی بازار در 2026-11-19 تأیید کرد که قیمت پایانی گواهی سکه، گواهی شمش و عسکه۲ برای جلسه مشترک 2026-11-18/1405-08-27 قابل استفاده است؛ برای جلسه بعد quote مشترک جدیدی در منابع بررسی‌شده موجود نبود.",
+    "گزارش رسمی پرتفوی مهر در شیت «اوراق»، ردیف 9، تعداد 6,645,054 ورقه از «سلف استاندارد سکه مرکزی» را نشان می‌دهد. نام ابزار با عنوان نماد عسکه۲ در سهمینو منطبق است؛ چون نماد در خود فایل صندوق چاپ نشده، نگاشت نماد با اطمینان بالا ولی نه با کد نماد درج‌شده در گزارش ثبت شده است.",
+    "ارزش بازار سلف در 27 آبان فقط در فرض ثابت‌ماندن تعداد 6,645,054 ورقه پس از پایان مهر، 16,513,969,238,208 ریال می‌شود؛ این عدد ارزش‌گذاری مشروط است، نه تأیید موجودی روز 27 آبان."
   ],
   "limitations": [
     "این خروجی تخمین حساسیت است، نه NAV رسمی منتشرشده از TSETMC یا متولی.",
-    "برای تبدیل ارزش‌گذاری هم‌تاریخ 18 نوامبر به NAV تازه‌تر، قیمت‌های هم‌زمان جلسه بعد و گزارش پرتفوی جدیدتر/تعداد دقیق اوراق در اختیار صندوق لازم است.",
     "ارزش‌گذاری عسکه2 به قیمت بازار قابل انجام است؛ اما اتصال قطعی نماد عسکه2 به ردیف سلف صندوق تا دریافت تعداد ورقه/نماد از گزارش تفصیلی پرتفوی مشروط می‌ماند.",
     "تا زمان بازبینی 2026-11-19، داده مشترک جدیدتر از جلسه 27 آبان/18 نوامبر برای هر سه ابزار پیدا نشد؛ NAV تخمینی به روز بعد roll-forward نشده است.",
-    "تطبیق قطعی ردیف سلف صندوق با نماد عسکه۲ و تعداد دقیق ورقه‌ها، بدون گزارش تفصیلی/دفتر دارایی که نماد و تعداد را نشان دهد، ممکن نیست."
+    "تعداد 6,645,054 ورقه از گزارش پایان مهر تأیید شده، اما تغییر احتمالی تعداد دارایی بین 30 مهر و 27 آبان معلوم نیست؛ mark-to-market روز 27 آبان با فرض ثابت‌ماندن تعداد ارائه شده است."
   ],
   "sources": [
     "https://www.fxempire.com/commodities/gold/history",
     "https://nerkhara.com/dollar/",
     "https://www.kalamehfarsi.tv/en/economy/",
     "https://github.com/saeedshiryan-dev/ayar-monitor/blob/main/data/ayar_codal_portfolio.json",
-    "https://github.com/saeedshiryan-dev/ayar-monitor/blob/main/data/ayar_live.json"
+    "https://github.com/saeedshiryan-dev/ayar-monitor/blob/main/data/ayar_live.json",
+    "https://sahmino.com/symbol/sske?tab=chart",
+    "Official uploaded portfolio workbook: 4-عملکرد_صندوق_عیار_مهر_1405نهایی.xlsx, sheet «اوراق», row 9, columns Q/S/U/W/Y."
   ],
   "calculation": {
     "method": "weighted spot-index adjustment to last official redemption NAV",
@@ -114,7 +121,11 @@
       "current_fair_nav_refreshed": false,
       "forward_market_quote_recorded": true,
       "forward_holding_mapping_confirmed": false,
-      "next_session_quote_available": false
+      "next_session_quote_available": false,
+      "forward_holding_quantity_reproduced": true,
+      "forward_holding_symbol_mapping_high_confidence": true,
+      "forward_holding_value_reproduced": true,
+      "next_session_quote_not_yet_available": true
     },
     "component_market_diagnostic": {
       "coin_certificate_premium_vs_fine_gold_pct": 5.2279,
@@ -133,7 +144,52 @@
       },
       "forward_component_directly_priced": true,
       "current_fair_nav_refreshed": false,
-      "reason": "قیمت مستقیم عسکه۲ و گواهی‌های سکه و شمش برای جلسه مشترک 27 آبان/18 نوامبر ثبت شده‌اند. در بازبینی 19 نوامبر قیمت مشترک جدیدتری برای جلسه بعد یافت نشد؛ بنابراین NAV رسمی 18 نوامبر مبنا مانده و NAV روز بعد ساخته نشده است."
+      "reason": "The official Mehr portfolio workbook confirms 6,645,054 papers under the exact instrument name «سلف استاندارد سکه مرکزی»; Sahmino maps this instrument name to symbol عسکه۲. Last synchronized quotes remain 27 Aban/18 Nov. 28-29 Aban are weekly market closure; next scheduled session is 30 Aban/21 Nov and has not traded yet.",
+      "forward_holding": {
+        "status": "quantity_confirmed_from_official_monthly_portfolio_report",
+        "report_file": "4-عملکرد_صندوق_عیار_مهر_1405نهایی.xlsx",
+        "report_period_jalali": "1405/07/30",
+        "report_sheet": "اوراق",
+        "report_row": 9,
+        "reported_instrument_name": "سلف استاندارد سکه مرکزی",
+        "symbol": "عسکه۲",
+        "symbol_mapping_basis": "Exact instrument-name match: Sahmino identifies عسکه2 as «سلف استاندارد سکه مرکزی»; ticker is not printed in the fund workbook.",
+        "symbol_mapping_confidence": "high",
+        "symbol_explicitly_printed_in_fund_report": false,
+        "papers_held": 6645054,
+        "papers_per_coin": 1000,
+        "coin_equivalent": 6645.054,
+        "market_price_rial_per_paper_at_report_date": 2671158,
+        "reported_book_cost_rial": 15837071677862,
+        "reported_net_market_value_rial": 17808981048023,
+        "reported_value_pct_total_assets": 0.45552607909087467,
+        "source_columns": {
+          "quantity": "Q",
+          "market_price_per_paper": "S",
+          "book_cost": "U",
+          "net_market_value": "W",
+          "asset_weight": "Y"
+        },
+        "reconciliation": {
+          "market_price_times_quantity_rial": 17749989152532,
+          "reported_net_market_value_minus_price_times_quantity_rial": 58991895491,
+          "implied_net_value_per_paper_rial": 2680035.5645,
+          "difference_pct_vs_price_times_quantity": 0.3323489101,
+          "note": "The report's net market value does not equal quantity × displayed market price per paper; discrepancy retained and flagged, not silently adjusted."
+        },
+        "latest_same_session_mark": {
+          "quote_date": "2026-11-18",
+          "quote_jalali": "1405/08/27",
+          "price_rial_per_paper": 2485152,
+          "market_value_if_quantity_unchanged_rial": 16513969238208,
+          "market_value_if_quantity_unchanged_toman": 1651396923820.8,
+          "change_pct_vs_reported_end_of_mehr_value_if_quantity_unchanged": -7.2716782972,
+          "quantity_unchanged_is_assumption": true
+        }
+      },
+      "forward_holding_quantity_confirmed": true,
+      "forward_holding_mapping_confidence": "high",
+      "forward_market_value_if_quantity_unchanged_rial": 16513969238208
     }
   },
   "component_market_snapshot": {
@@ -191,7 +247,7 @@
       "Point-in-time premiums cannot be applied as daily changes without a second synchronized quote.",
       "No reliable direct quote for the fund's coin-forward position was found."
     ],
-    "market_session_note": "آخرین جلسه مشترک قابل اتکا برای گواهی سکه، گواهی شمش و عسکه۲، 27 آبان 1405 / 2026-11-18 است. بررسی مجدد در 2026-11-19 نشان داد بازار گواهی‌ها آخرین بار در 27 آبان به‌روزرسانی شده و quote هم‌زمان جدیدتری برای 28 آبان منتشر نشده است.",
+    "market_session_note": "آخرین جلسه مشترک قابل اتکا برای گواهی سکه، گواهی شمش و عسکه۲، 27 آبان 1405 / 2026-11-18 است. 28 و 29 آبان 1405 پنجشنبه و جمعه و تعطیلی هفتگی بازار ایران‌اند؛ جلسه معاملاتی بعدی شنبه 30 آبان / 2026-11-21 است و هنوز قیمت آن جلسه وجود ندارد.",
     "coin_forward": {
       "symbol": "عسکه۲",
       "issuer": "بانک مرکزی جمهوری اسلامی ایران",
@@ -219,17 +275,67 @@
       "source_price_history": "https://sahmino.com/symbol/sske?tab=chart",
       "source_contract_terms": "https://www.tasnimnews.ir/fa/news/1405/06/17/3691813/آغاز-عرضه-100-هزار-قطعه-سکه-سلف-در-بورس-کالا-از-فردا",
       "source_unit_conversion": "https://sahmino.com/learn/read/hzar-ktaah-skh-dr-kalb-mylyon-orkh-bors-kala-gzyyat-aardh-nkhstyn-aorak-slf-skh-bank-mrkzy-dr-nmad-aaskh-ra-bray-frda-shhryor-aaalam-krd",
-      "status": "priced_market_quote",
-      "mapping_to_fund_holding": "plausible_not_confirmed",
+      "status": "priced_market_quote_and_holding_quantity_identified",
+      "mapping_to_fund_holding": "high_confidence_exact_instrument_name_match",
       "valuation_method": "direct market mark-to-market using same-session closing price",
       "caveats": [
-        "قیمت عسکه۲ در 27 آبان/18 نوامبر 2026 قیمت پایانی 2,485,152 ریال به‌ازای هر ورقه است.",
-        "هر 1,000 ورقه معادل یک سکه است؛ قیمت معادل هر سکه 248,515,200 تومان محاسبه می‌شود.",
-        "گزارش صندوق فقط طبقه سلف استاندارد سکه مرکزی را نشان می‌دهد و نماد/تعداد ورقه را اعلام نمی‌کند؛ تطبیق با عسکه۲ هنوز قطعی نیست.",
-        "کف 7 درصدی، مشروط به شرایط قرارداد و تسویه در سررسید است و قیمت تضمینی فروش زودتر محسوب نمی‌شود."
+        "گزارش مهر تعداد 6,645,054 ورقه را در ردیف «سلف استاندارد سکه مرکزی» نشان می‌دهد.",
+        "سهمینو نماد عسکه۲ را با همین نام ابزار معرفی می‌کند؛ نماد در فایل صندوق درج نشده و نگاشت بر پایه تطبیق دقیق نام ابزار است.",
+        "قیمت 27 آبان برای برآورد ارزش روز فقط با فرض ثابت‌ماندن تعداد گزارش‌شده در پایان مهر قابل ضرب است.",
+        "در گزارش مهر، قیمت بازار هر ورقه × تعداد با خالص ارزش فروش ثبت‌شده 0.3323% اختلاف دارد؛ هر دو عدد عیناً نگهداری و اختلاف علامت‌گذاری شده‌اند.",
+        "کف بازده 7 درصدی، مشروط به قرارداد و تسویه در سررسید است و قیمت تضمینی فروش زودهنگام نیست."
       ],
-      "note": "قیمت عسکه۲ برای همان جلسه 27 آبان ثبت شده است؛ هویت دقیق ردیف دارایی صندوق همچنان به‌دلیل نبود نماد و تعداد ورقه در گزارش پرتفوی تأیید نشده است."
+      "note": "قیمت عسکه۲ برای همان جلسه 27 آبان ثبت شده است؛ هویت دقیق ردیف دارایی صندوق همچنان به‌دلیل نبود نماد و تعداد ورقه در گزارش پرتفوی تأیید نشده است.",
+      "holding": {
+        "status": "quantity_confirmed_from_official_monthly_portfolio_report",
+        "report_file": "4-عملکرد_صندوق_عیار_مهر_1405نهایی.xlsx",
+        "report_period_jalali": "1405/07/30",
+        "report_sheet": "اوراق",
+        "report_row": 9,
+        "reported_instrument_name": "سلف استاندارد سکه مرکزی",
+        "symbol": "عسکه۲",
+        "symbol_mapping_basis": "Exact instrument-name match: Sahmino identifies عسکه2 as «سلف استاندارد سکه مرکزی»; ticker is not printed in the fund workbook.",
+        "symbol_mapping_confidence": "high",
+        "symbol_explicitly_printed_in_fund_report": false,
+        "papers_held": 6645054,
+        "papers_per_coin": 1000,
+        "coin_equivalent": 6645.054,
+        "market_price_rial_per_paper_at_report_date": 2671158,
+        "reported_book_cost_rial": 15837071677862,
+        "reported_net_market_value_rial": 17808981048023,
+        "reported_value_pct_total_assets": 0.45552607909087467,
+        "source_columns": {
+          "quantity": "Q",
+          "market_price_per_paper": "S",
+          "book_cost": "U",
+          "net_market_value": "W",
+          "asset_weight": "Y"
+        },
+        "reconciliation": {
+          "market_price_times_quantity_rial": 17749989152532,
+          "reported_net_market_value_minus_price_times_quantity_rial": 58991895491,
+          "implied_net_value_per_paper_rial": 2680035.5645,
+          "difference_pct_vs_price_times_quantity": 0.3323489101,
+          "note": "The report's net market value does not equal quantity × displayed market price per paper; discrepancy retained and flagged, not silently adjusted."
+        },
+        "latest_same_session_mark": {
+          "quote_date": "2026-11-18",
+          "quote_jalali": "1405/08/27",
+          "price_rial_per_paper": 2485152,
+          "market_value_if_quantity_unchanged_rial": 16513969238208,
+          "market_value_if_quantity_unchanged_toman": 1651396923820.8,
+          "change_pct_vs_reported_end_of_mehr_value_if_quantity_unchanged": -7.2716782972,
+          "quantity_unchanged_is_assumption": true
+        }
+      }
     },
-    "last_rechecked_at": "2026-11-19"
+    "last_rechecked_at": "2026-11-19",
+    "next_session": {
+      "date_jalali": "1405/08/30",
+      "date_gregorian": "2026-11-21",
+      "status": "scheduled_not_yet_traded",
+      "quotes_available": false,
+      "reason": "28 and 29 Aban are the Iranian Thursday-Friday weekly market closure."
+    }
   }
 }
