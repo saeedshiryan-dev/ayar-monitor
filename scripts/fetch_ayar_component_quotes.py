@@ -17,6 +17,7 @@ import requests
 ROOT = Path(__file__).resolve().parents[1]
 FAIR_NAV = ROOT / "data" / "ayar_fair_nav.json"
 OUT = ROOT / "data" / "ayar_component_market_quotes.json"
+MACRO = ROOT / "data" / "ayar_macro_live.json"
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml",
@@ -122,6 +123,45 @@ def expected_exchange_session_date(now):
     return session_day.isoformat()
 
 
+
+def apply_macro_quotes_for_session(data, session_date, macro_data=None):
+    """Use only same-session USD and XAU quotes for the valuation date."""
+    inputs = data["inputs"]
+    base_date = inputs["base_nav_date"]
+    if session_date == base_date:
+        inputs["xau_now_usd_oz"] = inputs["xau_base_usd_oz"]
+        inputs["xau_now_date"] = base_date
+        inputs["usd_now_toman"] = inputs["usd_base_toman"]
+        inputs["usd_now_date"] = base_date
+        return True, "same_session_base_nav_anchor"
+    if macro_data is None:
+        try:
+            macro_data = json.loads(MACRO.read_text(encoding="utf-8"))
+        except Exception as exc:
+            return False, f"macro_snapshot_unavailable:{type(exc).__name__}"
+    if macro_data.get("status") != "ok":
+        return False, "macro_snapshot_not_ok"
+    usd = macro_data.get("usd") or {}
+    xau = macro_data.get("xau") or {}
+    try:
+        usd_date = datetime.fromisoformat(usd["updated_at"]).astimezone(ZoneInfo("Asia/Tehran")).date().isoformat()
+        xau_date = datetime.fromisoformat(xau["updated_at"]).astimezone(ZoneInfo("Asia/Tehran")).date().isoformat()
+        usd_price = float(usd.get("display_price") or usd.get("sell"))
+        xau_price = float(xau.get("display_price") or xau.get("sell"))
+    except Exception as exc:
+        return False, f"macro_fields_invalid:{type(exc).__name__}"
+    if usd_date != session_date or xau_date != session_date:
+        return False, f"macro_quotes_not_same_session:usd={usd_date},xau={xau_date}"
+    if usd_price <= 0 or xau_price <= 0:
+        return False, "macro_quote_nonpositive"
+    inputs["usd_now_toman"] = usd_price
+    inputs["usd_now_date"] = session_date
+    inputs["xau_now_usd_oz"] = xau_price
+    inputs["xau_now_date"] = session_date
+    inputs["macro_quote_source"] = macro_data.get("source")
+    inputs["macro_quote_retrieved_at"] = macro_data.get("retrieved_at")
+    return True, "same_session_macro_quotes"
+
 def main():
     now = datetime.now(ZoneInfo("Asia/Tehran"))
     retrieved_at = now.isoformat()
@@ -147,7 +187,13 @@ def main():
     dates = {q["date"] for q in quotes.values()}
     common_date = next(iter(dates)) if len(dates) == 1 and len(quotes) == 4 else None
     expected_session = expected_exchange_session_date(now)
-    promoted = common_date == expected_session
+    macro_sync = False
+    macro_reason = "component_quotes_not_synchronized"
+    data = None
+    if common_date:
+        data = json.loads(FAIR_NAV.read_text(encoding="utf-8"))
+        macro_sync, macro_reason = apply_macro_quotes_for_session(data, common_date)
+    promoted = common_date == expected_session and macro_sync
     output = {
         "status": "synchronized_latest_exchange_session" if promoted else "quotes_not_synchronized_or_not_current",
         "retrieved_at": retrieved_at,
@@ -155,12 +201,15 @@ def main():
         "calendar_rule": "Iran commodity-certificate sessions scheduled Saturday-Wednesday; Thursday/Friday resolve to the preceding Wednesday unless a holiday intervenes.",
         "common_quote_date_gregorian": common_date,
         "common_quote_date_jalali": next(iter(quotes.values()))["jalali_date"] if common_date else None,
+        "macro_quotes_synchronized": macro_sync,
+        "macro_sync_reason": macro_reason,
         "promoted_to_valuation_model": promoted,
         "quotes": quotes,
         "errors": errors,
         "rules": [
             "Only explicitly dated last-trade/daily-close quotes are accepted.",
             "All four component quotes must share the latest scheduled exchange session before promotion.",
+            "USD and XAU macro quotes must also match that exchange session; the official NAV anchor is used only when the session equals the base NAV date.",
             "Thursday and Friday are mapped to the preceding Wednesday; unmodeled holidays still block promotion when quote dates differ.",
             "No previous-session quote is carried forward beyond the latest scheduled exchange session.",
             "Gold-bar certificate is recorded as a market reference only; it is not treated as a separately disclosed portfolio holding."
@@ -169,7 +218,6 @@ def main():
     OUT.write_text(json.dumps(output, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
     if promoted:
-        data = json.loads(FAIR_NAV.read_text(encoding="utf-8"))
         snap = data["component_market_snapshot"]
         q = quotes
         snap["coin_certificate"]["current_price_toman_per_certificate"] = q["coin_certificate"]["price"]
