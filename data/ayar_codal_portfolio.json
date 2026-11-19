@@ -145,7 +145,7 @@
   },
   "secondary_source_status": "partial_secondary_latest_composition_1405_08_25",
   "secondary_checked_at": "2026-11-19T12:00:00+03:30",
-  "official_source_error": "category=3,page=1: ConnectTimeout: HTTPSConnectionPool(host='search.codal.ir', port=443): Max retries exceeded with url: /api/search/v2/q?PageNumber=1&PageSize=100&Symbol=%D8%B9%DB%8C%D8%A7%D8%B1&Category=3&LetterType=-1&Length=-1&Audited=true&NotAudited=; category=-1,page=1: ConnectionError: HTTPSConnectionPool(host='search.codal.ir', port=443): Max retries exceeded with url: /api/search/v2/q?PageNumber=1&PageSize=100&Symbol=%D8%B9%DB%8C%D8%A7%D8%B1&Category=-1&LetterType=-1&Length=-1&Audited=true&NotAudited",
+  "official_source_error": "category=3,page=1: ConnectTimeout: HTTPSConnectionPool(host='search.codal.ir', port=443): Max retries exceeded with url: /api/search/v2/q?PageNumber=1&PageSize=100&Symbol=%D8%B9%DB%8C%D8%A7%D8%B1&Category=3&LetterType=-1&Length=-1&Audited=true&NotAudited=; category=-1,page=1: ConnectTimeout: HTTPSConnectionPool(host='search.codal.ir', port=443): Max retries exceeded with url: /api/search/v2/q?PageNumber=1&PageSize=100&Symbol=%D8%B9%DB%8C%D8%A7%D8%B1&Category=-1&LetterType=-1&Length=-1&Audited=true&NotAudited",
   "forward_holding_detail": {
     "report_date_jalali": "1405/07/30",
     "symbol": "عسکه۲",
@@ -165,7 +165,7 @@
     "next_session_quote_available": false
   },
   "latest_report_search": {
-    "checked_at": "2026-11-19T12:10:41.844671+00:00",
+    "checked_at": "2026-11-19T13:45:27.615386+00:00",
     "result": "No newer Codal portfolio report was confirmed; retained the existing official workbook.",
     "fallback_not_promoted": true,
     "existing_report_period": "1405/07/30",

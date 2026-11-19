@@ -1,7 +1,8 @@
 {
   "status": "quotes_not_synchronized_or_not_current",
-  "retrieved_at": "2026-11-19T15:40:42.023001+03:30",
-  "expected_session_date_gregorian": "2026-11-19",
+  "retrieved_at": "2026-11-19T17:15:27.799207+03:30",
+  "expected_session_date_gregorian": "2026-11-18",
+  "calendar_rule": "Iran commodity-certificate sessions scheduled Saturday-Wednesday; Thursday/Friday resolve to the preceding Wednesday unless a holiday intervenes.",
   "common_quote_date_gregorian": null,
   "common_quote_date_jalali": null,
   "promoted_to_valuation_model": false,
@@ -39,8 +40,9 @@
   },
   "rules": [
     "Only explicitly dated last-trade/daily-close quotes are accepted.",
-    "All four component quotes must share the current Tehran calendar session before promotion.",
-    "No previous-session quote is carried forward as a current quote.",
+    "All four component quotes must share the latest scheduled exchange session before promotion.",
+    "Thursday and Friday are mapped to the preceding Wednesday; unmodeled holidays still block promotion when quote dates differ.",
+    "No previous-session quote is carried forward beyond the latest scheduled exchange session.",
     "Gold-bar certificate is recorded as a market reference only; it is not treated as a separately disclosed portfolio holding."
   ]
 }
