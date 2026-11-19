@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101827"><title>اعتبارسنجی آماری عیار</title>
+<style>
+:root{color-scheme:dark;--bg:#0b1220;--panel:#131e30;--line:#26354b;--muted:#9aabc1;--txt:#edf3fb;--green:#2bc48a;--gold:#e6b85c}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--txt);font:14px/1.8 Tahoma,Arial,sans-serif}main{max-width:1050px;margin:auto;padding:18px 14px 40px}a{color:#9fc7ff}.panel,.card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:14px;margin:12px 0}.grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}.card{margin:0}.k{font-size:12px;color:var(--muted)}.v{font-size:21px;font-weight:bold;direction:ltr;text-align:right}.muted{color:var(--muted);font-size:12px}.row{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}table{width:100%;border-collapse:collapse;font-size:13px}td,th{padding:8px;border-bottom:1px solid var(--line);text-align:center}th{color:var(--muted)}.warn{color:var(--gold)}.good{color:var(--green)}@media(max-width:650px){.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.v{font-size:18px}}
+</style></head><body><main>
+<div class="row"><div><h2>آزمون آماری و اعتبارسنجی عیار</h2><div class="muted">بک‌تست بدون نگاه به آینده · دفتر سیگنال · ارزیابی مستقل NAV</div></div><a href="index.html">بازگشت به داشبورد اصلی</a></div>
+<div id="status" class="panel">در حال دریافت گزارش اعتبارسنجی…</div>
+<section class="grid">
+<div class="card"><div class="k">روزهای معتبر</div><div class="v" id="sessions">—</div></div>
+<div class="card"><div class="k">CAGR استراتژی EMA20/50</div><div class="v" id="cagr">—</div></div>
+<div class="card"><div class="k">CAGR نگهداری عیار</div><div class="v" id="bh">—</div></div>
+<div class="card"><div class="k">بیشترین افت استراتژی</div><div class="v" id="dd">—</div></div>
+</section>
+<section class="panel"><h3>مقایسه بک‌تست تاریخی</h3><div class="muted" id="range"></div><table><thead><tr><th>معیار</th><th>EMA20/50</th><th>خرید و نگهداری</th></tr></thead><tbody id="comparison"></tbody></table><p class="muted" id="assumption"></p></section>
+<section class="panel"><h3>ارزیابی خارج از نمونه (از ۲۰۲۴)</h3><div id="oos" class="muted">—</div></section>
+<section class="panel"><h3>آخرین سیگنال ثبت‌شده</h3><div id="signal">—</div></section>
+<section class="panel"><h3>نرخ موفقیت جهت سیگنال‌ها</h3><div class="muted">بازده پس از صدور سیگنال؛ برای افق‌های ۱، ۵ و ۱۰ جلسه. این نرخ‌ها به‌تنهایی معیار سودآوری نیستند.</div><table><thead><tr><th>افق</th><th>سیگنال صعودی و بازده مثبت</th><th>سیگنال نقد و بازده منفی</th><th>نمونه ارزیابی‌شده</th></tr></thead><tbody id="hit"></tbody></table></section>
+<section class="panel"><h3>اعتبارسنجی بنیادی NAV</h3><div id="fundamental">—</div><p class="muted">NAV رسمی همان جلسه که صرفاً به‌عنوان مبنا استفاده شده، پیش‌بینی مستقل محسوب نمی‌شود و در امتیاز دقت وارد نمی‌شود.</p></section>
+<section class="panel"><h3>محدودیت‌ها</h3><ul id="limitations"></ul><p class="muted" id="updated"></p></section>
+</main><script>
+const fmt=(x,d=2)=>x==null?'—':Number(x).toLocaleString('en-US',{maximumFractionDigits:d,minimumFractionDigits:d})+'%';
+const set=(id,v)=>document.getElementById(id).textContent=v;
+fetch('data/ayar_validation.json?ts='+Date.now()).then(r=>{if(!r.ok)throw Error('HTTP '+r.status);return r.json()}).then(d=>{
+const t=d.technical,f=d.fundamental,s=t.full_sample.strategy,b=t.full_sample.buy_and_hold;
+set('status','گزارش معتبر دریافت شد · وضعیت: '+d.status);
+set('sessions',t.history.valid_sessions.toLocaleString('en-US'));
+set('cagr',fmt(s.cagr_pct));set('bh',fmt(b.cagr_pct));set('dd',fmt(s.max_drawdown_pct));
+set('range',t.history.first_date+' تا '+t.history.last_date+' · '+t.model);
+const rows=[['بازده کل',fmt(s.total_return_pct),fmt(b.total_return_pct)],['بازده سالانه مرکب',fmt(s.cagr_pct),fmt(b.cagr_pct)],['نوسان سالانه',fmt(s.annualized_volatility_pct),fmt(b.annualized_volatility_pct)],['شارپ (نرخ بدون ریسک صفر)',s.sharpe_ratio_rf0??'—',b.sharpe_ratio_rf0??'—'],['بیشترین افت سرمایه',fmt(s.max_drawdown_pct),fmt(b.max_drawdown_pct)]];
+document.getElementById('comparison').innerHTML=rows.map(x=>'<tr>'+x.map(y=>'<td>'+y+'</td>').join('')+'</tr>').join('');
+set('assumption','هزینه فرضی هر سمت معامله: '+t.fee_assumption_per_side_pct+'%؛ '+t.full_sample.completed_round_trips+' معامله رفت‌وبرگشت کامل؛ نرخ برد معاملات بسته‌شده: '+(t.full_sample.trade_win_rate_pct==null?'—':t.full_sample.trade_win_rate_pct+'%')+'. '+t.fee_assumption_note);
+const o=t.out_of_sample_from_2024;set('oos',o?'جلسات: '+o.strategy.sessions+' · CAGR استراتژی: '+fmt(o.strategy.cagr_pct)+' · CAGR نگهداری: '+fmt(o.buy_and_hold.cagr_pct)+' · افت استراتژی: '+fmt(o.strategy.max_drawdown_pct):'داده کافی نیست');
+const l=t.latest_signal;set('signal',l.date+' · '+l.signal+' · قیمت پایانی: '+l.close.toLocaleString('en-US')+' ریال · EMA20: '+l.ema20.toFixed(2)+' · EMA50: '+l.ema50.toFixed(2));
+document.getElementById('hit').innerHTML=[1,5,10].map(h=>{const x=t.forward_signal_hit_rates[String(h)];return '<tr><td>'+h+' جلسه</td><td>'+fmt(x.bullish_positive_rate_pct)+'</td><td>'+fmt(x.cash_negative_rate_pct)+'</td><td>'+x.evaluated_signals+'</td></tr>'}).join('');
+set('fundamental','وضعیت: '+f.status+' · پیش‌بینی‌های مستقل ثبت‌شده: '+f.forecast_count+' · پیش‌بینی‌های قابل امتیازدهی: '+f.scored_forecast_count+' · MAPE: '+(f.mean_absolute_percentage_error_pct==null?'هنوز قابل محاسبه نیست':fmt(f.mean_absolute_percentage_error_pct)));
+document.getElementById('limitations').innerHTML=d.limitations.map(x=>'<li>'+x+'</li>').join('');
+set('updated','آخرین محاسبه: '+d.generated_at);
+}).catch(e=>set('status','گزارش هنوز ساخته نشده یا دریافت آن ناموفق است: '+e.message));
+</script></body></html>
