@@ -89,7 +89,9 @@ def run_period(closes, dates, fast, slow, first_i, fee, initial_position=0):
         max_dd = min(max_dd, equity / peak - 1.0)
         strategy_returns.append(net_return)
 
-        benchmark_return = raw_return
+        # Apply the same assumed entry and exit fee to the buy-and-hold benchmark.
+        benchmark_change = 1 if i == first_i or i == len(closes) - 1 else 0
+        benchmark_return = (1.0 + raw_return) * ((1.0 - fee) ** benchmark_change) - 1.0
         benchmark_equity *= 1.0 + benchmark_return
         benchmark_peak = max(benchmark_peak, benchmark_equity)
         benchmark_dd = min(benchmark_dd, benchmark_equity / benchmark_peak - 1.0)
