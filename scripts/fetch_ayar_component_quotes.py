@@ -5,6 +5,7 @@ Sources: Bourseeye commodity certificates and Sahmino's Aske2 quote history.
 Only same-session, explicitly dated quotes are promoted into the fair-NAV input.
 """
 import json
+import os
 import re
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -18,6 +19,7 @@ ROOT = Path(__file__).resolve().parents[1]
 FAIR_NAV = ROOT / "data" / "ayar_fair_nav.json"
 OUT = ROOT / "data" / "ayar_component_market_quotes.json"
 MACRO = ROOT / "data" / "ayar_macro_live.json"
+SAHMINO_API_URL = "https://sahmino.com/api/v1/instruments/sske/prices"
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
     "Accept": "text/html,application/xhtml+xml",
@@ -107,7 +109,71 @@ def parse_sahmino_quote_text(text, url):
     }
 
 
+
+def parse_sahmino_api_payload(payload, url):
+    data = payload.get("data")
+    if isinstance(data, list):
+        points = data
+        unit = payload.get("unit")
+    elif isinstance(data, dict):
+        points = data.get("points") or data.get("prices") or data.get("history")
+        unit = data.get("unit") or payload.get("unit")
+        if not points and any(k in data for k in ("close", "closingPrice", "closePrice")):
+            points = [data]
+    else:
+        raise ValueError("sahmino_api_data_missing")
+    if not isinstance(points, list) or not points:
+        raise ValueError("sahmino_api_price_points_missing")
+    point = next((p for p in reversed(points) if isinstance(p, dict)), None)
+    if not point:
+        raise ValueError("sahmino_api_latest_point_missing")
+    date_value = point.get("date") or point.get("sessionDate") or point.get("tradingDate")
+    close_value = point.get("close") or point.get("closingPrice") or point.get("closePrice")
+    point_unit = point.get("unit") or unit
+    if not date_value or close_value is None:
+        raise ValueError("sahmino_api_date_or_close_missing")
+    date_text = str(date_value)
+    if re.fullmatch(r"\\d{4}-\\d{2}-\\d{2}", date_text):
+        date_iso = date_text
+    elif re.fullmatch(r"\\d{8}", date_text):
+        date_iso = f"{date_text[:4]}-{date_text[4:6]}-{date_text[6:8]}"
+    else:
+        raise ValueError("sahmino_api_date_format_unknown")
+    normalized_unit = str(point_unit or "").lower()
+    if normalized_unit not in ("rial", "rials", "irr", "rial_per_paper"):
+        raise ValueError("sahmino_api_unit_not_rial")
+    price = number(str(close_value))
+    if price <= 0:
+        raise ValueError("sahmino_api_close_nonpositive")
+    gd = datetime.strptime(date_iso, "%Y-%m-%d").date()
+    jd = jdatetime.date.fromgregorian(date=gd)
+    return {
+        "key": "coin_forward",
+        "symbol": "عسکه۲",
+        "price": price,
+        "unit": "rial_per_paper",
+        "jalali_date": f"{jd.year}/{jd.month:02d}/{jd.day:02d}",
+        "date": date_iso,
+        "source": url,
+        "price_type": "daily_close",
+        "volume": point.get("volume"),
+    }
+
+
 def sahmino_quote(url):
+    token = os.getenv("SAHMINO_API_TOKEN")
+    if token:
+        response = requests.get(
+            SAHMINO_API_URL,
+            headers={"Authorization": f"Bearer {token}", "Accept": "application/json"},
+            timeout=(8, 20),
+        )
+        response.raise_for_status()
+        payload = response.json()
+        if payload.get("error"):
+            code = payload["error"].get("code", "unknown")
+            raise ValueError(f"sahmino_api_error:{code}")
+        return parse_sahmino_api_payload(payload, SAHMINO_API_URL)
     return parse_sahmino_quote_text(get_text(url), url)
 
 
