@@ -75,6 +75,10 @@ button.active{background:#d5a84e;color:#172033;border-color:#d5a84e;font-weight:
 <div class="metric"><span>خالص صدور و ابطال یک‌ماهه (همت)</span><b id="fundamentalFlow">—</b></div>
 <div class="metric"><span>تخفیف قیمت پایانی به NAV</span><b id="fundamentalDiscount">—</b></div>
 <div class="metric"><span>افت بیشینه یک‌ساله</span><b id="fundamentalDrawdown">—</b></div>
+<div class="metric"><span>واحدهای منتشرشده</span><b id="fundamentalUnits">—</b></div>
+<div class="metric"><span>ارزش معاملات آخرین جلسه (همت)</span><b id="fundamentalTradingValue">—</b></div>
+<div class="metric"><span>ورود پول حقیقی ۲۰ جلسه (همت)</span><b id="fundamentalRealMoneyFlow">—</b></div>
+<div class="metric"><span>نوسان سالانه</span><b id="fundamentalVolatility">—</b></div>
 </div>
 <div id="fundamentalQuality" class="foot">داده‌ها با تاریخ و درجه اطمینان منبع نگهداری می‌شوند؛ NAV کامل در صورت فقدان قیمت یک جزء مسدود می‌ماند.</div>
 <div class="bookgrid">
@@ -296,6 +300,10 @@ function drawFundamental(j){
  document.getElementById('fundamentalFlow').textContent=fmtNum(j.peer_comparison?.ayar_net_issue_flow_hamt?.one_month);
  document.getElementById('fundamentalDiscount').textContent=fmtPct(j.nav_performance?.close_discount_to_same_day_redemption_nav_pct);
  document.getElementById('fundamentalDrawdown').textContent=fmtPct(j.risk_and_liquidity?.one_year_max_drawdown_pct);
+ document.getElementById('fundamentalUnits').textContent=fmtNum(j.peer_comparison?.units_outstanding_latest);
+ document.getElementById('fundamentalTradingValue').textContent=fmtNum((j.risk_and_liquidity?.traded_value_toman||0)/1e12);
+ document.getElementById('fundamentalRealMoneyFlow').textContent=fmtNum(j.peer_comparison?.ayar_real_money_flow_20_sessions_hamt);
+ document.getElementById('fundamentalVolatility').textContent=fmtPct(j.risk_and_liquidity?.annualized_volatility_pct);
  const q=document.getElementById('fundamentalQuality');
  q.textContent='آخرین ترکیب تفصیلی: ۳۰ مهر ۱۴۰۵ · آخرین NAV رسمی: '+(j.nav_performance?.official_nav_date||'—')+' · وضعیت NAV کامل: '+(j.component_valuation?.full_fair_nav_status||'—')+' · امتیازها کیفیت پژوهش‌اند، نه توصیه خرید.';
  const portfolioNames=[['شمش طلا','gold_bullion'],['گواهی سکه','coin_certificates'],['نقره','silver'],['سلف سکه','coin_forward'],['سپرده','bank_deposit'],['طبقه‌بندی‌نشده','unclassified']];
