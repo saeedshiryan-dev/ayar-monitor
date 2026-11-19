@@ -9,6 +9,7 @@ on:
       - 'scripts/fetch_ayar_component_quotes.py'
       - 'scripts/calculate_ayar_fair_nav.py'
       - 'scripts/component_valuation.py'
+      - 'tests/test_component_quotes.py'
   schedule:
     # 18:15 Tehran time, after the 18:00 commodity-certificate session.
     # Saturday through Wednesday (Iran trading week).
@@ -36,6 +37,9 @@ jobs:
 
       - name: Install data dependencies
         run: python -m pip install --upgrade requests openpyxl jdatetime
+
+      - name: Validate fundamental data parsers and valuation guards
+        run: python -m unittest discover -s tests -p 'test_*.py'
 
       - name: Retry official Codal search and workbook download
         env:
