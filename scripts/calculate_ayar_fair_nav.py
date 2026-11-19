@@ -32,7 +32,7 @@ def calculate(data):
         row = {"usd_shock_pct": usd_shock, "nav_rial_by_xau_shock": {}}
         for xau_shock in shocks:
             scenario_gold = (1 + usd_shock / 100) * (1 + xau_shock / 100) - 1
-            scenario_silver = (1 + usd_shock / 100) * (1 + float(i["silver_usd_change_pct"]) / 100) - 1
+            scenario_silver = usd_shock / 100
             scenario_return = (gold_linked / 100) * scenario_gold + (silver / 100) * scenario_silver
             row["nav_rial_by_xau_shock"][str(xau_shock)] = round(estimate * (1 + scenario_return))
         matrix.append(row)
