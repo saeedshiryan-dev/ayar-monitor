@@ -20,7 +20,7 @@ class ComponentValuationTests(unittest.TestCase):
             },
             "component_market_snapshot": {
                 "snapshot_date": "2026-11-18",
-                "coin_certificate": {"price_toman_per_certificate": 100, "date": "2026-11-18"},
+                "coin_certificate": {"price_toman_per_certificate": 100, "date": "2026-11-18", "unit": "one full new-design Bahar Azadi coin"},
                 "silver_bar_certificate": {"price_toman_per_gram": 10, "date": "2026-11-18"},
                 "coin_forward": {"closing_price_rial_per_paper": 100, "quote_date": "2026-11-18"}
             }
