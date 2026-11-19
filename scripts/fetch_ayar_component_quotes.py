@@ -77,7 +77,7 @@ def parse_sahmino_quote_text(text, url):
     # close, change text, and volume. The change cell may contain Persian
     # direction words and the Arabic decimal separator (٫), so match it as
     # a token rather than restricting it to ASCII numeric characters.
-    text = clean(text)
+    text = clean(text).replace("|", " ").replace("│", " ")
     pattern = (
         r"(\d{1,2})\s+(" + "|".join(MONTHS) + r")\s+(14\d{2})"
         r"\s+([\d,٬]+)\s+([\d,٬]+)\s+([\d,٬]+)\s+([\d,٬]+)"
@@ -92,6 +92,7 @@ def parse_sahmino_quote_text(text, url):
         "key": "coin_forward",
         "symbol": "عسکه۲",
         "price": close,
+        "volume": number(match.group(8)),
         "unit": "rial_per_paper",
         "jalali_date": f"{year}/{MONTHS.index(month)+1:02d}/{int(day):02d}",
         "date": jalali_date(day, month, year),
