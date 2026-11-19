@@ -11,8 +11,8 @@ from scripts.fetch_ayar_component_quotes import (
 class ComponentQuoteParserTests(unittest.TestCase):
     def test_sahmino_history_row_extracts_daily_close_not_high(self):
         sample = (
-            "تاریخچه اخیر ۲۷ آبان ۱۴۰۵ ۲٬۴۸۱٬۱۲۱ ۲٬۴۹۶٬۳۰۸ "
-            "۲٬۴۸۰٬۱۱۱ ۲٬۴۸۵٬۱۵۲ ▼نزولی ۰٫۴۵٪ ۲۹۵٬۶۰۷"
+            "تاریخچه اخیر | ۲۷ آبان ۱۴۰۵ | ۲٬۴۸۱٬۱۲۱ | ۲٬۴۹۶٬۳۰۸ | "
+            "۲٬۴۸۰٬۱۱۱ | ۲٬۴۸۵٬۱۵۲ | ▼نزولی ۰٫۴۵٪ | ۲۹۵٬۶۰۷"
         )
         quote = parse_sahmino_quote_text(
             sample, "https://sahmino.com/symbol/sske?tab=chart"
@@ -20,6 +20,7 @@ class ComponentQuoteParserTests(unittest.TestCase):
         self.assertEqual(quote["price"], 2485152)
         self.assertEqual(quote["date"], "2026-11-18")
         self.assertEqual(quote["price_type"], "daily_close")
+        self.assertEqual(quote["volume"], 295607)
 
     def test_thursday_uses_wednesday_exchange_session(self):
         now = datetime(2026, 11, 19, 17, 0, tzinfo=ZoneInfo("Asia/Tehran"))
