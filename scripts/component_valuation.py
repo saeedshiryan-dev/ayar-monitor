@@ -23,6 +23,8 @@ def _quote_return(base_price: Any, current_price: Any,
     current = _num(current_price)
     if base is None or current is None:
         return None, "missing_base_or_current_quote"
+    if not base_date or not current_date:
+        return None, "missing_quote_date"
     if date.fromisoformat(current_date) < date.fromisoformat(base_date):
         return None, "current_quote_precedes_base_date"
     if current_date == base_date:
