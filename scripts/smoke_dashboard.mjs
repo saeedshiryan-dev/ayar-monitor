@@ -1,5 +1,4 @@
 import { chromium } from "playwright";
-import fs from "node:fs";
 
 const url = process.env.DASHBOARD_URL || "https://saeedshiryan-dev.github.io/ayar-monitor/";
 const browser = await chromium.launch({ headless: true });
@@ -13,57 +12,27 @@ try {
     throw new Error(`Dashboard HTTP response: ${response?.status() ?? "no response"}`);
   }
 
+  // The dashboard must load the published fundamental dossier even when
+  // market-only feeds are closed, delayed, or temporarily unavailable.
   await page.waitForFunction(() => {
-    const price = document.querySelector("#price")?.textContent?.trim();
-    const history = document.querySelector("#fundHistoryCount")?.textContent?.trim();
-    const portfolio = document.querySelector("#codalPortfolioStatus")?.textContent?.trim();
-    const liveLast = document.querySelector("#liveLast")?.textContent?.trim();
-    const liveClose = document.querySelector("#liveClose")?.textContent?.trim();
-    const liveTime = document.querySelector("#liveTime")?.textContent?.trim();
-    const navRedemption = document.querySelector("#navRedemption")?.textContent?.trim();
-    const navSubscription = document.querySelector("#navSubscription")?.textContent?.trim();
-    const navPublishedAt = document.querySelector("#navPublishedAt")?.textContent?.trim();
-    const bookStatus = document.querySelector("#bookStatus")?.textContent?.trim();
-    return price && price !== "—" && history && history !== "—" &&
-      portfolio && !portfolio.includes("در انتظار") &&
-      liveLast && liveLast !== "—" && liveClose && liveClose !== "—" &&
-      navRedemption && navRedemption !== "—" &&
-      navSubscription && navSubscription !== "—" && navPublishedAt &&
-      navPublishedAt !== "—" && bookStatus === "دریافت شد" &&
-      document.querySelector("#liveTime")?.textContent?.trim() !== "—" &&
-      document.querySelector("#macroStatus")?.textContent?.trim() === "دریافت موفق · نر‌خ‌آرا" &&
-      document.querySelector("#macroUsd")?.textContent?.trim() !== "—" &&
-      document.querySelector("#macroXau")?.textContent?.trim() !== "—";
+    const score = document.querySelector("#fundamentalScore")?.textContent?.trim();
+    const portfolioRows = document.querySelectorAll("#fundamentalPortfolioRows tr").length;
+    const scoreRows = document.querySelectorAll("#fundamentalScoreRows tr").length;
+    return score && score.includes("/10") && portfolioRows >= 5 && scoreRows >= 8;
   }, { timeout: 120000 });
 
   const initial = await page.evaluate(() => ({
     title: document.title,
-    price: document.querySelector("#price")?.textContent?.trim(),
-    rsi: document.querySelector("#rsi")?.textContent?.trim(),
-    historyCount: document.querySelector("#fundHistoryCount")?.textContent?.trim(),
-    portfolioStatus: document.querySelector("#codalPortfolioStatus")?.textContent?.trim(),
-    portfolioInfo: document.querySelector("#codalPortfolioInfo")?.textContent?.trim(),
+    fundamentalScore: document.querySelector("#fundamentalScore")?.textContent?.trim(),
+    fundamentalGoldWeight: document.querySelector("#fundamentalGoldWeight")?.textContent?.trim(),
+    fundamentalOneYear: document.querySelector("#fundamentalOneYear")?.textContent?.trim(),
+    portfolioRows: document.querySelectorAll("#fundamentalPortfolioRows tr").length,
+    peerRows: document.querySelectorAll("#fundamentalPeers tr").length,
+    scoreRows: document.querySelectorAll("#fundamentalScoreRows tr").length,
+    scenarioRows: document.querySelectorAll("#fundamentalScenarioRows tr").length,
     hasChart: typeof Chart !== "undefined" &&
       Boolean(Chart.getChart(document.querySelector("#priceChart"))),
     hasNavPanel: Boolean(document.querySelector("#navRedemption")),
-    liveLast: document.querySelector("#liveLast")?.textContent?.trim(),
-    liveClose: document.querySelector("#liveClose")?.textContent?.trim(),
-    liveTime: document.querySelector("#liveTime")?.textContent?.trim(),
-    macroStatus: document.querySelector("#macroStatus")?.textContent?.trim(),
-    macroUsd: document.querySelector("#macroUsd")?.textContent?.trim(),
-    macroXau: document.querySelector("#macroXau")?.textContent?.trim(),
-    navRedemption: document.querySelector("#navRedemption")?.textContent?.trim(),
-    navSubscription: document.querySelector("#navSubscription")?.textContent?.trim(),
-    navPremium: document.querySelector("#navPremium")?.textContent?.trim(),
-    navPublishedAt: document.querySelector("#navPublishedAt")?.textContent?.trim(),
-    bookStatus: document.querySelector("#bookStatus")?.textContent?.trim(),
-    bookUpdated: document.querySelector("#bookUpdated")?.textContent?.trim(),
-    fundLatestRedemption: document.querySelector("#fundLatestRedemption")?.textContent?.trim(),
-    fundLatestSubscription: document.querySelector("#fundLatestSubscription")?.textContent?.trim(),
-    historyNavHeader: document.querySelector("#fundHistoryRows")?.parentElement?.querySelector("thead")?.textContent?.trim(),
-    portfolioTableCount: document.querySelectorAll("#codalPortfolioTables table").length,
-    portfolioAssetRows: document.querySelector("#codalPortfolioTables table tbody")?.querySelectorAll("tr").length ??
-      document.querySelector("#codalPortfolioTables table")?.querySelectorAll("tr").length ?? 0,
   }));
 
   await page.locator('.tf[data-tf="4h"]').click();
@@ -71,32 +40,23 @@ try {
   await page.screenshot({ path: "artifacts/ayar-dashboard.png", fullPage: true });
 
   if (!initial.title.includes("داشبورد")) throw new Error("Unexpected page title");
+  if (!initial.fundamentalScore.includes("8/10")) throw new Error("Fundamental scorecard did not render");
+  if (initial.portfolioRows < 5 || initial.scoreRows < 8) throw new Error("Fundamental tables are incomplete");
+  if (initial.peerRows < 5 || initial.scenarioRows < 5) throw new Error("Peer or scenario tables are incomplete");
   if (!initial.hasNavPanel) throw new Error("NAV panel did not render");
-  for (const key of ["liveLast", "liveClose", "liveTime", "navRedemption", "navSubscription", "navPremium", "navPublishedAt", "macroUsd", "macroXau"]) {
-    if (!initial[key] || initial[key] === "—") throw new Error("Live quote/NAV field did not render: " + key);
-  }
-  if (initial.bookStatus !== "دریافت شد") throw new Error("Order book was not loaded: " + initial.bookStatus);
-  if (initial.macroStatus !== "دریافت موفق · نر‌خ‌آرا") throw new Error("Macro quotes are missing or stale: " + initial.macroStatus);
-  if (!initial.fundLatestRedemption || initial.fundLatestRedemption === "—" ||
-      !initial.fundLatestSubscription || initial.fundLatestSubscription === "—") {
-    throw new Error("Historical NAV values did not render");
-  }
-  if (!initial.historyNavHeader?.includes("تومان")) throw new Error("Historical NAV table unit is not explicit");
-  if (initial.portfolioTableCount < 2 || initial.portfolioAssetRows < 5) {
-    throw new Error("Uploaded Codal portfolio tables did not render completely");
-  }
   if (!fourHourActive) throw new Error("4-hour timeframe control did not respond");
 
-  // Verify the published page also fits a narrow mobile viewport.
+  // Verify the fundamental panel remains usable on a narrow mobile viewport.
   await page.setViewportSize({ width: 390, height: 844 });
   await page.reload({ waitUntil: "domcontentloaded", timeout: 120000 });
-  await page.waitForFunction(() => document.querySelector("#liveLast")?.textContent?.trim() &&
-    document.querySelector("#codalPortfolioStatus")?.textContent?.trim() &&
-    document.querySelector("#fundLatestRedemption")?.textContent?.trim() !== "—", { timeout: 120000 });
+  await page.waitForFunction(() =>
+    document.querySelector("#fundamentalScore")?.textContent?.includes("/10") &&
+    document.querySelectorAll("#fundamentalScoreRows tr").length >= 8,
+    { timeout: 120000 }
+  );
   const mobile = await page.evaluate(() => ({
     viewportWidth: window.innerWidth,
     documentWidth: document.documentElement.scrollWidth,
-    portfolioTables: document.querySelectorAll("#codalPortfolioTables table").length,
     noHorizontalPageOverflow: document.documentElement.scrollWidth <= window.innerWidth + 2,
   }));
   if (!mobile.noHorizontalPageOverflow) throw new Error("Mobile page has horizontal overflow: " + JSON.stringify(mobile));
