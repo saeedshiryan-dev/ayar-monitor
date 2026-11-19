@@ -1,0 +1,417 @@
+{
+  "schema_version": "1.0.0",
+  "fund": "صندوق سرمایه‌گذاری طلای عیار مفید",
+  "symbol": "عیار",
+  "as_of_date": "2026-11-19",
+  "jalali_as_of_date": "1405/08/28",
+  "purpose": "fundamental research coverage and monitoring model; scores are not an investment recommendation or a rating of expected return",
+  "research_depth_score_10": 8,
+  "scoring_definition": "امتیاز ۸ از ۱۰ برای عمق و پوشش تحلیل است؛ نه امتیاز جذابیت سرمایه‌گذاری و نه تضمین کامل‌بودن داده‌های روز. داده ناقص با برچسب و محدودیت نگهداری می‌شود.",
+  "source_hierarchy": [
+    "official fund/Codal statements and TSETMC NAV",
+    "dated exchange data from Bourseeye and Sahmino",
+    "secondary fund comparison pages",
+    "macro news reporting official statistics"
+  ],
+  "fund_profile": {
+    "manager": "سبدگردان مفید",
+    "inception_jalali": "1397/03/29",
+    "instrument": "ETF commodity gold fund",
+    "core_exposure": "gold bullion, gold coin deposit certificates, small silver and standardized coin-forward exposure",
+    "market_maker_secondary": "اختصاصی بازارگردانی مفید",
+    "governance_caveat": "current official prospectus and the latest amended investment policy were not independently retrieved; trustee/auditor metadata differs across secondary sources and is not used as a confirmed fact"
+  },
+  "portfolio_composition": {
+    "dates": [
+      "1405/05/31",
+      "1405/06/31",
+      "1405/07/30"
+    ],
+    "source_types": [
+      "user-uploaded official monthly portfolio workbook",
+      "user-uploaded official monthly portfolio workbook",
+      "official monthly portfolio workbook already parsed into repository"
+    ],
+    "weights_pct": {
+      "1405/05/31": {
+        "gold_bullion": 87.92,
+        "coin_certificates": 12.01,
+        "silver": 0.07,
+        "coin_forward": 0,
+        "bank_deposit": 0.0000228,
+        "unclassified": 0
+      },
+      "1405/06/31": {
+        "gold_bullion": 87.89,
+        "coin_certificates": 11.43,
+        "silver": 0.24,
+        "coin_forward": 0.44,
+        "bank_deposit": 0.0023226,
+        "unclassified": 0
+      },
+      "1405/07/30": {
+        "gold_bullion": 87.65865306,
+        "coin_certificates": 11.20971945,
+        "silver": 0.61093504,
+        "coin_forward": 0.45552608,
+        "bank_deposit": 0.00092932,
+        "unclassified": 0.06423705
+      }
+    },
+    "latest_combined_gold_weight_pct": 98.86837251,
+    "listed_asset_value_hamt": {
+      "1405/05/31": 275.8626,
+      "1405/06/31": 331.0384,
+      "1405/07/30": 390.703
+    },
+    "listed_asset_value_growth_pct": {
+      "1405/05/31_to_1405/06/31": 20.0012,
+      "1405/06/31_to_1405/07/30": 18.0235
+    },
+    "interpretation": "رشد ارزش دارایی‌های فهرست‌شده ترکیبی از تغییر قیمت دارایی‌ها و صدور/ابطال واحدهاست و بازده NAV هر واحد محسوب نمی‌شود."
+  },
+  "financials": {
+    "period_end_jalali": "1405/05/31",
+    "units": "همت؛ صورت اصلی به میلیون ریال گزارش شده و به همت تبدیل شده است",
+    "total_assets_hamt": 275.863133,
+    "liabilities_hamt": 0.478645,
+    "net_assets_hamt": 275.384488,
+    "prior_year_net_assets_hamt": 70.892225,
+    "net_assets_yoy_growth_pct": 288.4551,
+    "net_profit_hamt": 145.266201,
+    "prior_year_net_profit_hamt": 23.552623,
+    "net_profit_yoy_growth_pct": 516.7729,
+    "income_hamt": 147.39665,
+    "realized_sale_profit_hamt": 7.927327,
+    "unrealized_holding_gain_hamt": 139.46818,
+    "unrealized_gain_as_pct_of_net_profit": 96.0087,
+    "fund_fees_and_expenses_hamt": 2.130449,
+    "management_and_organ_expenses_hamt": 1.44859,
+    "other_expenses_hamt": 0.681859,
+    "expenses_as_pct_of_ending_net_assets": 0.7736,
+    "liabilities_as_pct_of_total_assets": 0.1735,
+    "units_start": 3322335429,
+    "units_issued": 1685573805,
+    "units_redeemed": 198126818,
+    "units_end": 4809782416,
+    "unit_count_growth_pct": 44.7711,
+    "estimated_nav_per_unit_start_toman": 21338.07,
+    "estimated_nav_per_unit_end_toman": 57255.08,
+    "estimated_nav_per_unit_change_pct": 168.3236,
+    "caveats": [
+      "سود تحقق‌نیافته 96% سود خالص است؛ بخش غالب سود حسابداری نقدی/توزیع‌شده نیست و به ارزش‌گذاری بازار حساس است.",
+      "نسبت هزینه 0.7736% بر مبنای خالص دارایی پایان دوره است و expense ratio رسمی مبتنی بر متوسط دارایی‌ها نیست.",
+      "رشد خالص دارایی و تعداد واحدها را نباید به‌عنوان بازده سرمایه‌گذاری تفسیر کرد."
+    ]
+  },
+  "monthly_accounting_performance": {
+    "1405/06/31": {
+      "income_hamt": 37.744895,
+      "asset_revaluation_share_pct": 99.9459
+    },
+    "1405/07/30": {
+      "income_hamt": 44.010378,
+      "asset_revaluation_share_pct": 99.5976,
+      "components_hamt": {
+        "gold_bullion_revaluation": 37.910533,
+        "coin_certificate_revaluation": 5.96039,
+        "silver_revaluation": -0.037621,
+        "coin_forward_revaluation": 0.176832,
+        "bank_deposit_interest": 0.000244
+      }
+    },
+    "october_income_change_vs_september_pct": 16.5995,
+    "interpretation": "درآمد ماهانه گزارش‌شده عمدتاً تغییر ارزش دارایی‌هاست، نه سود نقدی پرداخت‌شده یا بازده دقیق NAV هر واحد."
+  },
+  "nav_performance": {
+    "official_nav_redemption_rial": 663527,
+    "official_nav_date": "2026-11-18",
+    "official_nav_subscription_rial": 666542,
+    "market_close_rial": 654752,
+    "market_price_date": "2026-11-18",
+    "close_discount_to_same_day_redemption_nav_pct": -1.3228,
+    "last_trade_rial": 655602,
+    "last_trade_discount_to_nav_pct": -1.1944,
+    "raw_redemption_nav_returns_pct": {
+      "30d": -6.9071,
+      "90d": 26.2363,
+      "180d": 26.5256,
+      "365d": 115.1842
+    },
+    "raw_return_base_dates": {
+      "30d": "2026-10-19",
+      "90d": "2026-08-18",
+      "180d": "2026-05-22",
+      "365d": "2025-11-18"
+    },
+    "secondary_adjusted_returns_pct": {
+      "1m": -6.29,
+      "3m": 26.26,
+      "6m": 26.54,
+      "1y": 116.69
+    },
+    "secondary_one_year_rank": "3 از 37 صندوق طلا",
+    "caveat": "بازده‌های NAV تعدیل‌شده منبع ثانویه و NAV خام TSETMC دو سری/روش متفاوت‌اند؛ اختلاف آن‌ها حفظ شده و با هم ادغام نشده‌اند. آخرین رکورد رسمی NAV در 18 نوامبر است."
+  },
+  "peer_comparison": {
+    "source": "Bourseeye gold-fund comparison snapshot updated 1405/08/27",
+    "universe_count": 37,
+    "total_gold_fund_assets_hamt": 955,
+    "ayar_assets_hamt": 356,
+    "ayar_share_of_universe_pct": 37.2775,
+    "ayar_net_issue_flow_hamt": {
+      "one_month": 7.4,
+      "three_months": 37.4
+    },
+    "ayar_real_money_flow_20_sessions_hamt": 3.6,
+    "returns_pct": {
+      "ayar": {
+        "one_month": -6.29,
+        "three_months": 26.26,
+        "one_year": 116.69
+      },
+      "lotus": {
+        "one_month": -2.3,
+        "three_months": 31.13,
+        "one_year": 124.75,
+        "assets_hamt": 131
+      },
+      "kahroba": {
+        "one_month": -6.22,
+        "three_months": 26.31,
+        "one_year": 116.1,
+        "assets_hamt": 66.6
+      },
+      "mesghal": {
+        "one_month": -6.28,
+        "three_months": 25.62,
+        "one_year": 115.82,
+        "assets_hamt": 54.1
+      },
+      "ganj": {
+        "one_month": -6.35,
+        "three_months": 25.62,
+        "one_year": 117.82,
+        "assets_hamt": 43.3
+      },
+      "gohar": {
+        "one_month": -6.54,
+        "three_months": 24.93,
+        "one_year": 114.11,
+        "assets_hamt": 28.8
+      },
+      "javaher": {
+        "one_month": -6.24,
+        "three_months": 24.93,
+        "one_year": 113.16,
+        "assets_hamt": 23.9
+      },
+      "zarvan": {
+        "one_month": -6.37,
+        "three_months": 25.57,
+        "one_year": 116.67,
+        "assets_hamt": 20.7
+      },
+      "tabesh": {
+        "one_month": -6.27,
+        "three_months": 22.24,
+        "one_year": 114.27,
+        "assets_hamt": 20.5
+      }
+    },
+    "group_weighted_one_year_return_pct": 116.44,
+    "caveat": "در همان snapshot، تاریخ NAV عیار 25 آبان اعلام شده ولی NAV بعضی رقبا 28 آبان است؛ این مقایسه برای غربال نسبی است، نه رتبه‌بندی دقیق هم‌تاریخ."
+  },
+  "risk_and_liquidity": {
+    "annualized_volatility_pct": 41.85,
+    "one_year_max_drawdown_pct": -25.51,
+    "sharpe_ratio": 1.35,
+    "latest_exchange_session": "1405/08/27",
+    "traded_volume_units": 41648000,
+    "traded_value_toman": 2726900000000,
+    "caveat": "شاخص‌های ریسک از منبع ثانویه‌اند؛ برای بازتولید دقیق باید سری روزانه NAV تعدیل‌شده و نرخ بدون ریسک هم‌تاریخ در مدل محلی ذخیره شود."
+  },
+  "component_valuation": {
+    "anchor_date": "2026-11-18",
+    "base_redemption_nav_rial": 663527,
+    "coin_certificate_price_toman": 247950130,
+    "coin_certificate_premium_vs_fine_gold_pct": 5.2279,
+    "gold_bar_reference_price_toman_per_0_1g_certificate": 3226600,
+    "gold_bar_reference_premium_vs_fine_gold_pct": 0.7722,
+    "silver_certificate_price_toman_per_gram": 419000,
+    "aske2_close_rial_per_paper": 2485152,
+    "aske2_papers_held_at_month_end": 6645054,
+    "aske2_papers_per_coin": 1000,
+    "aske2_coin_equivalent": 6645.054,
+    "aske2_coin_equivalent_price_toman": 248515200,
+    "aske2_conditional_maturity_floor_toman_per_coin": 252199000,
+    "aske2_discount_to_conditional_floor_pct": 1.4607,
+    "aske2_quote_to_maturity_days": 21,
+    "full_fair_nav_status": "blocked_missing_deposit_accrual_and_unclassified_residual",
+    "no_stale_quote_carry_forward": true,
+    "caveats": [
+      "قیمت گواهی سکه، نقره و عسکه۲ آخرین جلسه مشترک 27 آبان/18 نوامبر است؛ قیمت روز جدیدتر در جلسه مشترک ثبت نشده است.",
+      "وزن‌ها از گزارش 30 مهرند؛ تعداد واقعی همه دارایی‌ها در 27 آبان تأیید نشده است.",
+      "سپرده بانکی به نرخ/تاریخ accrual و مانده 0.064237% به تفکیک رسمی نیاز دارد.",
+      "GoldBar صرفاً مرجع بازار است و به‌عنوان دارایی مستقل صندوق فرض نشده است.",
+      "کف بازده عسکه۲ مشروط به تسویه در سررسید است و قیمت خروج زودهنگام را تضمین نمی‌کند."
+    ]
+  },
+  "macro_and_scenarios": {
+    "cpi_mehr_1405": {
+      "monthly_pct": 4.4,
+      "year_over_year_pct": 88.7,
+      "annual_average_pct": 76.8,
+      "source": "Iran Statistical Center figures reported 2026-10-28"
+    },
+    "one_year_real_return_approx_pct": 14.8331,
+    "real_return_method": "(1 + 116.69%) / (1 + 88.7%) - 1; approximate because fund return and CPI publication dates differ",
+    "gold_linked_weight_pct": 98.86837251,
+    "scenario_formula": "gold-linked weight × ((1 + USD shock) × (1 + XAUUSD shock) - 1); coin premium held constant; silver, forward, cash and residual excluded",
+    "scenario_grid_pct": [
+      {
+        "usd_shock": -10,
+        "xau_shock": -10,
+        "indicative_nav_effect": -18.785
+      },
+      {
+        "usd_shock": -10,
+        "xau_shock": 0,
+        "indicative_nav_effect": -9.8868
+      },
+      {
+        "usd_shock": -10,
+        "xau_shock": 10,
+        "indicative_nav_effect": -0.9887
+      },
+      {
+        "usd_shock": 0,
+        "xau_shock": -10,
+        "indicative_nav_effect": -9.8868
+      },
+      {
+        "usd_shock": 0,
+        "xau_shock": 0,
+        "indicative_nav_effect": 0
+      },
+      {
+        "usd_shock": 0,
+        "xau_shock": 10,
+        "indicative_nav_effect": 9.8868
+      },
+      {
+        "usd_shock": 10,
+        "xau_shock": -10,
+        "indicative_nav_effect": -0.9887
+      },
+      {
+        "usd_shock": 10,
+        "xau_shock": 0,
+        "indicative_nav_effect": 9.8868
+      },
+      {
+        "usd_shock": 10,
+        "xau_shock": 10,
+        "indicative_nav_effect": 20.7624
+      }
+    ],
+    "coin_premium_compression_to_zero_nav_effect_pct": -0.5861,
+    "interpretation": "سناریوها حساسیت مکانیکی‌اند، نه پیش‌بینی قیمت؛ پریمیوم سکه، هزینه نگهداری، ریسک مقررات و همبستگی اجزای غیرشمش جداگانه اثر می‌گذارند."
+  },
+  "regulatory_watchlist": [
+    {
+      "date": "1405/08/05",
+      "event": "سازمان بورس جدول حد نصاب ترکیب دارایی صندوق‌های مبتنی بر کالا را اصلاح کرده و امکان سرمایه‌گذاری در اوراق سلف موازی استاندارد/گواهی سپرده کالایی را در چارچوب جدید مطرح کرده است.",
+      "deadline": "1405/09/03",
+      "status": "monitor_meeting_and_amended_prospectus",
+      "source": "https://www.tasnimnews.ir/fa/news/1405/08/05/3733157/حد-نصاب-سرمایه-گذاری-صندوق-های-قابل-معامله-اصلاح-شد",
+      "caveat": "متن جدول عددی حد نصاب در منبع ثانویه بازیابی نشده؛ بنابراین درباره انطباق درصدهای عیار نتیجه قطعی صادر نمی‌شود."
+    },
+    {
+      "date": "1405/07/03",
+      "event": "سقف دارایی حقوقی‌ها در گواهی شمش طلا به یک تن کاهش یافت؛ صندوق‌های طلا و صندوق‌های دارای مجوز بازارگردانی از این سقف مستثنا اعلام شدند.",
+      "status": "fund_exemption_reported",
+      "source": "https://www.tasnimnews.ir/fa/news/1405/07/03/3705568/کاهش-سقف-دارایی-اشخاص-حقوقی-در-گواهی-سپرده-شمش-طلا"
+    }
+  ],
+  "scorecard": [
+    {
+      "layer": "ساختار صندوق و سازوکار سرمایه‌گذاری",
+      "score_10": 8,
+      "evidence": "manager, inception, ETF and asset types identified",
+      "gap": "latest official prospectus and fee schedule"
+    },
+    {
+      "layer": "ترکیب و تمرکز پرتفوی",
+      "score_10": 8.5,
+      "evidence": "three monthly official portfolio snapshots May-October and asset weights reconcile",
+      "gap": "latest daily position counts"
+    },
+    {
+      "layer": "صورت‌های مالی و ترازنامه",
+      "score_10": 8,
+      "evidence": "audited/unaudited comparative statement to 1405/05/31 and balance sheet metrics",
+      "gap": "newer interim financial statement"
+    },
+    {
+      "layer": "کیفیت سود و درآمد",
+      "score_10": 8,
+      "evidence": "realized/unrealized split, monthly income attribution for Shahrivar and Mehr",
+      "gap": "cash-flow reconciliation and later-period statements"
+    },
+    {
+      "layer": "بازده NAV و عملکرد تاریخی",
+      "score_10": 8,
+      "evidence": "2,315 TSETMC NAV records and 1m/3m/6m/1y calculations",
+      "gap": "continuous daily NAV update after 26 Mehr; last official NAV 18 Nov"
+    },
+    {
+      "layer": "مقایسه رقبا",
+      "score_10": 8,
+      "evidence": "37-fund universe, AUM, returns, peer ranks and flow snapshot",
+      "gap": "strict same-date normalized NAV series for every peer"
+    },
+    {
+      "layer": "جریان پول و نقدشوندگی",
+      "score_10": 8.5,
+      "evidence": "AUM, units, net issuance, real-money flow and daily trading value",
+      "gap": "market-maker inventory and full order-book time series"
+    },
+    {
+      "layer": "ارزش‌گذاری و حباب اجزا",
+      "score_10": 8,
+      "evidence": "direct coin/silver/Aske2 marks, spot premium and strict stale-data gate",
+      "gap": "bank-deposit accrual and 0.064237% residual; current all-component marks"
+    },
+    {
+      "layer": "کلان و سناریوهای دلار/اونس",
+      "score_10": 8,
+      "evidence": "CPI, USD/XAU sources, weighted sensitivities and premium-compression scenario",
+      "gap": "scenario probabilities and a stable real-rate series"
+    },
+    {
+      "layer": "ریسک، مقررات و حاکمیت",
+      "score_10": 8,
+      "evidence": "volatility, drawdown, Sharpe, regulatory changes and deadline monitoring",
+      "gap": "official amended prospectus, trustee/auditor confirmation and updated expense schedule"
+    }
+  ],
+  "unresolved_access": {
+    "required_for_automated_official_codal": "GitHub Actions secret CODAL_HTTP_PROXY containing a valid Iran-based HTTP/HTTPS proxy endpoint",
+    "current_observed_error": "GitHub-hosted runner direct egress to search.codal.ir timed out; CODAL_HTTP_PROXY is unset",
+    "security_note": "Proxy credentials should be entered directly in GitHub repository Actions secrets, not pasted into chat."
+  },
+  "sources": [
+    "https://bourseeye.com/funds/1521/صندوق-طلای-عیار-مفید",
+    "https://bourseeye.com/funds/gold",
+    "https://bourseeye.com/commodities/1504/سکه-طلا",
+    "https://bourseeye.com/commodities/1503/شمش-طلا",
+    "https://bourseeye.com/commodities/1507/شمش-نقره",
+    "https://sahmino.com/symbol/sske?tab=chart",
+    "https://shakhesban.com/markets/fund/عیار/history",
+    "https://cdn.iranintl.com/202610285108",
+    "https://www.tasnimnews.ir/fa/news/1405/08/05/3733157/حد-نصاب-سرمایه-گذاری-صندوق-های-قابل-معامله-اصلاح-شد",
+    "https://www.tasnimnews.ir/fa/news/1405/07/03/3705568/کاهش-سقف-دارایی-اشخاص-حقوقی-در-گواهی-سپرده-شمش-طلا"
+  ],
+  "updated_at": "2026-11-19T17:00:00+03:30"
+}
