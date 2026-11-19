@@ -1,4 +1,5 @@
 import unittest
+import pandas as pd
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
@@ -7,6 +8,7 @@ from scripts.fetch_ayar_component_quotes import (
     apply_macro_quotes_for_session,
     expected_exchange_session_date,
     parse_sahmino_api_payload,
+    parse_ime_salaf_frame,
     parse_sahmino_quote_text,
 )
 
@@ -18,7 +20,7 @@ class ComponentQuoteParserTests(unittest.TestCase):
             "۲٬۴۸۰٬۱۱۱ | ۲٬۴۸۵٬۱۵۲ | ▼نزولی ۰٫۴۵٪ | ۲۹۵٬۶۰۷"
         )
         quote = parse_sahmino_quote_text(
-            sample, "https://sahmino.com/symbol/sske?tab=chart"
+            sample, "https://www.ime.co.ir/standard-transactions.html"
         )
         self.assertEqual(quote["price"], 2485152)
         self.assertEqual(quote["date"], "2026-11-18")
@@ -41,6 +43,23 @@ class ComponentQuoteParserTests(unittest.TestCase):
         self.assertEqual(quote["date"], "2026-11-18")
         self.assertEqual(quote["unit"], "rial_per_paper")
 
+
+    def test_ime_salaf_frame_selects_exact_aske2_daily_close(self):
+        frame = pd.DataFrame([
+            {"Symbol": "نماد دیگر", "Code": "X1", "GregorianDate": "2026-11-18",
+             "JalaliDate": "1405-08-27", "ClosingPrice": 900, "TradeVolume": 10},
+            {"Symbol": "عسکه2", "Code": "SSKE", "GregorianDate": "2026-11-17",
+             "JalaliDate": "1405-08-26", "ClosingPrice": 2480000, "TradeVolume": 200000},
+            {"Symbol": "عسکه۲", "Code": "SSKE", "GregorianDate": "2026-11-18",
+             "JalaliDate": "1405-08-27", "ClosingPrice": 2485152, "TradeVolume": 295607},
+        ])
+        quote = parse_ime_salaf_frame(frame)
+        self.assertEqual(quote["price"], 2485152)
+        self.assertEqual(quote["date"], "2026-11-18")
+        self.assertEqual(quote["unit"], "rial_per_paper")
+        self.assertEqual(quote["price_type"], "official_daily_close")
+        self.assertEqual(quote["instrument_code"], "SSKE")
+
     def test_base_aske2_anchor_only_applies_to_exact_session(self):
         data = {
             "inputs": {"base_nav_date": "2026-11-18"},
@@ -58,7 +77,7 @@ class ComponentQuoteParserTests(unittest.TestCase):
             "gold_bar_certificate": {"date": "2026-11-18"},
             "silver": {"date": "2026-11-18"},
         }
-        errors = {"coin_forward": "sahmino_api_token_missing"}
+        errors = {"coin_forward": "ime_salaf_history_unavailable"}
         used = apply_base_forward_anchor(quotes, errors, data, "2026-11-18")
         self.assertTrue(used)
         self.assertEqual(quotes["coin_forward"]["price"], 2485152)
