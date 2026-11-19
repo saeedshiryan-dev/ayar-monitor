@@ -133,9 +133,9 @@ def parse_sahmino_api_payload(payload, url):
     if not date_value or close_value is None:
         raise ValueError("sahmino_api_date_or_close_missing")
     date_text = str(date_value)
-    if re.fullmatch(r"\\d{4}-\\d{2}-\\d{2}", date_text):
+    if re.fullmatch(r"\d{4}-\d{2}-\d{2}", date_text):
         date_iso = date_text
-    elif re.fullmatch(r"\\d{8}", date_text):
+    elif re.fullmatch(r"\d{8}", date_text):
         date_iso = f"{date_text[:4]}-{date_text[4:6]}-{date_text[6:8]}"
     else:
         raise ValueError("sahmino_api_date_format_unknown")
