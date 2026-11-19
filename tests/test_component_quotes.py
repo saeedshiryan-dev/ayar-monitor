@@ -60,13 +60,15 @@ class ComponentQuoteParserTests(unittest.TestCase):
         macro = {
             "status": "ok",
             "source": "test",
-            "retrieved_at": "2026-11-18T13:00:00+00:00",
-            "usd": {"updated_at": "2026-11-18T12:34:43+00:00", "display_price": 266730},
-            "xau": {"updated_at": "2026-11-18T12:44:43+00:00", "display_price": 3727.64},
+            "retrieved_at": "2026-11-21T13:00:00+00:00",
+            "usd": {"updated_at": "2026-11-21T12:34:43+00:00", "display_price": 266730},
+            "xau": {"updated_at": "2026-11-21T12:44:43+00:00", "display_price": 3727.64},
         }
-        ok, reason = apply_macro_quotes_for_session(data, "2026-11-18", macro)
+        ok, reason = apply_macro_quotes_for_session(data, "2026-11-21", macro)
         self.assertTrue(ok)
-        self.assertEqual(reason, "same_session_base_nav_anchor")
+        self.assertEqual(reason, "same_session_macro_quotes")
+        self.assertEqual(data["inputs"]["xau_now_date"], "2026-11-21")
+        self.assertEqual(data["inputs"]["usd_now_date"], "2026-11-21")
 
     def test_wednesday_uses_current_session(self):
         now = datetime(2026, 11, 18, 18, 30, tzinfo=ZoneInfo("Asia/Tehran"))
