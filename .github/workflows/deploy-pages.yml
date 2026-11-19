@@ -8,6 +8,9 @@ on:
   push:
     paths:
       - 'index.html'
+      - 'indicator-lab.html'
+      - 'validation.html'
+      - 'data/ayar_indicator_lab.json'
       - 'data/ayar_intraday_indicators.json'
       - 'data/ayar_live.json'
       - 'data/ayar_fund_history.json'
@@ -43,6 +46,10 @@ jobs:
         run: |
           mkdir -p public
           cp index.html public/index.html
+          cp indicator-lab.html public/indicator-lab.html
+          cp validation.html public/validation.html
+          mkdir -p public/data
+          cp data/ayar_indicator_lab.json public/data/ayar_indicator_lab.json
 
       - name: Upload dashboard artifact
         uses: actions/upload-pages-artifact@v3
