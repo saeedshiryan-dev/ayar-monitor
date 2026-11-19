@@ -138,3 +138,4 @@ if __name__ == "__main__":
     main()
 
 # Trigger validation run after enabling push workflow trigger.
+# Intraday history endpoint availability is checked by this workflow.
