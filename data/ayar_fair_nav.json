@@ -1,0 +1,104 @@
+{
+  "model_name": "Ayar indicative fair NAV sensitivity",
+  "status": "indicative_model_not_official_nav",
+  "calculated_at": "2026-11-19",
+  "inputs": {
+    "base_redemption_nav_rial": 663527,
+    "base_nav_date": "2026-11-18",
+    "last_official_market_price_rial": 655602,
+    "market_price_date": "2026-11-18",
+    "portfolio_report_date_jalali": "1405/07/30",
+    "portfolio_weights_pct": {
+      "gold_bullion": 87.65865305870705,
+      "coin_certificates": 11.209719447450112,
+      "silver": 0.6109350390828153,
+      "coin_forward": 0.45552607909087467,
+      "bank_deposit": 0.0009293248536181528
+    },
+    "unclassified_weight_pct": 0.06423705081552988,
+    "xau_base_usd_oz": 3753.9,
+    "xau_base_date": "2026-11-18",
+    "xau_base_source": "FXEmpire historical XAU close; https://www.fxempire.com/commodities/gold/history",
+    "xau_now_usd_oz": 3732.38,
+    "xau_now_date": "2026-11-19",
+    "xau_now_source": "FXEmpire XAU daily quote; https://www.fxempire.com/commodities/gold/history",
+    "usd_base_toman": 266629,
+    "usd_base_date_jalali": "1405/08/27",
+    "usd_base_source": "NerkhAra daily historical quote; https://nerkhara.com/dollar/",
+    "usd_now_toman": 266315,
+    "usd_now_date_jalali": "1405/08/28",
+    "usd_now_source": "NerkhAra free-market USD; https://nerkhara.com/dollar/",
+    "silver_usd_change_pct": 0.42,
+    "silver_change_date": "2026-11-19",
+    "silver_source": "Kalameh market snapshot; https://www.kalamehfarsi.tv/en/economy/"
+  },
+  "assumptions": [
+    "شمش طلا، گواهی سکه و سلف سکه برای این تخمین با بتای یک نسبت به شاخص طلای ریالی مدل شده‌اند؛ پریمیوم سکه و basis قرارداد سلف جداگانه در دسترس نیست.",
+    "نقره با تغییر روزانه اعلام‌شده 0.42% به‌علاوه تغییر دلار مدل شده است.",
+    "سپرده بانکی و مانده طبقه‌بندی‌نشده در فاصله کوتاه ثابت فرض شده‌اند.",
+    "وزن‌ها از گزارش رسمی پرتفوی پایان مهر 1405 هستند؛ تغییرات پرتفوی پس از آن به‌طور کامل معلوم نیست.",
+    "نرخ‌های دلار و اونس روز 19 نوامبر و NAV مبنا روز 18 نوامبرند؛ زمان ثبت منابع متفاوت است."
+  ],
+  "limitations": [
+    "این خروجی تخمین حساسیت است، نه NAV رسمی منتشرشده از TSETMC یا متولی.",
+    "برای NAV منصفانه دقیق‌تر، گزارش پرتفوی رسمی تازه‌تر، قیمت/پریمیوم هم‌زمان سکه، قیمت سلف، موجودی و بدهی‌ها و زمان‌های هم‌تراز لازم‌اند.",
+    "آخرین قیمت بازار موجود مربوط به 18 نوامبر است؛ از آن برای حباب روز 19 نوامبر استفاده نشده است."
+  ],
+  "sources": [
+    "https://www.fxempire.com/commodities/gold/history",
+    "https://nerkhara.com/dollar/",
+    "https://www.kalamehfarsi.tv/en/economy/",
+    "https://github.com/saeedshiryan-dev/ayar-monitor/blob/main/data/ayar_codal_portfolio.json",
+    "https://github.com/saeedshiryan-dev/ayar-monitor/blob/main/data/ayar_live.json"
+  ],
+  "calculation": {
+    "method": "weighted spot-index adjustment to last official redemption NAV",
+    "gold_local_return_pct": -0.6904,
+    "silver_local_return_pct": 0.3017,
+    "gold_linked_weight_pct": 99.323899,
+    "silver_weight_pct": 0.610935,
+    "unclassified_weight_pct": 0.064237,
+    "weighted_estimated_nav_return_pct": -0.6839,
+    "indicative_nav_rial": 658989,
+    "indicative_nav_toman": 65898.9,
+    "last_official_market_price_vs_same_day_nav_pct": -1.1944,
+    "scenario_shocks_pct": [
+      -2,
+      0,
+      2
+    ],
+    "scenario_matrix": [
+      {
+        "usd_shock_pct": -2,
+        "nav_rial_by_xau_shock": {
+          "0": 645835,
+          "2": 658664,
+          "-2": 633006
+        }
+      },
+      {
+        "usd_shock_pct": 0,
+        "nav_rial_by_xau_shock": {
+          "0": 659006,
+          "2": 672097,
+          "-2": 645916
+        }
+      },
+      {
+        "usd_shock_pct": 2,
+        "nav_rial_by_xau_shock": {
+          "0": 672178,
+          "2": 685530,
+          "-2": 658825
+        }
+      }
+    ],
+    "validation": {
+      "weights_sum_with_residual_pct": 100,
+      "weights_sum_valid": true,
+      "calculation_reproduced": true,
+      "official_nav_not_replaced": true,
+      "current_market_premium_not_calculated_due_to_non_synchronous_quote": true
+    }
+  }
+}
