@@ -159,23 +159,6 @@ def parse_sahmino_api_payload(payload, url):
     }
 
 
-def sahmino_quote(url):
-    token = os.getenv("SAHMINO_API_TOKEN")
-    if token:
-        response = requests.get(
-            SAHMINO_API_URL,
-            headers={"Authorization": f"Bearer {token}", "Accept": "application/json"},
-            timeout=(8, 20),
-        )
-        response.raise_for_status()
-        payload = response.json()
-        if payload.get("error"):
-            code = payload["error"].get("code", "unknown")
-            raise ValueError(f"sahmino_api_error:{code}")
-        return parse_sahmino_api_payload(payload, SAHMINO_API_URL)
-    return parse_sahmino_quote_text(get_text(url), url)
-
-
 
 def normalize_symbol(value):
     return clean(value).replace(" ", "").replace("‌", "")
