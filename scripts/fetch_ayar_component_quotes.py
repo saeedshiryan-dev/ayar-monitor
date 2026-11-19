@@ -79,7 +79,7 @@ def parse_sahmino_quote_text(text, url):
     # extract the first four numeric fields (OHLC) and the final volume
     # from that row instead of trying to parse the localized change string.
     text = clean(text).replace("|", " ").replace("│", " ")
-    history_start = text.find("تاریخچه اخیر")
+    history_start = text.find("تاریخچه")
     if history_start >= 0:
         text = text[history_start:]
     date_pattern = r"(\d{1,2})\s+(" + "|".join(MONTHS) + r")\s+(14\d{2})"
