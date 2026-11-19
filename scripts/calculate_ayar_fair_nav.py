@@ -100,6 +100,20 @@ def calculate(data):
             row["nav_rial_by_xau_shock"][str(xau_shock)] = round(estimate * (1 + scenario_return))
         matrix.append(row)
     diagnostic = component_premiums(data["component_market_snapshot"])
+    holding = data["component_market_snapshot"]["coin_forward"]["holding"]
+    papers = int(holding["papers_held"])
+    quote = int(data["component_market_snapshot"]["coin_forward"]["closing_price_rial_per_paper"])
+    papers_per_coin = int(holding["papers_per_coin"])
+    if papers <= 0 or papers_per_coin <= 0:
+        raise ValueError("Invalid confirmed forward holding quantity")
+    holding_value_rial = papers * quote
+    holding["latest_same_session_mark"]["market_value_if_quantity_unchanged_rial"] = holding_value_rial
+    holding["latest_same_session_mark"]["market_value_if_quantity_unchanged_toman"] = holding_value_rial / 10
+    diagnostic["forward_holding_quantity_confirmed"] = True
+    diagnostic["forward_holding_papers"] = papers
+    diagnostic["forward_holding_coin_equivalent"] = papers / papers_per_coin
+    diagnostic["forward_market_value_if_quantity_unchanged_rial"] = holding_value_rial
+    diagnostic["forward_report_date_reconciliation_difference_rial"] = int(holding["reconciliation"]["reported_net_market_value_minus_price_times_quantity_rial"])
     data["calculation"] = {
         "method": "weighted spot-index adjustment to last official redemption NAV",
         "gold_local_return_pct": round(gold_return * 100, 4),
@@ -122,7 +136,10 @@ def calculate(data):
             "current_market_premium_not_calculated_due_to_non_synchronous_quote": True,
             "component_premiums_reproduced": True,
             "forward_price_unit_conversion_valid": True,
-            "forward_mark_to_market_reproduced": True
+            "forward_mark_to_market_reproduced": True,
+            "forward_holding_quantity_reproduced": papers == int(holding["papers_held"]),
+            "forward_holding_value_reproduced": holding_value_rial == papers * quote,
+            "next_session_quote_not_yet_available": not bool(data["inputs"]["next_session_quotes_available"])
         }
     }
     return data
