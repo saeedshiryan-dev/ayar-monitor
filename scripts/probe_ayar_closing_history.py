@@ -43,6 +43,11 @@ def main():
             item["positive_rows"] = len(positive)
             item["positive_first"] = positive[0] if positive else None
             item["positive_last"] = positive[-1] if positive else None
+            positive_prices = [int(x["pDrCotVal"]) for x in positive if x.get("pDrCotVal") is not None]
+            item["positive_price_range"] = {
+                "low": min(positive_prices) if positive_prices else None,
+                "high": max(positive_prices) if positive_prices else None,
+            }
             item["session_first"] = session_rows[0] if session_rows else None
             item["session_last"] = session_rows[-1] if session_rows else None
             for label, subset in (("all", rows), ("session", session_rows)):
