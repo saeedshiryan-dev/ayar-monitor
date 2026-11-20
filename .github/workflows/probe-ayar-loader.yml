@@ -9,6 +9,7 @@ on:
 
 permissions:
   contents: read
+  actions: write
 
 jobs:
   probe:
@@ -19,6 +20,16 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+      - name: Cancel superseded full-history runs
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for run_id in 44709052520 44709286303; do
+            curl --fail-with-body -sS -X POST \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/saeedshiryan-dev/ayar-monitor/actions/runs/$run_id/cancel" || true
+          done
       - run: python -m pip install requests
       - run: python scripts/probe_ayar_loader_intraday.py
       - uses: actions/upload-artifact@v4
