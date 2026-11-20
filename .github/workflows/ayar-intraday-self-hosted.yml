@@ -1,0 +1,62 @@
+name: Ayar Intraday Build (Self-hosted)
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm_full_download:
+        description: "Run the full historical 1h/4h download and daily validation"
+        required: true
+        type: choice
+        options:
+          - "yes"
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    # This must run on a computer where the user has installed and started
+    # a GitHub Actions self-hosted runner. Network requests then use that
+    # computer's internet connection rather than GitHub-hosted egress IPs.
+    runs-on: [self-hosted, Linux, X64]
+    timeout-minutes: 360
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip requests
+
+      - name: Verify TSETMC endpoint from this runner
+        run: |
+          python - <<'PY'
+          import requests
+          url = "https://cdn.tsetmc.com/api/ClosingPrice/GetClosingPriceHistory/34144395039913458/20261117"
+          r = requests.get(url, timeout=30, headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"})
+          print("HTTP status:", r.status_code)
+          r.raise_for_status()
+          data = r.json()
+          rows = data.get("closingPriceHistory", [])
+          positive = [x for x in rows if int(x.get("pDrCotVal", 0) or 0) > 0]
+          print("Closing-history rows:", len(rows))
+          print("Positive traded-price snapshots:", len(positive))
+          if not positive:
+              raise SystemExit("TSETMC endpoint returned no usable price snapshots from this runner")
+          PY
+
+      - name: Download and validate full 1h/4h history
+        run: python scripts/build_ayar_intraday_candles.py
+
+      - name: Upload candle CSVs and validation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ayar-intraday-self-hosted-${{ github.run_id }}
+          path: build/intraday/
+          if-no-files-found: warn
+          retention-days: 30
