@@ -5,11 +5,12 @@ on:
     paths:
       - 'scripts/probe_ayar_loader_intraday.py'
       - 'scripts/probe_ayar_closing_history.py'
+      - 'scripts/probe_ayar_gap_closing_history.py'
       - '.github/workflows/probe-ayar-loader.yml'
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
   actions: write
 
 jobs:
@@ -41,3 +42,15 @@ jobs:
           name: ayar-loader-intraday-probe
           path: build/
           retention-days: 7
+      - name: Commit gap probe report for review
+        if: always()
+        run: |
+          if [ -f build/gap_closing_history_probe.json ]; then
+            git config user.name 'github-actions[bot]'
+            git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+            git add build/gap_closing_history_probe.json
+            if ! git diff --cached --quiet; then
+              git commit -m 'Add Ayar gap closing-history probe results'
+              git push
+            fi
+          fi
