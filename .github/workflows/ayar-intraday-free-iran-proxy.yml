@@ -2,6 +2,9 @@ name: Ayar Intraday Build (Free Iran Proxy)
 
 on:
   workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/ayar-intraday-free-iran-proxy.yml'
 
 permissions:
   contents: read
