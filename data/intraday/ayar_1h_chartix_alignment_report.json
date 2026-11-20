@@ -1,0 +1,19 @@
+{
+  "symbol": "عیار",
+  "source_file": "/ayar data/aiar_1405_08_29_1946_CHARTIX.zip",
+  "source_time": "2026-11-20T16:18:53Z",
+  "output_file": "ayar_1h_chartix_daily_aligned.csv",
+  "rows": 7540,
+  "validated_days": 1986,
+  "failed_days": 0,
+  "unchanged_days": 2,
+  "method": "Within each date, linearly map original H1 prices from intraday minimum/maximum to the Chartix daily low/high. Set first H1 open to daily open and last H1 close to daily close. Scale H1 volumes proportionally to daily volume and put rounding remainder in final bar. No previous-close/next-open bridging is applied.",
+  "validation": "Re-aggregated adjusted H1 candles match the Chartix daily OHLCV exactly for every included day.",
+  "excluded_examples": [],
+  "limitations": [
+    "Synthetic reconstruction, not actual trade-level candles.",
+    "Intraday timing/order of daily high and low is not independently verified.",
+    "Two dates were left unchanged because the daily reference was absent or invalid.",
+    "Original Chartix export and TSETMC-validated baseline remain untouched."
+  ]
+}
