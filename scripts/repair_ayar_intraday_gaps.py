@@ -20,7 +20,7 @@ PUBLISHED = Path("data/intraday")
 
 def make_session():
     retry = Retry(
-        total=3, connect=3, read=3, status=3, backoff_factor=1.0,
+        total=2, connect=2, read=2, status=2, backoff_factor=0.5,
         status_forcelist=(429, 500, 502, 503, 504),
         allowed_methods=frozenset(["GET"]), raise_on_status=False,
     )
@@ -32,6 +32,19 @@ def make_session():
         "Referer": "https://www.tsetmc.com/",
     })
     return session
+
+
+def paced_repair_get(url):
+    with builder.REQUEST_LOCK:
+        now = time.monotonic()
+        wait = max(0.0, builder.NEXT_REQUEST_AT - now)
+        if wait:
+            time.sleep(wait)
+        builder.NEXT_REQUEST_AT = time.monotonic() + 0.5
+    return builder.get_session().get(url, timeout=(8, 15))
+
+
+builder.paced_get = paced_repair_get
 
 
 def repair_one(day):
@@ -113,7 +126,7 @@ def main():
 
     print(json.dumps({"seed_validated": len(valid_reports), "seed_failed": len(pending), "expected": len(days)}), flush=True)
 
-    with ThreadPoolExecutor(max_workers=2) as pool:
+    with ThreadPoolExecutor(max_workers=3) as pool:
         futures = {pool.submit(repair_one, day): day for day in pending}
         for idx, future in enumerate(as_completed(futures), 1):
             day = futures[future]
