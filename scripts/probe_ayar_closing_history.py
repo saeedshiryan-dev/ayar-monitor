@@ -10,6 +10,11 @@ DAILY = json.loads(Path("data/ayar_daily_history.json").read_text(encoding="utf-
 DAILY_MAP = {str(x["date"]): x for x in DAILY["valid_history"]}
 
 
+def hms(v):
+    v = int(v)
+    return v // 10000, (v // 100) % 100, v % 100
+
+
 def main():
     session = requests.Session()
     session.headers.update({
@@ -26,21 +31,27 @@ def main():
             r = session.get(url, timeout=(8, 30))
             item["http_status"] = r.status_code
             r.raise_for_status()
-            payload = r.json()
-            rows = payload.get("closingPriceHistory", [])
+            rows = r.json().get("closingPriceHistory", [])
+            rows = sorted(rows, key=lambda x: int(x.get("hEven", 0)))
             item["row_count"] = len(rows)
             item["keys"] = sorted(rows[0].keys()) if rows else []
             item["first_row"] = rows[0] if rows else None
             item["last_row"] = rows[-1] if rows else None
-            for field in ("pClosing", "pDrCotVal", "zTotTran", "qTotTran5J", "qTotCap"):
-                vals = [float(x[field]) for x in rows if x.get(field) is not None]
-                item[field] = {
-                    "first": vals[0] if vals else None,
-                    "last": vals[-1] if vals else None,
-                    "min": min(vals) if vals else None,
-                    "max": max(vals) if vals else None,
-                    "monotonic_non_decreasing": all(a <= b for a, b in zip(vals, vals[1:])),
-                }
+            session_rows = [x for x in rows if (9,0,0) <= hms(x.get("hEven",0)) <= (12,30,59)]
+            item["session_row_count"] = len(session_rows)
+            item["session_first"] = session_rows[0] if session_rows else None
+            item["session_last"] = session_rows[-1] if session_rows else None
+            for label, subset in (("all", rows), ("session", session_rows)):
+                block = {}
+                for field in ("pClosing", "pDrCotVal", "zTotTran", "qTotTran5J", "qTotCap"):
+                    vals = [float(x[field]) for x in subset if x.get(field) is not None]
+                    block[field] = {
+                        "first": vals[0] if vals else None,
+                        "last": vals[-1] if vals else None,
+                        "min": min(vals) if vals else None,
+                        "max": max(vals) if vals else None,
+                    }
+                item[label] = block
             daily = DAILY_MAP[date]
             item["daily"] = {
                 "trade_count": int(daily["trade_count"]),
