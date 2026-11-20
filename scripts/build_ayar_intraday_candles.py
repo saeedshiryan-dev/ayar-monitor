@@ -213,7 +213,8 @@ def main():
         "four_hour_candles": len(four_hour_all),
         "total_transactions": sum(x["active_unique_trades"] for x in reports),
         "total_volume": sum(x["volume"] for x in reports),
-        "daily_validation": reports, "failures": failures,\n        "warning_days": sum(bool(x.get("warnings")) for x in reports),
+        "daily_validation": reports, "failures": failures,
+        "warning_days": sum(bool(x.get("warnings")) for x in reports),
         "elapsed_seconds": round(time.time() - started, 1),
     }
     (OUT / "validation_report.json").write_text(
