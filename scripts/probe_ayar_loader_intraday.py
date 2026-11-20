@@ -1,72 +1,66 @@
 import json
+import re
 import time
 from pathlib import Path
+from urllib.parse import urlparse
 
 import requests
 
 INS_CODE = "34144395039913458"
 SAMPLES = ["20200329", "20260621", "20261117"]
-HOSTS = ["https://cdn.tsetmc.com/api"]
-DAILY = json.loads(Path("data/ayar_daily_history.json").read_text(encoding="utf-8"))
-DAILY_MAP = {str(x["date"]): x for x in DAILY["valid_history"]}
-
+TEMPLATES = [
+    "http://tsetmc.com/Loader.aspx?ParTree=15131P&i={ins}&d={date}",
+    "https://tsetmc.com/Loader.aspx?ParTree=15131P&i={ins}&d={date}",
+    "http://www.tsetmc.com/Loader.aspx?ParTree=15131P&i={ins}&d={date}",
+    "https://www.tsetmc.com/Loader.aspx?ParTree=15131P&i={ins}&d={date}",
+    "http://old.tsetmc.com/Loader.aspx?ParTree=15131P&i={ins}&d={date}",
+    "https://old.tsetmc.com/Loader.aspx?ParTree=15131P&i={ins}&d={date}",
+    "http://service.tsetmc.com/Loader.aspx?ParTree=15131P&i={ins}&d={date}",
+    "https://service.tsetmc.com/Loader.aspx?ParTree=15131P&i={ins}&d={date}",
+    "http://cdn.tsetmc.com/Loader.aspx?ParTree=15131P&i={ins}&d={date}",
+    "https://cdn.tsetmc.com/Loader.aspx?ParTree=15131P&i={ins}&d={date}",
+    "http://cdn7.tsetmc.com/Loader.aspx?ParTree=15131P&i={ins}&d={date}",
+    "https://cdn7.tsetmc.com/Loader.aspx?ParTree=15131P&i={ins}&d={date}",
+    "http://cdn8.tsetmc.com/Loader.aspx?ParTree=15131P&i={ins}&d={date}",
+    "https://cdn8.tsetmc.com/Loader.aspx?ParTree=15131P&i={ins}&d={date}",
+    "http://cdn9.tsetmc.com/Loader.aspx?ParTree=15131P&i={ins}&d={date}",
+    "https://cdn9.tsetmc.com/Loader.aspx?ParTree=15131P&i={ins}&d={date}",
+]
 
 def main():
-    session = requests.Session()
-    session.headers.update({
-        "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/128.0.0.0 Safari/537.36",
-        "Accept": "application/json,text/plain,*/*",
-        "Referer": "https://www.tsetmc.com/",
+    s = requests.Session()
+    s.headers.update({
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/128.0.0.0 Safari/537.36",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+        "Referer": "http://tsetmc.com/",
     })
-    results = []
+    out = []
     for date in SAMPLES:
-        daily = DAILY_MAP[date]
-        for host in HOSTS:
-          for grouped in ("false", "true"):
-            url = f"{host}/Trade/GetTradeHistory/{INS_CODE}/{date}/{grouped}"
-            item = {"date": date, "host": host, "grouped": grouped, "url": url}
+        for template in TEMPLATES:
+            url = template.format(ins=INS_CODE, date=date)
+            item = {"date": date, "url": url}
             try:
-                response = session.get(url, timeout=(5, 15))
-                item["http_status"] = response.status_code
-                response.raise_for_status()
-                payload = response.json()
-                rows = payload.get("tradeHistory", [])
-                item["raw_rows"] = len(rows)
-                by_id = {}
-                conflicts = 0
-                for row in rows:
-                    key = str(row.get("nTran"))
-                    if key in by_id and by_id[key] != row:
-                        conflicts += 1
-                    by_id[key] = row
-                active = [r for r in by_id.values() if int(r.get("canceled") or 0) == 0]
-                prices = [int(r["pTran"]) for r in active]
-                item["unique_rows"] = len(by_id)
-                item["active_rows"] = len(active)
-                item["conflicting_duplicate_ids"] = conflicts
-                item["volume"] = sum(int(r["qTitTran"]) for r in active)
-                item["low"] = min(prices) if prices else None
-                item["high"] = max(prices) if prices else None
-                item["daily"] = {
-                    "trade_count": int(daily["trade_count"]),
-                    "volume": int(daily["volume"]),
-                    "low": int(daily["low"]),
-                    "high": int(daily["high"]),
-                }
-                item["matches"] = {
-                    "count": len(active) == int(daily["trade_count"]),
-                    "volume": item["volume"] == int(daily["volume"]),
-                    "low": bool(prices) and item["low"] == int(daily["low"]),
-                    "high": bool(prices) and item["high"] == int(daily["high"]),
-                }
-            except Exception as exc:
-                item["error"] = str(exc)
-            results.append(item)
+                r = s.get(url, timeout=(5, 12), allow_redirects=True)
+                body = r.text
+                item.update({
+                    "status": r.status_code,
+                    "final_url": r.url,
+                    "length": len(body),
+                    "content_type": r.headers.get("content-type"),
+                    "title": (re.search(r"<title[^>]*>(.*?)</title>", body, re.I|re.S).group(1).strip()[:120]
+                              if re.search(r"<title[^>]*>(.*?)</title>", body, re.I|re.S) else None),
+                    "has_intra": "IntraTradeData" in body,
+                    "has_trade": "trade" in body.lower(),
+                    "script_src": re.findall(r'<script[^>]+src=["\\']([^"\\']+)', body, re.I)[:8],
+                    "prefix": re.sub(r"\\s+", " ", body[:300])[:300],
+                })
+            except Exception as e:
+                item["error"] = str(e)[:300]
+            out.append(item)
             print(json.dumps(item, ensure_ascii=False), flush=True)
-            time.sleep(0.3)
+            time.sleep(0.2)
     Path("build/loader_probe.json").parent.mkdir(parents=True, exist_ok=True)
-    Path("build/loader_probe.json").write_text(json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8")
-
+    Path("build/loader_probe.json").write_text(json.dumps(out, ensure_ascii=False, indent=2), encoding="utf-8")
 
 if __name__ == "__main__":
     main()
