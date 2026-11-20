@@ -15,11 +15,11 @@ DATA_DIR = Path("data")
 CACHE_DIR = DATA_DIR / "intraday"
 CACHE_DIR.mkdir(parents=True, exist_ok=True)
 HISTORY_FILE = DATA_DIR / "ayar_daily_history.json"
-LOOKBACK_DAYS = 260
+LOOKBACK_DAYS = 120
 REFRESH_LATEST_DAYS = 3
-MAX_WORKERS = 5
-REQUEST_TIMEOUT = (10, 25)
-MAX_ATTEMPTS = 2
+MAX_WORKERS = 3
+REQUEST_TIMEOUT = (10, 40)
+MAX_ATTEMPTS = 3
 
 thread_local = local()
 
@@ -100,22 +100,33 @@ def download_day(daily):
         raise ValueError(f"تطبیق معاملات با آمار روزانه ناموفق در {date}: {checks}")
 
     candles_1h = []
-    for hour in range(12, 18):
+    for hour in range(12, 19):
         selected = [x for x in rows if hour * 10000 <= x["hEven"] < (hour + 1) * 10000]
-        candle = make_candle(selected, date, hour, hour + 1)
+        candle = make_candle(selected, date, hour, hour + 1, partial=(hour == 18))
         if candle:
             candles_1h.append(candle)
 
     candles_4h = []
-    for start, end in ((12, 16),):
+    for start, end in ((12, 16), (16, 18)):
         selected = [
             x for x in rows
             if start * 10000 <= x["hEven"] < end * 10000
             or (end == 18 and x["hEven"] == 180000)
         ]
-        candle = make_candle(selected, date, start, end, partial=False)
+        candle = make_candle(selected, date, start, end, partial=(end - start < 4))
         if candle:
             candles_4h.append(candle)
+
+    expected_count = len(rows)
+    expected_volume = sum(x["volume"] for x in rows)
+    candle_validation = {
+        "1h_trade_count": sum(x["trades"] for x in candles_1h) == expected_count,
+        "1h_volume": sum(x["volume"] for x in candles_1h) == expected_volume,
+        "4h_trade_count": sum(x["trades"] for x in candles_4h) == expected_count,
+        "4h_volume": sum(x["volume"] for x in candles_4h) == expected_volume,
+    }
+    if not all(candle_validation.values()):
+        raise ValueError(f"کندل‌سازی یک‌ساعته/چهارساعته در {date} با معاملات خام تطبیق ندارد: {candle_validation}")
 
     result = {
         "symbol": "عیار",
@@ -124,8 +135,9 @@ def download_day(daily):
         "timezone": "Asia/Tehran",
         "source": "TSETMC",
         "retrieved_at": datetime.now(TEHRAN).isoformat(),
-        "validated": True,
+        "validated": all(checks.values()) and all(candle_validation.values()),
         "validation": checks,
+        "candle_validation": candle_validation,
         "raw_records": len(raw),
         "unique_transactions": len(rows),
         "daily_volume": sum(x["volume"] for x in rows),
@@ -137,6 +149,20 @@ def download_day(daily):
     temp.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
     temp.replace(path)
     return result
+
+
+def cache_matches(cached, daily):
+    if cached.get("validated") is not True:
+        return False
+    expected_count = int(daily["trade_count"])
+    expected_volume = int(daily["volume"])
+    for key in ("candles_1h", "candles_4h"):
+        candles = cached.get(key, [])
+        if sum(int(x.get("trades", 0)) for x in candles) != expected_count:
+            return False
+        if sum(int(x.get("volume", 0)) for x in candles) != expected_volume:
+            return False
+    return True
 
 
 def main():
@@ -161,7 +187,7 @@ def main():
         if path.exists() and date not in refresh_dates:
             try:
                 cached = json.loads(path.read_text(encoding="utf-8"))
-                if cached.get("validated") is True:
+                if cache_matches(cached, daily):
                     return ("reused", date, None)
             except Exception:
                 pass
@@ -190,9 +216,11 @@ def main():
     valid_days = 0
     valid_1h = 0
     valid_4h = 0
+    selected_map = {str(x["date"]): x for x in selected}
     for path in CACHE_DIR.glob("ayar_*.json"):
         day = json.loads(path.read_text(encoding="utf-8"))
-        if day.get("validated") is True:
+        daily = selected_map.get(str(day.get("date")))
+        if daily and cache_matches(day, daily):
             valid_days += 1
             valid_1h += len(day.get("candles_1h", []))
             valid_4h += sum(
