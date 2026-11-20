@@ -12,7 +12,7 @@
   "validated_days": 1938,
   "failed_days": 39,
   "one_hour_candles": 6786,
-  "four_hour_candles": 2375,
+  "four_hour_candles": 2377,
   "total_transactions": 38515516,
   "total_volume": 52660015188,
   "candle_validation": {
@@ -31230,5 +31230,48 @@
       "repair_error": "No usable active trades from either TSETMC host/flag; attempts=[{\"url\": \"https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261104/false\", \"error\": \"HTTPSConnectionPool(host='cdn.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261104/false (Caused by ReadTimeoutError(\\\"HTTPSConnectionPool(host='cdn.tsetmc.com', port=443): Read timed out. (read timeout=15)\\\"))\"}, {\"url\": \"https://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261104/false\", \"error\": \"HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261104/false (Caused by NameResolutionError(\\\"HTTPSConnection(host='cdn10.tsetmc.com', port=443): Failed to resolve 'cdn10.tsetmc.com' ([Errno -2] Name or service not known)\\\"))\"}]"
     }
   ],
-  "elapsed_seconds": 269.1
+  "elapsed_seconds": 269.1,
+  "four_hour_cache_recovered_dates": [
+    "20261104"
+  ],
+  "four_hour_validated_days": 1939,
+  "four_hour_failed_days": 38,
+  "one_hour_validated_days": 1938,
+  "one_hour_failed_days": 39,
+  "timeframe_coverage": {
+    "1h": {
+      "validated_days": 1938,
+      "missing_days": 39,
+      "candles": 6786,
+      "closing_auction_candles": 82
+    },
+    "4h": {
+      "validated_days": 1939,
+      "missing_days": 38,
+      "candles": 2377,
+      "partial_session_remainder_candles": 318
+    }
+  },
+  "timeframe_recoveries": [
+    {
+      "date": "20261104",
+      "timeframe": "4h",
+      "source": "data/intraday/ayar_20261104.json",
+      "validated": true,
+      "validation": {
+        "trade_count": true,
+        "volume": true,
+        "minimum": true,
+        "maximum": true
+      },
+      "transactions": 77985,
+      "volume": 69464602,
+      "one_hour_imported": false,
+      "note": "The 4h candles reconcile exactly. The cached 1h candles omit one closing-time transaction and 93 volume units, so they were excluded."
+    }
+  ],
+  "candle_time_policy": {
+    "1h": "18:00 candles are retained as separate closing-time trade bars when present.",
+    "4h": "16:00 bars are partial 2-hour session remainders; exclude them from full 4-hour indicator calculations."
+  }
 }
