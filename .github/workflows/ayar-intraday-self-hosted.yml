@@ -18,7 +18,7 @@ jobs:
     # This must run on a computer where the user has installed and started
     # a GitHub Actions self-hosted runner. Network requests then use that
     # computer's internet connection rather than GitHub-hosted egress IPs.
-    runs-on: [self-hosted, Linux, X64]
+    runs-on: self-hosted
     timeout-minutes: 360
     steps:
       - name: Checkout repository
