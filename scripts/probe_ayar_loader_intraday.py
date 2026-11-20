@@ -37,7 +37,8 @@ def main():
             try:
                 response = session.get(url, timeout=(5, 8))
                 item["http_status"] = response.status_code
-                item["final_url"] = response.url\n                item["response_length"] = len(response.text)
+                item["final_url"] = response.url
+                item["response_length"] = len(response.text)
                 response.raise_for_status()
                 rows = parse_rows(response.text)
                 if rows is None:
