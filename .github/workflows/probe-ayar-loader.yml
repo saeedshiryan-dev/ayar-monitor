@@ -4,6 +4,7 @@ on:
   push:
     paths:
       - 'scripts/probe_ayar_loader_intraday.py'
+      - 'scripts/probe_ayar_closing_history.py'
       - '.github/workflows/probe-ayar-loader.yml'
   workflow_dispatch:
 
