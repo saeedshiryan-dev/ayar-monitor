@@ -1,0 +1,109 @@
+name: Ayar Intraday Build (Free Iran Proxy)
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 360
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: python -m pip install --upgrade pip requests
+
+      - name: Find and test an Iranian HTTP proxy from GitHub
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import requests
+          import time
+
+          source = "https://raw.githubusercontent.com/proxifly/free-proxy-list/main/proxies/countries/IR/data.json"
+          response = requests.get(source, timeout=30)
+          response.raise_for_status()
+          candidates = json.loads(response.text)
+
+          # Use only plain HTTP proxy endpoints. HTTPS requests to TSETMC
+          # still travel through a TLS CONNECT tunnel, preserving certificate checks.
+          candidates = [
+              item for item in candidates
+              if item.get("protocol") == "http"
+              and item.get("geolocation", {}).get("country") == "IR"
+              and item.get("proxy", "").startswith("http://")
+          ]
+
+          test_url = "https://cdn.tsetmc.com/api/ClosingPrice/GetClosingPriceHistory/34144395039913458/20261117"
+          selected = None
+          for index, item in enumerate(candidates[:40], 1):
+              proxy = item["proxy"]
+              proxies = {"http": proxy, "https": proxy}
+              try:
+                  r = requests.get(
+                      test_url,
+                      proxies=proxies,
+                      timeout=(8, 18),
+                      headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"},
+                  )
+                  r.raise_for_status()
+                  payload = r.json()
+                  rows = payload.get("closingPriceHistory", [])
+                  if any(int(row.get("pDrCotVal", 0) or 0) > 0 for row in rows):
+                      selected = proxy
+                      print(f"Usable Iranian proxy found at candidate {index}: {item.get('ip')}:{item.get('port')}")
+                      print(f"TSETMC returned {len(rows)} history rows.")
+                      break
+                  print(f"Candidate {index}: HTTP {r.status_code}, but no usable TSETMC rows.")
+              except Exception as exc:
+                  print(f"Candidate {index} failed: {type(exc).__name__}: {exc}")
+              time.sleep(0.5)
+
+          if not selected:
+              raise SystemExit("No listed Iranian proxy passed the live TSETMC test. No data build was started.")
+
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as env:
+              env.write(f"HTTP_PROXY={selected}\n")
+              env.write(f"HTTPS_PROXY={selected}\n")
+              env.write(f"http_proxy={selected}\n")
+              env.write(f"https_proxy={selected}\n")
+          PY
+
+      - name: Confirm proxy route and TSETMC access
+        run: |
+          python - <<'PY'
+          import os, requests
+          proxy = os.environ["HTTPS_PROXY"]
+          print("Selected proxy:", proxy)
+          url = "https://cdn.tsetmc.com/api/ClosingPrice/GetClosingPriceHistory/34144395039913458/20261117"
+          r = requests.get(url, timeout=30, headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"})
+          r.raise_for_status()
+          rows = r.json().get("closingPriceHistory", [])
+          positive = sum(int(x.get("pDrCotVal", 0) or 0) > 0 for x in rows)
+          print("TSETMC rows:", len(rows), "| positive price rows:", positive)
+          if positive == 0:
+              raise SystemExit("Proxy route stopped returning usable data.")
+          PY
+
+      - name: Download and validate full 1h/4h history
+        run: python scripts/build_ayar_intraday_candles.py
+
+      - name: Upload candle CSVs and validation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ayar-intraday-free-iran-proxy-${{ github.run_id }}
+          path: build/intraday/
+          if-no-files-found: warn
+          retention-days: 30
