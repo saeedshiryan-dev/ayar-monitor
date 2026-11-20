@@ -44,6 +44,15 @@ def main():
             item["positive_first"] = positive[0] if positive else None
             item["positive_last"] = positive[-1] if positive else None
             positive_prices = [int(x["pDrCotVal"]) for x in positive if x.get("pDrCotVal") is not None]
+            positive_closing = [int(x["pClosing"]) for x in positive if x.get("pClosing") is not None]
+            item["positive_pclosing_range"] = {
+                "low": min(positive_closing) if positive_closing else None,
+                "high": max(positive_closing) if positive_closing else None,
+            }
+            item["positive_cumulative_monotonic"] = {
+                "count": all(float(a.get("zTotTran") or 0) <= float(b.get("zTotTran") or 0) for a,b in zip(positive, positive[1:])),
+                "volume": all(float(a.get("qTotTran5J") or 0) <= float(b.get("qTotTran5J") or 0) for a,b in zip(positive, positive[1:])),
+            }
             item["positive_price_range"] = {
                 "low": min(positive_prices) if positive_prices else None,
                 "high": max(positive_prices) if positive_prices else None,
