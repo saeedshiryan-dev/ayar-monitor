@@ -51,7 +51,7 @@ def main():
                               if re.search(r"<title[^>]*>(.*?)</title>", body, re.I|re.S) else None),
                     "has_intra": "IntraTradeData" in body,
                     "has_trade": "trade" in body.lower(),
-                    "script_src": re.findall(r'<script[^>]+src=["\\']([^"\\']+)', body, re.I)[:8],
+                    "script_src": re.findall(r'<script[^>]+src="([^"]+)', body, re.I)[:8],
                     "prefix": re.sub(r"\\s+", " ", body[:300])[:300],
                 })
             except Exception as e:
