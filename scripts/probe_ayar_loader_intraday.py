@@ -7,8 +7,8 @@ from pathlib import Path
 import requests
 
 INS_CODE = "34144395039913458"
-SAMPLES = ["20200329", "20261117"]
-HOSTS = ["http://tsetmc.com", "http://old.tsetmc.com", "http://www.tsetmc.com", "https://old.tsetmc.com"]
+SAMPLES = ["20200329"]
+HOSTS = ["http://tsetmc.com", "http://old.tsetmc.com"]
 DAILY = json.loads(Path("data/ayar_daily_history.json").read_text(encoding="utf-8"))
 DAILY_MAP = {str(x["date"]): x for x in DAILY["valid_history"]}
 
@@ -35,9 +35,9 @@ def main():
             url = f"{base}/Loader.aspx?ParTree=15131P&i={INS_CODE}&d={date}"
             item = {"date": date, "host": base, "url": url}
             try:
-                response = session.get(url, timeout=(8, 12))
+                response = session.get(url, timeout=(5, 8))
                 item["http_status"] = response.status_code
-                item["final_url"] = response.url
+                item["final_url"] = response.url\n                item["response_length"] = len(response.text)
                 response.raise_for_status()
                 rows = parse_rows(response.text)
                 if rows is None:
