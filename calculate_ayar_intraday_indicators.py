@@ -149,3 +149,5 @@ def main():
     tmp.replace(OUT)
     print(json.dumps({k:{"count":v["candle_count"],"latest":v["latest"]} for k,v in result["timeframes"].items()},ensure_ascii=False,indent=2))
 
+if __name__ == "__main__":
+    main()
