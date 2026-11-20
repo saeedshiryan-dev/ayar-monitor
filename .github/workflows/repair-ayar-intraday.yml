@@ -9,7 +9,7 @@ on:
 
 permissions:
   contents: write
-  actions: read
+  actions: write
 
 jobs:
   repair:
@@ -20,14 +20,16 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-      - name: Cancel superseded gap-repair run
+      - name: Cancel superseded gap-repair runs
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          curl --fail-with-body -sS -X POST \
-            -H "Authorization: Bearer $GH_TOKEN" \
-            -H "Accept: application/vnd.github+json" \
-            "https://api.github.com/repos/saeedshiryan-dev/ayar-monitor/actions/runs/44710805207/cancel" || true
+          for run_id in 44710805207 44710925599 44710931367; do
+            curl --fail-with-body -sS -X POST \
+              -H "Authorization: Bearer $GH_TOKEN" \
+              -H "Accept: application/vnd.github+json" \
+              "https://api.github.com/repos/saeedshiryan-dev/ayar-monitor/actions/runs/$run_id/cancel" || true
+          done
       - name: Download previously validated seed candles
         uses: actions/download-artifact@v4
         with:
