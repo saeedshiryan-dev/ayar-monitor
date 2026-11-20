@@ -8,7 +8,7 @@ import requests
 
 INS_CODE = "34144395039913458"
 SAMPLES = ["20200329", "20200415", "20200922", "20261117"]
-SERVERS = [0, 7, 8, 9]
+HOSTS = ["http://tsetmc.com", "http://old.tsetmc.com", "http://www.tsetmc.com", "https://old.tsetmc.com"]
 DAILY = json.loads(Path("data/ayar_daily_history.json").read_text(encoding="utf-8"))
 DAILY_MAP = {str(x["date"]): x for x in DAILY["valid_history"]}
 
@@ -31,13 +31,13 @@ def main():
     results = []
     for date in SAMPLES:
         daily = DAILY_MAP[date]
-        for server in SERVERS:
-            host = "cdn.tsetmc.com" if server == 0 else f"cdn{server}.tsetmc.com"
-            url = f"https://{host}/Loader.aspx?ParTree=15131P&i={INS_CODE}&d={date}"
-            item = {"date": date, "server": server, "url": url}
+        for base in HOSTS:
+            url = f"{base}/Loader.aspx?ParTree=15131P&i={INS_CODE}&d={date}"
+            item = {"date": date, "host": base, "url": url}
             try:
                 response = session.get(url, timeout=(20, 60))
                 item["http_status"] = response.status_code
+                item["final_url"] = response.url
                 response.raise_for_status()
                 rows = parse_rows(response.text)
                 if rows is None:
