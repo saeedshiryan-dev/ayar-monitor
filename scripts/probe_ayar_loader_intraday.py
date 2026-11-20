@@ -5,8 +5,8 @@ from pathlib import Path
 import requests
 
 INS_CODE = "34144395039913458"
-SAMPLES = ["20200329", "20260621"]
-HOSTS = [f"https://cdn{i}.tsetmc.com/api" for i in range(1, 10)]
+SAMPLES = ["20200329", "20260621", "20261117"]
+HOSTS = ["https://cdn.tsetmc.com/api"]
 DAILY = json.loads(Path("data/ayar_daily_history.json").read_text(encoding="utf-8"))
 DAILY_MAP = {str(x["date"]): x for x in DAILY["valid_history"]}
 
@@ -22,10 +22,11 @@ def main():
     for date in SAMPLES:
         daily = DAILY_MAP[date]
         for host in HOSTS:
-            url = f"{host}/Trade/GetTradeHistory/{INS_CODE}/{date}/false"
-            item = {"date": date, "host": host, "url": url}
+          for grouped in ("false", "true"):
+            url = f"{host}/Trade/GetTradeHistory/{INS_CODE}/{date}/{grouped}"
+            item = {"date": date, "host": host, "grouped": grouped, "url": url}
             try:
-                response = session.get(url, timeout=(4, 8))
+                response = session.get(url, timeout=(5, 15))
                 item["http_status"] = response.status_code
                 response.raise_for_status()
                 payload = response.json()
@@ -62,7 +63,7 @@ def main():
                 item["error"] = str(exc)
             results.append(item)
             print(json.dumps(item, ensure_ascii=False), flush=True)
-            time.sleep(0.1)
+            time.sleep(0.3)
     Path("build/loader_probe.json").parent.mkdir(parents=True, exist_ok=True)
     Path("build/loader_probe.json").write_text(json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8")
 
