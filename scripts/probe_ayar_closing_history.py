@@ -39,6 +39,10 @@ def main():
             item["last_row"] = rows[-1] if rows else None
             session_rows = [x for x in rows if (9,0,0) <= hms(x.get("hEven",0)) <= (12,30,59)]
             item["session_row_count"] = len(session_rows)
+            positive = [x for x in rows if float(x.get("zTotTran") or 0) > 0]
+            item["positive_rows"] = len(positive)
+            item["positive_first"] = positive[0] if positive else None
+            item["positive_last"] = positive[-1] if positive else None
             item["session_first"] = session_rows[0] if session_rows else None
             item["session_last"] = session_rows[-1] if session_rows else None
             for label, subset in (("all", rows), ("session", session_rows)):
@@ -53,6 +57,20 @@ def main():
                     }
                 item[label] = block
             daily = DAILY_MAP[date]
+            trade_url = f"https://cdn.tsetmc.com/api/Trade/GetTradeHistory/{INS_CODE}/{date}/false"
+            tr = session.get(trade_url, timeout=(8, 30))
+            tr.raise_for_status()
+            trades = tr.json().get("tradeHistory", [])
+            active_trades = [x for x in trades if int(x.get("canceled") or 0) == 0]
+            active_sorted = sorted(active_trades, key=lambda x: (int(x.get("hEven") or 0), int(x.get("nTran") or 0)))
+            item["trade_history"] = {
+                "rows": len(trades),
+                "active": len(active_trades),
+                "first": active_sorted[0] if active_sorted else None,
+                "last": active_sorted[-1] if active_sorted else None,
+                "min_price": min((int(x["pTran"]) for x in active_sorted), default=None),
+                "max_price": max((int(x["pTran"]) for x in active_sorted), default=None),
+            }
             item["daily"] = {
                 "trade_count": int(daily["trade_count"]),
                 "volume": int(daily["volume"]),
