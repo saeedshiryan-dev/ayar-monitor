@@ -4,7 +4,7 @@ import time
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
-from threading import local
+from threading import Lock, local
 
 import requests
 from requests.adapters import HTTPAdapter
@@ -15,6 +15,8 @@ BASE = "https://cdn.tsetmc.com/api"
 HISTORY_FILE = Path("data/ayar_daily_history.json")
 OUT = Path("build/intraday")
 THREAD_LOCAL = local()
+REQUEST_LOCK = Lock()
+NEXT_REQUEST_AT = 0.0
 
 
 def get_session():
@@ -36,6 +38,17 @@ def get_session():
     return session
 
 
+def paced_get(url):
+    global NEXT_REQUEST_AT
+    with REQUEST_LOCK:
+        now = time.monotonic()
+        wait = max(0.0, NEXT_REQUEST_AT - now)
+        if wait:
+            time.sleep(wait)
+        NEXT_REQUEST_AT = time.monotonic() + 0.6
+    return get_session().get(url, timeout=(20, 120))
+
+
 def parse_h_even(value):
     value = int(value)
     hour, rem = divmod(value, 10000)
@@ -47,15 +60,15 @@ def parse_h_even(value):
 
 def fetch_and_validate(daily):
     date = str(daily["date"])
-    hosts = ("https://cdn.tsetmc.com/api",)
+    hosts = ("https://cdn.tsetmc.com/api", "https://cdn10.tsetmc.com/api")
     attempts = []
     best = None
 
     for base in hosts:
-        for include_canceled in ("false", "true"):
+        for include_canceled in ("false",):
             url = f"{base}/Trade/GetTradeHistory/{INS_CODE}/{date}/{include_canceled}"
             try:
-                response = get_session().get(url, timeout=(20, 120))
+                response = paced_get(url)
                 response.raise_for_status()
                 payload = response.json()
                 if not isinstance(payload, dict) or not isinstance(payload.get("tradeHistory"), list):
