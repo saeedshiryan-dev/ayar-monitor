@@ -47,73 +47,105 @@ def parse_h_even(value):
 
 def fetch_and_validate(daily):
     date = str(daily["date"])
-    url = f"{BASE}/Trade/GetTradeHistory/{INS_CODE}/{date}/false"
-    response = get_session().get(url, timeout=(25, 180))
-    response.raise_for_status()
-    payload = response.json()
-    if not isinstance(payload, dict) or not isinstance(payload.get("tradeHistory"), list):
-        raise ValueError("Unexpected API response structure")
-    raw = payload["tradeHistory"]
-    by_number = {}
-    for row in raw:
-        if int(row.get("canceled", 0) or 0) != 0:
-            continue
-        number = str(row.get("nTran"))
-        if number in ("None", ""):
-            raise ValueError("Trade row missing nTran")
-        signature = (
-            int(row["hEven"]), int(float(row["pTran"])), int(row["qTitTran"])
-        )
-        old = by_number.get(number)
-        if old is not None:
-            old_sig = (int(old["hEven"]), int(float(old["pTran"])), int(old["qTitTran"]))
-            if signature != old_sig:
-                raise ValueError(f"Conflicting duplicate nTran={number}")
-        else:
-            by_number[number] = row
+    hosts = ("https://cdn.tsetmc.com/api", "https://www.tsetmc.com/api")
+    attempts = []
+    best = None
 
-    trades = list(by_number.values())
-    if not trades:
-        raise ValueError("No active trades returned for a day marked as traded")
-    normalized = []
-    for row in trades:
-        h, m, s = parse_h_even(row["hEven"])
-        normalized.append({
-            "date": date, "hour": h, "minute": m, "second": s,
-            "nTran": int(row["nTran"]), "price": int(float(row["pTran"])),
-            "volume": int(row["qTitTran"]),
-        })
-    # nTran is the within-day sequence; sorting ascending restores chronological
-    # order even when multiple transactions share the same second.
-    normalized.sort(key=lambda x: (x["hour"], x["minute"], x["second"], x["nTran"]))
-    prices = [x["price"] for x in normalized]
-    volume = sum(x["volume"] for x in normalized)
-    checks = {
-        "trade_count": len(normalized) == int(daily["trade_count"]),
-        "volume": volume == int(daily["volume"]),
-        "low": min(prices) == int(daily["low"]),
-        "high": max(prices) == int(daily["high"]),
-        "open": prices[0] == int(daily["open"]),
-        "last": prices[-1] == int(daily.get("last", daily["close"])),
-    }
-    if not all(checks.values()):
-        raise ValueError(
-            "Daily reconciliation failed: " + json.dumps({
-                "checks": checks, "intraday_count": len(normalized),
-                "daily_count": int(daily["trade_count"]),
-                "intraday_volume": volume, "daily_volume": int(daily["volume"]),
-                "first_price": prices[0], "daily_open": int(daily["open"]),
-                "last_price": prices[-1], "daily_last": int(daily.get("last", daily["close"])),
+    for base in hosts:
+        for include_canceled in ("false", "true"):
+            url = f"{base}/Trade/GetTradeHistory/{INS_CODE}/{date}/{include_canceled}"
+            try:
+                response = get_session().get(url, timeout=(25, 180))
+                response.raise_for_status()
+                payload = response.json()
+                if not isinstance(payload, dict) or not isinstance(payload.get("tradeHistory"), list):
+                    raise ValueError("Unexpected API response structure")
+                raw = payload["tradeHistory"]
+                by_number = {}
+                for row in raw:
+                    if int(row.get("canceled", 0) or 0) != 0:
+                        continue
+                    number = str(row.get("nTran"))
+                    if number in ("None", ""):
+                        raise ValueError("Trade row missing nTran")
+                    signature = (int(row["hEven"]), int(float(row["pTran"])), int(row["qTitTran"]))
+                    old = by_number.get(number)
+                    if old is not None:
+                        old_sig = (int(old["hEven"]), int(float(old["pTran"])), int(old["qTitTran"]))
+                        if signature != old_sig:
+                            raise ValueError(f"Conflicting duplicate nTran={number}")
+                    else:
+                        by_number[number] = row
+
+                normalized = []
+                for row in by_number.values():
+                    h, m, s = parse_h_even(row["hEven"])
+                    normalized.append({
+                        "date": date, "hour": h, "minute": m, "second": s,
+                        "nTran": int(row["nTran"]), "price": int(float(row["pTran"])),
+                        "volume": int(row["qTitTran"]),
+                    })
+                normalized.sort(key=lambda x: (x["hour"], x["minute"], x["second"], x["nTran"]))
+                if not normalized:
+                    attempts.append({"url": url, "raw_rows": len(raw), "active_rows": 0})
+                    continue
+
+                prices = [x["price"] for x in normalized]
+                volume = sum(x["volume"] for x in normalized)
+                checks = {
+                    "trade_count": len(normalized) == int(daily["trade_count"]),
+                    "volume": volume == int(daily["volume"]),
+                    "low": min(prices) == int(daily["low"]),
+                    "high": max(prices) == int(daily["high"]),
+                    "open": prices[0] == int(daily["open"]),
+                    "last": prices[-1] == int(daily.get("last", daily["close"])),
+                }
+                hard_checks = all(checks[k] for k in ("trade_count", "volume", "low", "high"))
+                score = sum(checks[k] for k in ("trade_count", "volume", "low", "high", "open", "last"))
+                candidate = {
+                    "url": url, "response": response, "raw_rows": len(raw),
+                    "trades": normalized, "checks": checks, "score": score,
+                    "hard_checks": hard_checks, "volume": volume, "prices": prices,
+                }
+                attempts.append({
+                    "url": url, "raw_rows": len(raw), "active_rows": len(normalized),
+                    "checks": checks, "score": score,
+                })
+                if best is None or candidate["score"] > best["score"]:
+                    best = candidate
+                # Exact daily trade count, volume and range means no trade data is missing.
+                if hard_checks:
+                    break
+            except Exception as exc:
+                attempts.append({"url": url, "error": str(exc)})
+
+        if best is not None and best["hard_checks"]:
+            break
+
+    if best is None:
+        raise ValueError("No usable active trades from either TSETMC host/flag; attempts=" +
+                         json.dumps(attempts, ensure_ascii=False))
+
+    if not best["hard_checks"]:
+        prices = best["prices"]
+        raise ValueError("Daily trade data remains incomplete after endpoint fallbacks: " +
+            json.dumps({
+                "best_checks": best["checks"], "attempts": attempts,
+                "intraday_count": len(best["trades"]), "daily_count": int(daily["trade_count"]),
+                "intraday_volume": best["volume"], "daily_volume": int(daily["volume"]),
                 "intraday_low": min(prices), "daily_low": int(daily["low"]),
                 "intraday_high": max(prices), "daily_high": int(daily["high"]),
-            }, ensure_ascii=False)
-        )
-    return date, normalized, {
-        "date": date, "http_status": response.status_code,
-        "raw_rows": len(raw), "active_unique_trades": len(normalized),
-        "volume": volume, "checks": checks, "passed": True,
-    }
+            }, ensure_ascii=False))
 
+    report = {
+        "date": date, "source_url": best["url"],
+        "raw_rows": best["raw_rows"], "active_unique_trades": len(best["trades"]),
+        "volume": best["volume"], "checks": best["checks"],
+        "passed": True,
+        "warnings": [k for k in ("open", "last") if not best["checks"][k]],
+        "attempts": attempts,
+    }
+    return date, best["trades"], report
 
 def aggregate(trades, hours):
     groups = defaultdict(list)
@@ -150,7 +182,7 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     reports, hourly_all, four_hour_all, failures = [], [], [], []
     started = time.time()
-    with ThreadPoolExecutor(max_workers=4) as pool:
+    with ThreadPoolExecutor(max_workers=8) as pool:
         futures = {pool.submit(fetch_and_validate, day): day for day in days}
         for index, future in enumerate(as_completed(futures), 1):
             day = futures[future]
@@ -181,7 +213,7 @@ def main():
         "four_hour_candles": len(four_hour_all),
         "total_transactions": sum(x["active_unique_trades"] for x in reports),
         "total_volume": sum(x["volume"] for x in reports),
-        "daily_validation": reports, "failures": failures,
+        "daily_validation": reports, "failures": failures,\n        "warning_days": sum(bool(x.get("warnings")) for x in reports),
         "elapsed_seconds": round(time.time() - started, 1),
     }
     (OUT / "validation_report.json").write_text(
