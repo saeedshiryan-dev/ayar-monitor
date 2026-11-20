@@ -1,3 +1,4 @@
+# Re-run marker: validate all previously missing dates with the closing-history fallback.
 import json
 import time
 from pathlib import Path
