@@ -209,28 +209,34 @@ def main():
         "previous_failures": len(failures_by_date),
     }), flush=True)
 
-    for index, daily in enumerate(todo, 1):
-        date = str(daily["date"])
-        try:
-            result = fetch_day(daily)
-            reports.append(result["report"])
-            hourly.extend(aggregate(result["trades"], 1))
-            four_hour.extend(aggregate(result["trades"], 4))
-            failures_by_date.pop(date, None)
+    completed = 0
+    with ThreadPoolExecutor(max_workers=args.workers) as pool:
+        future_map = {pool.submit(fetch_day, daily): daily for daily in todo}
+        for future in as_completed(future_map):
+            daily = future_map[future]
+            date = str(daily["date"])
+            completed += 1
+            try:
+                result = future.result()
+                reports.append(result["report"])
+                hourly.extend(aggregate(result["trades"], 1))
+                four_hour.extend(aggregate(result["trades"], 4))
+                failures_by_date.pop(date, None)
+                event = "date_passed"
+                error = None
+            except Exception as exc:
+                failures_by_date[date] = {"date": date, "error": str(exc)}
+                event = "date_failed"
+                error = str(exc)
             print(json.dumps({
-                "event": "date_passed", "date": date, "pending_completed": index,
+                "event": event, "date": date, "pending_completed": completed,
                 "pending_total": len(todo), "validated": len(reports),
+                "failed": len(failures_by_date), "error": error,
                 "elapsed_seconds": round(time.time() - started, 1),
             }), flush=True)
-        except Exception as exc:
-            failure = {"date": date, "error": str(exc)}
-            failures_by_date[date] = failure
-            print(json.dumps({
-                "event": "date_failed", "date": date, "pending_completed": index,
-                "pending_total": len(todo), "error": str(exc),
-            }), flush=True)
-        failures = list(failures_by_date.values())
-        save_checkpoint(days, reports, hourly, four_hour, failures, started, base_report)
+            failures = list(failures_by_date.values())
+            # Persist a checkpoint after every finished date, not after a whole batch.
+            save_checkpoint(days, reports, hourly, four_hour, failures, started, base_report)
 
     failures = list(failures_by_date.values())
     save_checkpoint(days, reports, hourly, four_hour, failures, started, base_report)
