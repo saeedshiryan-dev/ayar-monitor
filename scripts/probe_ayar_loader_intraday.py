@@ -7,7 +7,7 @@ from pathlib import Path
 import requests
 
 INS_CODE = "34144395039913458"
-SAMPLES = ["20200329", "20200415", "20200922", "20261117"]
+SAMPLES = ["20200329", "20261117"]
 HOSTS = ["http://tsetmc.com", "http://old.tsetmc.com", "http://www.tsetmc.com", "https://old.tsetmc.com"]
 DAILY = json.loads(Path("data/ayar_daily_history.json").read_text(encoding="utf-8"))
 DAILY_MAP = {str(x["date"]): x for x in DAILY["valid_history"]}
@@ -35,7 +35,7 @@ def main():
             url = f"{base}/Loader.aspx?ParTree=15131P&i={INS_CODE}&d={date}"
             item = {"date": date, "host": base, "url": url}
             try:
-                response = session.get(url, timeout=(20, 60))
+                response = session.get(url, timeout=(8, 12))
                 item["http_status"] = response.status_code
                 item["final_url"] = response.url
                 response.raise_for_status()
@@ -81,7 +81,7 @@ def main():
                 item["error"] = str(exc)
             results.append(item)
             print(json.dumps(item, ensure_ascii=False))
-            time.sleep(0.4)
+            time.sleep(0.15)
     Path("build/loader_probe.json").parent.mkdir(parents=True, exist_ok=True)
     Path("build/loader_probe.json").write_text(json.dumps(results, ensure_ascii=False, indent=2), encoding="utf-8")
 
