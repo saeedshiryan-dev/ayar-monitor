@@ -1,5 +1,7 @@
 name: Build Ayar Full Intraday Candles
 
+# Direct GitHub-hosted runner; no VPN or Iranian proxy is configured.
+
 on:
   push:
     paths:
