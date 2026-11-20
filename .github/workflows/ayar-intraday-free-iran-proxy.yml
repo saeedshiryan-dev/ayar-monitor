@@ -83,20 +83,57 @@ jobs:
               env.write(f"https_proxy={selected}\n")
           PY
 
-      - name: Confirm proxy route and TSETMC access
+      - name: Re-test Iranian proxy stability before the long download
+        shell: bash
         run: |
           python - <<'PY'
-          import os, requests
-          proxy = os.environ["HTTPS_PROXY"]
-          print("Selected proxy:", proxy)
+          import json, os, requests, time
+
+          source = "https://raw.githubusercontent.com/proxifly/free-proxy-list/main/proxies/countries/IR/data.json"
+          data = requests.get(source, timeout=30).json()
+          candidates = [
+              x for x in data
+              if x.get("protocol") == "http"
+              and x.get("geolocation", {}).get("country") == "IR"
+              and x.get("proxy", "").startswith("http://")
+          ]
           url = "https://cdn.tsetmc.com/api/ClosingPrice/GetClosingPriceHistory/34144395039913458/20261117"
-          r = requests.get(url, timeout=30, headers={"User-Agent": "Mozilla/5.0", "Accept": "application/json"})
-          r.raise_for_status()
-          rows = r.json().get("closingPriceHistory", [])
-          positive = sum(int(x.get("pDrCotVal", 0) or 0) > 0 for x in rows)
-          print("TSETMC rows:", len(rows), "| positive price rows:", positive)
-          if positive == 0:
-              raise SystemExit("Proxy route stopped returning usable data.")
+          headers = {"User-Agent": "Mozilla/5.0", "Accept": "application/json"}
+          chosen = None
+
+          # A single successful response is not enough: public proxies often die
+          # immediately. Require two consecutive successful TSETMC requests.
+          for i, item in enumerate(candidates[:30], 1):
+              proxy = item["proxy"]
+              proxies = {"http": proxy, "https": proxy}
+              ok = True
+              for attempt in (1, 2):
+                  try:
+                      r = requests.get(url, proxies=proxies, timeout=(5, 10), headers=headers)
+                      r.raise_for_status()
+                      rows = r.json().get("closingPriceHistory", [])
+                      if not any(int(row.get("pDrCotVal", 0) or 0) > 0 for row in rows):
+                          raise RuntimeError("no usable TSETMC prices")
+                      print(f"Candidate {i}, check {attempt}: OK ({len(rows)} rows)")
+                  except Exception as exc:
+                      print(f"Candidate {i} rejected on check {attempt}: {type(exc).__name__}: {exc}")
+                      ok = False
+                      break
+                  if attempt == 1:
+                      time.sleep(2)
+              if ok:
+                  chosen = proxy
+                  print(f"Stable-enough proxy selected: {item.get('ip')}:{item.get('port')}")
+                  break
+
+          if not chosen:
+              raise SystemExit("No Iranian public proxy passed two consecutive TSETMC checks; full download not started.")
+
+          with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as env:
+              env.write(f"HTTP_PROXY={chosen}\\n")
+              env.write(f"HTTPS_PROXY={chosen}\\n")
+              env.write(f"http_proxy={chosen}\\n")
+              env.write(f"https_proxy={chosen}\\n")
           PY
 
       - name: Download and validate full 1h/4h history
