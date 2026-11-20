@@ -24,7 +24,7 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          for run_id in 44709052520 44709286303; do
+          for run_id in 44709052520 44709286303 44709689346 44709777818; do
             curl --fail-with-body -sS -X POST \
               -H "Authorization: Bearer $GH_TOKEN" \
               -H "Accept: application/vnd.github+json" \
