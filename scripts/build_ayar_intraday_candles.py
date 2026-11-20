@@ -21,14 +21,14 @@ def get_session():
     session = getattr(THREAD_LOCAL, "session", None)
     if session is None:
         retry = Retry(
-            total=4, connect=4, read=4, status=4, backoff_factor=1.5,
+            total=7, connect=7, read=7, status=7, backoff_factor=2.0,
             status_forcelist=(429, 500, 502, 503, 504),
             allowed_methods=frozenset(["GET"]), raise_on_status=False,
         )
         session = requests.Session()
         session.mount("https://", HTTPAdapter(max_retries=retry))
         session.headers.update({
-            "User-Agent": "Mozilla/5.0 (compatible; AyarHistoricalResearch/1.0)",
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/128.0.0.0 Safari/537.36",
             "Accept": "application/json",
             "Referer": "https://www.tsetmc.com/",
         })
@@ -47,7 +47,7 @@ def parse_h_even(value):
 
 def fetch_and_validate(daily):
     date = str(daily["date"])
-    hosts = ("https://cdn.tsetmc.com/api", "https://www.tsetmc.com/api")
+    hosts = ("https://cdn.tsetmc.com/api",)
     attempts = []
     best = None
 
@@ -55,7 +55,7 @@ def fetch_and_validate(daily):
         for include_canceled in ("false", "true"):
             url = f"{base}/Trade/GetTradeHistory/{INS_CODE}/{date}/{include_canceled}"
             try:
-                response = get_session().get(url, timeout=(25, 180))
+                response = get_session().get(url, timeout=(20, 120))
                 response.raise_for_status()
                 payload = response.json()
                 if not isinstance(payload, dict) or not isinstance(payload.get("tradeHistory"), list):
@@ -182,7 +182,7 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     reports, hourly_all, four_hour_all, failures = [], [], [], []
     started = time.time()
-    with ThreadPoolExecutor(max_workers=8) as pool:
+    with ThreadPoolExecutor(max_workers=3) as pool:
         futures = {pool.submit(fetch_and_validate, day): day for day in days}
         for index, future in enumerate(as_completed(futures), 1):
             day = futures[future]
