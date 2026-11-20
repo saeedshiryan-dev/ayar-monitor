@@ -1,4 +1,5 @@
 import json
+import csv
 from pathlib import Path
 from datetime import datetime
 from zoneinfo import ZoneInfo
@@ -54,14 +55,59 @@ def build(cs,tf):
       "EMA200":rnd(e200),"RSI14":rnd(r),"MACD":rnd(m),"MACD_signal":rnd(sig),
       "MACD_histogram":rnd(hist),"Volume":vol,"Volume_SMA20":rnd(vs),"Volume_Ratio":rnd(vr,3)}}
 
+def read_candle_csv(path, timeframe):
+    candles=[]
+    with path.open(encoding="utf-8-sig",newline="") as f:
+        for row in csv.DictReader(f):
+            start=row["time"][:5]
+            hour=int(start[:2])
+            # Keep regular-session one-hour bars; closing-auction prints at 18:00
+            # remain in the raw CSV but are not mixed into continuous-session indicators.
+            if timeframe=="1h" and hour==18:
+                continue
+            # The 16:00-18:00 remainder is a partial two-hour bar, not a full 4h bar.
+            if timeframe=="4h" and hour==16:
+                continue
+            candles.append({
+                "date":row["date"],"start":start,
+                "open":int(row["open"]),"high":int(row["high"]),
+                "low":int(row["low"]),"close":int(row["close"]),
+                "volume":int(row["volume"]),"trades":int(row["trade_count"]),
+                "partial":False
+            })
+    return candles
+
+
 def main():
-    if not CACHE.exists(): raise FileNotFoundError("Intraday cache missing")
-    h1=[]; h4=[]; files=sorted(CACHE.glob("ayar_*.json"))
-    for p in files:
-        d=json.loads(p.read_text(encoding="utf-8"))
-        if d.get("validated") is not True: raise ValueError(f"Unvalidated cache: {p.name}")
-        h1.extend(d.get("candles_1h",[])); h4.extend([x for x in d.get("candles_4h",[]) if int(x.get("end","00:00")[:2])-int(x.get("start","00:00")[:2])==4])
-    live_path=DATA/"ayar_intraday_live.json"; meta={"status":"not_available"}
+    if not CACHE.exists():
+        raise FileNotFoundError("Intraday cache missing")
+
+    h1_csv=CACHE/"ayar_1h.csv"
+    h4_csv=CACHE/"ayar_4h.csv"
+    report_path=CACHE/"validation_report.json"
+    historical_report={}
+    source_mode="daily_json_cache"
+
+    if h1_csv.exists() and h4_csv.exists() and report_path.exists():
+        historical_report=json.loads(report_path.read_text(encoding="utf-8"))
+        if historical_report.get("candle_validation",{}).get("passed") is not True:
+            raise ValueError("Historical 1h/4h CSV candle validation did not pass")
+        h1=read_candle_csv(h1_csv,"1h")
+        h4=read_candle_csv(h4_csv,"4h")
+        source_mode="full_history_validated_csv"
+        files=sorted(CACHE.glob("ayar_*.json"))
+    else:
+        h1=[]; h4=[]; files=sorted(CACHE.glob("ayar_*.json"))
+        for p in files:
+            d=json.loads(p.read_text(encoding="utf-8"))
+            if d.get("validated") is not True:
+                raise ValueError(f"Unvalidated cache: {p.name}")
+            h1.extend([x for x in d.get("candles_1h",[]) if not x.get("partial",False)])
+            h4.extend([x for x in d.get("candles_4h",[]) if
+                int(x.get("end","00:00")[:2])-int(x.get("start","00:00")[:2])==4])
+
+    live_path=DATA/"ayar_intraday_live.json"
+    meta={"status":"not_available"}
     if live_path.exists():
         live=json.loads(live_path.read_text(encoding="utf-8"))
         meta={k:live.get(k) for k in ("status","date","retrieved_at","trade_count",
@@ -70,16 +116,36 @@ def main():
         if live.get("status")=="ok":
             def merge(base,new):
                 d={(x["date"],x["start"]):x for x in base}
-                for x in new: d[(x["date"],x["start"])]=x
+                for x in new:
+                    d[(x["date"],x["start"])]=x
                 return sorted(d.values(),key=lambda x:(x["date"],x["start"]))
-            h1=merge(h1,live.get("candles_1h",[])); h4=merge(h4,[x for x in live.get("candles_4h",[]) if int(x.get("end","00:00")[:2])-int(x.get("start","00:00")[:2])==4])
-    result={"symbol":"عیار","source":"TSETMC","timezone":"Asia/Tehran",
+            h1=merge(h1,[x for x in live.get("candles_1h",[]) if not x.get("partial",False)])
+            h4=merge(h4,[x for x in live.get("candles_4h",[]) if
+                int(x.get("end","00:00")[:2])-int(x.get("start","00:00")[:2])==4 and not x.get("partial",False)])
+
+    coverage=historical_report.get("timeframe_coverage",{})
+    validation={
+        "source_mode":source_mode,
+        "historical_candle_validation_passed":historical_report.get("candle_validation",{}).get("passed"),
+        "expected_trading_days":historical_report.get("expected_trading_days"),
+        "one_hour_validated_days":coverage.get("1h",{}).get("validated_days"),
+        "one_hour_missing_days":coverage.get("1h",{}).get("missing_days"),
+        "four_hour_validated_days":coverage.get("4h",{}).get("validated_days"),
+        "four_hour_missing_days":coverage.get("4h",{}).get("missing_days"),
+        "historical_1h_candles":len(h1),
+        "historical_complete_4h_candles":len(h4),
+        "minimum_candles_for_EMA200":200,
+        "live_intraday_overlay":meta,
+        "one_hour_candle_policy":"Regular-session candles only; exclude the separate 18:00 closing-auction bar.",
+        "four_hour_candle_policy":"Complete 08:00-12:00 and 12:00-16:00 bars only; exclude the partial 16:00-18:00 remainder."
+    }
+    result={"symbol":"عیار","source":"TSETMC raw trades","timezone":"Asia/Tehran",
       "calculated_at":datetime.now(TEHRAN).isoformat(),
       "method":"EMA seeded by SMA; RSI Wilder; MACD 12-26-9; volume SMA20",
-      "validation":{"cached_days":len(files),"minimum_candles_for_EMA200":200,
-        "live_intraday_overlay":meta,
-        "four_hour_candle_policy":"Only complete 12:00-16:00 four-hour buckets; exclude 16:00-18:00 two-hour remainder."},
+      "validation":validation,
       "timeframes":{"1h":build(h1,"1h"),"4h":build(h4,"4h")}}
-    tmp=OUT.with_suffix(".tmp"); tmp.write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding="utf-8"); tmp.replace(OUT)
+    tmp=OUT.with_suffix(".tmp")
+    tmp.write_text(json.dumps(result,ensure_ascii=False,indent=2),encoding="utf-8")
+    tmp.replace(OUT)
     print(json.dumps({k:{"count":v["candle_count"],"latest":v["latest"]} for k,v in result["timeframes"].items()},ensure_ascii=False,indent=2))
-if __name__=="__main__": main()
+
