@@ -14,13 +14,12 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
-      - name: Probe today's official TSETMC trade-history endpoint
+      - name: Probe documented TSETMC trade alternatives
         env:
           PYTHONUNBUFFERED: "1"
         run: |
           python - <<'PY'
-          import json
-          import time
+          import json, time
           from datetime import datetime
           from zoneinfo import ZoneInfo
           import requests
@@ -36,76 +35,45 @@ jobs:
               "Origin": "https://www.tsetmc.com",
           })
 
-          results = []
-          for host in ("https://cdn.tsetmc.com/api", "https://cdn10.tsetmc.com/api"):
-              url = f"{host}/Trade/GetTradeHistory/{code}/{date}/false"
-              item = {"date": date, "url": url}
+          probes = [
+              ("history_false", f"https://cdn.tsetmc.com/api/Trade/GetTradeHistory/{code}/{date}/false", "json"),
+              ("history_true", f"https://cdn.tsetmc.com/api/Trade/GetTradeHistory/{code}/{date}/true", "json"),
+              ("intraday_aggregate", f"https://cdn.tsetmc.com/api/Trade/GetTradeIntraDay/{code}", "json"),
+              ("legacy_trade_detail", f"http://old.tsetmc.com/tsev2/data/TradeDetail.aspx?i={code}", "text"),
+          ]
+
+          for name, url, kind in probes:
+              result = {"probe": name, "url": url, "date": date}
               started = time.monotonic()
               try:
-                  response = session.get(url, timeout=(15, 75))
-                  item["http_status"] = response.status_code
-                  item["elapsed_seconds"] = round(time.monotonic() - started, 2)
-                  item["content_type"] = response.headers.get("Content-Type")
-                  response.raise_for_status()
-                  payload = response.json()
-                  rows = payload.get("tradeHistory") if isinstance(payload, dict) else None
-                  if not isinstance(rows, list):
-                      raise ValueError("JSON پاسخ فاقد آرایه tradeHistory است")
-                  active = []
-                  for row in rows:
-                      if not isinstance(row, dict):
-                          continue
-                      try:
-                          if int(row.get("canceled", 0) or 0) != 0:
-                              continue
-                          number = int(row["nTran"])
-                          hhmmss = int(row["hEven"])
-                          price = int(float(row["pTran"]))
-                          volume = int(row["qTitTran"])
-                          if price <= 0 or volume <= 0:
-                              continue
-                          active.append((number, hhmmss, price, volume))
-                      except (KeyError, TypeError, ValueError):
-                          continue
-                  unique = {}
-                  conflicts = 0
-                  for row in active:
-                      old = unique.get(row[0])
-                      if old is not None and old != row:
-                          conflicts += 1
-                      else:
-                          unique[row[0]] = row
-                  trades = sorted(unique.values(), key=lambda x: (x[1], x[0]))
-                  item.update({
-                      "json_valid": True,
-                      "raw_rows": len(rows),
-                      "active_rows": len(active),
-                      "unique_transactions": len(trades),
-                      "duplicate_conflicts": conflicts,
-                      "volume_sum": sum(x[3] for x in trades),
-                      "first_trade_hEven": trades[0][1] if trades else None,
-                      "last_trade_hEven": trades[-1][1] if trades else None,
-                      "first_trade_sample": rows[0] if rows else None,
-                      "last_trade_sample": rows[-1] if rows else None,
-                      "usable": bool(trades) and conflicts == 0,
+                  response = session.get(url, timeout=(15, 60))
+                  result.update({
+                      "http_status": response.status_code,
+                      "elapsed_seconds": round(time.monotonic()-started, 2),
+                      "content_type": response.headers.get("Content-Type"),
+                      "body_length": len(response.content),
                   })
+                  response.raise_for_status()
+                  if kind == "json":
+                      payload = response.json()
+                      result["json_valid"] = True
+                      result["top_level_keys"] = list(payload.keys()) if isinstance(payload, dict) else None
+                      key = next(iter(payload.keys()), None) if isinstance(payload, dict) else None
+                      rows = payload.get(key) if key else None
+                      result["payload_key"] = key
+                      result["rows_type"] = type(rows).__name__
+                      result["rows_count"] = len(rows) if isinstance(rows, list) else None
+                      result["sample_first"] = rows[0] if isinstance(rows, list) and rows else rows
+                      result["sample_last"] = rows[-1] if isinstance(rows, list) and rows else None
+                      if isinstance(rows, list) and rows:
+                          result["row_fields"] = sorted(rows[0].keys()) if isinstance(rows[0], dict) else None
+                      result["usable"] = isinstance(rows, list) and len(rows) > 0
+                  else:
+                      body = response.text
+                      result["body_prefix"] = body[:1200]
+                      result["usable"] = bool(body.strip()) and len(body) > 20
               except Exception as exc:
-                  item["error"] = f"{type(exc).__name__}: {str(exc)[:350]}"
-                  item["usable"] = False
-              results.append(item)
-              print(json.dumps(item, ensure_ascii=False), flush=True)
-
-          usable = [x for x in results if x.get("usable")]
-          if usable:
-              print(json.dumps({
-                  "final_status": "fallback_endpoint_responded",
-                  "usable_hosts": [x["url"].split("/api")[0] for x in usable],
-                  "note": "پاسخ زنده endpoint تاریخچه معاملات دریافت شد؛ تطبیق کامل با آمار رسمی روزانه هنوز لازم است."
-              }, ensure_ascii=False), flush=True)
-          else:
-              print(json.dumps({
-                  "final_status": "fallback_endpoint_unavailable",
-                  "note": "هر دو میزبان برای endpoint تاریخچه معاملات امروز پاسخ قابل استفاده ندادند."
-              }, ensure_ascii=False), flush=True)
-              raise SystemExit("No usable TSETMC GetTradeHistory response for today's session.")
+                  result["error"] = f"{type(exc).__name__}: {str(exc)[:350]}"
+                  result["usable"] = False
+              print(json.dumps(result, ensure_ascii=False), flush=True)
           PY
