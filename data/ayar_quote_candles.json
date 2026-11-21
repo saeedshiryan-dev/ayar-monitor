@@ -1,0 +1,51 @@
+{
+  "symbol": "عیار",
+  "source": "TSETMC ClosingPrice/GetClosingPriceInfo",
+  "sampling_interval_seconds": 30,
+  "sampling_method": "repeated_quote_snapshots",
+  "updated_at": "2026-11-21T17:38:32.115261+03:30",
+  "status": "ok",
+  "warning_fa": "این‌ها کندل رسمی معاملات نیستند؛ کندل‌های بازسازی‌شده از نمونه‌های تابلو هستند و فقط برای تحلیل کمکی مناسب‌اند.",
+  "timeframes": {
+    "1h": [
+      {
+        "date": "20261121",
+        "start": "17:00",
+        "end": "18:00",
+        "timestamp": "20261121T17:00:00+03:30",
+        "open": 631125,
+        "high": 631125,
+        "low": 630752,
+        "close": 630752,
+        "volume_delta_sampled": 717245,
+        "trade_count_delta_sampled": 1215,
+        "sample_count": 9,
+        "max_sample_gap_seconds": 30.256779,
+        "partial": true,
+        "provisional": true,
+        "source_type": "sampled_quote_reconstruction",
+        "quality_note_fa": "OHLC از نمونه‌های ۳۰ثانیه‌ای قیمت تابلو بازسازی شده؛ بین نمونه‌ها ممکن است سقف/کف یا معاملات جا افتاده باشد."
+      }
+    ],
+    "4h": [
+      {
+        "date": "20261121",
+        "start": "16:00",
+        "end": "18:00",
+        "timestamp": "20261121T16:00:00+03:30",
+        "open": 631125,
+        "high": 631125,
+        "low": 630752,
+        "close": 630752,
+        "volume_delta_sampled": 717245,
+        "trade_count_delta_sampled": 1215,
+        "sample_count": 9,
+        "max_sample_gap_seconds": 30.256779,
+        "partial": true,
+        "provisional": true,
+        "source_type": "sampled_quote_reconstruction",
+        "quality_note_fa": "OHLC از نمونه‌های ۳۰ثانیه‌ای قیمت تابلو بازسازی شده؛ بین نمونه‌ها ممکن است سقف/کف یا معاملات جا افتاده باشد."
+      }
+    ]
+  }
+}
