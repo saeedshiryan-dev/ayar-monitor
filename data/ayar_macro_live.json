@@ -2,22 +2,22 @@
   "status": "ok",
   "source": "NerkhAra public API",
   "source_url": "https://nerkhara.com/en/api/",
-  "retrieved_at": "2026-11-21T08:24:09.275128+00:00",
+  "retrieved_at": "2026-11-21T09:09:17.713788+00:00",
   "timezone": "UTC",
   "refresh_claim_minutes": 10,
   "max_accepted_age_minutes": 20,
   "usd": {
     "symbol": "usd",
     "name": "دلار آمریکا (بازار آزاد)",
-    "buy": 271235.0,
-    "sell": 271235.0,
-    "display_price": 271235.0,
+    "buy": 271135.0,
+    "sell": 271135.0,
+    "display_price": 271135.0,
     "unit": "تومان به‌ازای هر دلار",
-    "updated_at": "2026-11-21T08:21:52+00:00",
-    "age_seconds": 137,
+    "updated_at": "2026-11-21T09:01:52+00:00",
+    "age_seconds": 445,
     "source_method": "average",
     "source_count": 2,
-    "change_pct": 0.33,
+    "change_pct": 0.3,
     "source_page": "https://nerkhara.com/dollar/"
   },
   "xau": {
@@ -27,8 +27,8 @@
     "sell": 3535.0,
     "display_price": 3535.0,
     "unit": "دلار به‌ازای هر اونس تروا",
-    "updated_at": "2026-11-21T08:21:52+00:00",
-    "age_seconds": 137,
+    "updated_at": "2026-11-21T09:01:52+00:00",
+    "age_seconds": 445,
     "source_method": "lead",
     "source_count": 1,
     "change_pct": -1.16,
@@ -37,7 +37,7 @@
   "validation": {
     "both_quotes_present": true,
     "both_timestamps_fresh": true,
-    "usd_source_timestamp": "2026-11-21T08:21:52+00:00",
-    "xau_source_timestamp": "2026-11-21T08:21:52+00:00"
+    "usd_source_timestamp": "2026-11-21T09:01:52+00:00",
+    "xau_source_timestamp": "2026-11-21T09:01:52+00:00"
   }
 }
