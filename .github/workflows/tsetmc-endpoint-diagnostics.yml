@@ -1,0 +1,72 @@
+name: TSETMC Endpoint Diagnostics
+
+on:
+  push:
+    paths:
+      - '.github/workflows/tsetmc-endpoint-diagnostics.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  diagnose:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Test official TSETMC endpoints independently
+        run: |
+          python - <<'PY'
+          import json, time, requests
+          from datetime import datetime, timezone
+          base = "https://cdn.tsetmc.com/api"
+          code = "34144395039913458"
+          endpoints = {
+              "quote": f"{base}/ClosingPrice/GetClosingPriceInfo/{code}",
+              "orderbook": f"{base}/BestLimits/{code}",
+              "trades": f"{base}/Trade/GetTrade/{code}",
+          }
+          s = requests.Session()
+          s.headers.update({
+              "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+              "Accept": "application/json, text/plain, */*",
+              "Referer": "https://www.tsetmc.com/",
+              "Origin": "https://www.tsetmc.com",
+          })
+          results = {}
+          for name, url in endpoints.items():
+              attempts = []
+              for attempt in range(1, 4):
+                  started = time.monotonic()
+                  try:
+                      r = s.get(url, timeout=(10, 25))
+                      elapsed = round(time.monotonic() - started, 2)
+                      try:
+                          payload = r.json()
+                          valid_json = True
+                          top_keys = list(payload.keys())[:8] if isinstance(payload, dict) else type(payload).__name__
+                      except ValueError:
+                          valid_json, top_keys = False, None
+                      attempts.append({
+                          "attempt": attempt, "http_status": r.status_code,
+                          "elapsed_seconds": elapsed,
+                          "content_type": r.headers.get("content-type"),
+                          "json_valid": valid_json, "top_level": top_keys,
+                          "body_prefix": r.text[:180].replace("\\n", " ")
+                      })
+                      if r.ok:
+                          break
+                  except requests.RequestException as e:
+                      attempts.append({
+                          "attempt": attempt, "exception": type(e).__name__,
+                          "elapsed_seconds": round(time.monotonic() - started, 2),
+                          "message": str(e)[:180]
+                      })
+                  if attempt < 3:
+                      time.sleep(attempt * 2)
+              results[name] = attempts
+          print(json.dumps({
+              "tested_at_utc": datetime.now(timezone.utc).isoformat(),
+              "runner": "GitHub Actions ubuntu-latest",
+              "results": results
+          }, ensure_ascii=False, indent=2))
+          PY
