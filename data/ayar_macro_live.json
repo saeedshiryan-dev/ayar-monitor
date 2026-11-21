@@ -2,22 +2,22 @@
   "status": "ok",
   "source": "NerkhAra public API",
   "source_url": "https://nerkhara.com/en/api/",
-  "retrieved_at": "2026-11-21T16:08:16.706388+00:00",
+  "retrieved_at": "2026-11-21T16:49:05.657796+00:00",
   "timezone": "UTC",
   "refresh_claim_minutes": 10,
   "max_accepted_age_minutes": 20,
   "usd": {
     "symbol": "usd",
     "name": "دلار آمریکا (بازار آزاد)",
-    "buy": 268985.0,
-    "sell": 268985.0,
-    "display_price": 268985.0,
+    "buy": 268980.0,
+    "sell": 268980.0,
+    "display_price": 268980.0,
     "unit": "تومان به‌ازای هر دلار",
-    "updated_at": "2026-11-21T16:01:52+00:00",
-    "age_seconds": 384,
+    "updated_at": "2026-11-21T16:41:52+00:00",
+    "age_seconds": 433,
     "source_method": "average",
     "source_count": 2,
-    "change_pct": -0.88,
+    "change_pct": -0.87,
     "source_page": "https://nerkhara.com/dollar/"
   },
   "xau": {
@@ -27,17 +27,17 @@
     "sell": 3535.0,
     "display_price": 3535.0,
     "unit": "دلار به‌ازای هر اونس تروا",
-    "updated_at": "2026-11-21T16:01:52+00:00",
-    "age_seconds": 384,
+    "updated_at": "2026-11-21T16:41:52+00:00",
+    "age_seconds": 433,
     "source_method": "lead",
     "source_count": 1,
-    "change_pct": -0.45,
+    "change_pct": -0.22,
     "source_page": "https://nerkhara.com/ons-tala/"
   },
   "validation": {
     "both_quotes_present": true,
     "both_timestamps_fresh": true,
-    "usd_source_timestamp": "2026-11-21T16:01:52+00:00",
-    "xau_source_timestamp": "2026-11-21T16:01:52+00:00"
+    "usd_source_timestamp": "2026-11-21T16:41:52+00:00",
+    "xau_source_timestamp": "2026-11-21T16:41:52+00:00"
   }
 }
