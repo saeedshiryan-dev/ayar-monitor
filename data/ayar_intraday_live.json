@@ -3,64 +3,11 @@
   "source": "TSETMC GetTrade",
   "date": "20261121",
   "timezone": "Asia/Tehran",
-  "retrieved_at": "2026-11-21T13:05:39.089615+03:30",
-  "status": "ok",
-  "trade_count": 59636,
-  "candles_1h": [
-    {
-      "date": "20261121",
-      "start": "12:00",
-      "end": "13:00",
-      "timestamp": "20261121T12:00:00+03:30",
-      "open": 630000,
-      "high": 633994,
-      "low": 626314,
-      "close": 631590,
-      "volume": 46036000,
-      "trades": 57631,
-      "partial": false,
-      "provisional": true
-    },
-    {
-      "date": "20261121",
-      "start": "13:00",
-      "end": "14:00",
-      "timestamp": "20261121T13:00:00+03:30",
-      "open": 631587,
-      "high": 632526,
-      "low": 631586,
-      "close": 631700,
-      "volume": 1403459,
-      "trades": 2005,
-      "partial": true,
-      "provisional": true
-    }
-  ],
-  "candles_4h": [
-    {
-      "date": "20261121",
-      "start": "12:00",
-      "end": "16:00",
-      "timestamp": "20261121T12:00:00+03:30",
-      "open": 630000,
-      "high": 633994,
-      "low": 626314,
-      "close": 631700,
-      "volume": 47439459,
-      "trades": 59636,
-      "partial": true,
-      "provisional": true
-    }
-  ],
+  "retrieved_at": "2026-11-21T13:29:23.948212+03:30",
+  "status": "not_available",
+  "trade_count": 0,
+  "candles_1h": [],
+  "candles_4h": [],
   "note_fa": "کندل‌های موقت از endpoint معاملات زنده TSETMC؛ آمار نهایی روز نیست.",
-  "quote_trade_count": 59603,
-  "quote_retrieved_at": "2026-11-21T13:05:05.940071+03:30",
-  "quote_age_seconds": 33.15,
-  "observed_trade_count_delta": -33,
-  "trade_count_difference": null,
-  "count_reconciled": null,
-  "count_reconciliation_status": "not_comparable_time_gap",
-  "quality_note_fa": "snapshot قیمت و معاملات هم‌زمان نیستند؛ اختلاف مشاهده‌شده معیار قطعی کسری معاملات نیست.",
-  "first_trade_time": "120003",
-  "last_trade_time": "130521"
+  "reason": "اختلال موقت TSETMC پس از چند تلاش: 502 Server Error: Bad Gateway for url: https://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458"
 }

@@ -2,7 +2,7 @@
   "symbol": "عیار",
   "source": "TSETMC raw trades",
   "timezone": "Asia/Tehran",
-  "calculated_at": "2026-11-21T13:05:49.704338+03:30",
+  "calculated_at": "2026-11-21T13:29:46.169153+03:30",
   "method": "EMA seeded by SMA; RSI Wilder; MACD 12-26-9; volume SMA20",
   "validation": {
     "source_mode": "full_history_validated_csv",
@@ -12,19 +12,19 @@
     "one_hour_missing_days": 39,
     "four_hour_validated_days": 1939,
     "four_hour_missing_days": 38,
-    "historical_1h_candles": 6705,
+    "historical_1h_candles": 6704,
     "historical_complete_4h_candles": 2059,
     "minimum_candles_for_EMA200": 200,
     "live_intraday_overlay": {
-      "status": "ok",
+      "status": "not_available",
       "date": "20261121",
-      "retrieved_at": "2026-11-21T13:05:39.089615+03:30",
-      "trade_count": 59636,
-      "quote_trade_count": 59603,
-      "quote_retrieved_at": "2026-11-21T13:05:05.940071+03:30",
-      "observed_trade_count_delta": -33,
-      "count_reconciliation_status": "not_comparable_time_gap",
-      "quality_note_fa": "snapshot قیمت و معاملات هم‌زمان نیستند؛ اختلاف مشاهده‌شده معیار قطعی کسری معاملات نیست.",
+      "retrieved_at": "2026-11-21T13:29:23.948212+03:30",
+      "trade_count": 0,
+      "quote_trade_count": null,
+      "quote_retrieved_at": null,
+      "observed_trade_count_delta": null,
+      "count_reconciliation_status": null,
+      "quality_note_fa": null,
       "error": null
     },
     "one_hour_candle_policy": "Regular-session candles only; exclude the separate 18:00 closing-auction bar.",
@@ -32,28 +32,28 @@
   },
   "timeframes": {
     "1h": {
-      "candle_count": 6705,
+      "candle_count": 6704,
       "first_candle": "20180609 09:00",
-      "last_candle": "20261121 12:00",
+      "last_candle": "20261117 17:00",
       "latest": {
-        "datetime": "20261121 12:00",
-        "open": 630000,
-        "high": 633994,
-        "low": 626314,
-        "close": 631590.0,
-        "volume": 46036000,
-        "trades": 57631,
+        "datetime": "20261117 17:00",
+        "open": 664000,
+        "high": 664050,
+        "low": 662000,
+        "close": 662301.0,
+        "volume": 6797969,
+        "trades": 12193,
         "partial": false,
-        "EMA20": 661524.86,
-        "EMA50": 669446.58,
-        "EMA200": 675360.55,
+        "EMA20": 664675.9,
+        "EMA50": 670991.75,
+        "EMA200": 675800.46,
         "EMA200_status": "ok",
-        "RSI14": 16.92,
-        "MACD": -4276.27,
-        "MACD_signal": -2670.96,
-        "MACD_histogram": -1605.31,
-        "Volume_SMA20": 10491202.7,
-        "Volume_Ratio": 4.388
+        "RSI14": 41.63,
+        "MACD": -1843.84,
+        "MACD_signal": -2269.63,
+        "MACD_histogram": 425.79,
+        "Volume_SMA20": 8516192.45,
+        "Volume_Ratio": 0.798
       },
       "candles": [
         {
@@ -73799,20 +73799,6 @@
           "volume": 6797969,
           "trades": 12193,
           "partial": false
-        },
-        {
-          "date": "20261121",
-          "start": "12:00",
-          "end": "13:00",
-          "timestamp": "20261121T12:00:00+03:30",
-          "open": 630000,
-          "high": 633994,
-          "low": 626314,
-          "close": 631590,
-          "volume": 46036000,
-          "trades": 57631,
-          "partial": false,
-          "provisional": true
         }
       ],
       "indicators": {
@@ -80520,8 +80506,7 @@
           665142.45,
           665023.36,
           664925.89,
-          664675.9,
-          661524.86
+          664675.9
         ],
         "EMA50": [
           null,
@@ -87227,8 +87212,7 @@
           671962.83,
           671646.33,
           671346.47,
-          670991.75,
-          669446.58
+          670991.75
         ],
         "EMA200": [
           null,
@@ -93934,8 +93918,7 @@
           676178.34,
           676056.09,
           675936.13,
-          675800.46,
-          675360.55
+          675800.46
         ],
         "RSI14": [
           null,
@@ -100641,8 +100624,7 @@
           44.76,
           44.74,
           45.01,
-          41.63,
-          16.92
+          41.63
         ],
         "MACD": [
           null,
@@ -107348,8 +107330,7 @@
           -2119.19,
           -1979.73,
           -1839.3,
-          -1843.84,
-          -4276.27
+          -1843.84
         ],
         "MACD_signal": [
           null,
@@ -114055,8 +114036,7 @@
           -2642.91,
           -2510.28,
           -2376.08,
-          -2269.63,
-          -2670.96
+          -2269.63
         ],
         "MACD_histogram": [
           null,
@@ -120762,8 +120742,7 @@
           523.72,
           530.54,
           536.78,
-          425.79,
-          -1605.31
+          425.79
         ],
         "Volume": [
           5000000,
@@ -127469,8 +127448,7 @@
           3965947,
           2789919,
           3041750,
-          6797969,
-          46036000
+          6797969
         ],
         "Volume_SMA20": [
           null,
@@ -134176,8 +134154,7 @@
           8984832.05,
           8647063.75,
           8493348.5,
-          8516192.45,
-          10491202.7
+          8516192.45
         ],
         "Volume_Ratio": [
           null,
@@ -140883,8 +140860,7 @@
           0.441,
           0.323,
           0.358,
-          0.798,
-          4.388
+          0.798
         ]
       }
     },
