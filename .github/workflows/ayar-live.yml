@@ -38,8 +38,42 @@ jobs:
       - name: Install dependency
         run: python -m pip install requests
 
-      - name: Fetch official TSETMC quote
-        run: python scripts/fetch_ayar_live.py
+      - name: Fetch official TSETMC quote (retry transient TSETMC failures)
+        shell: bash
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3; do
+            echo "TSETMC fetch attempt $attempt/3"
+            if python scripts/fetch_ayar_live.py; then
+              break
+            fi
+            if [ "$attempt" -eq 3 ]; then
+              echo "TSETMC remained unavailable after 3 attempts."
+              exit 1
+            fi
+            sleep $((attempt * 15))
+          done
+
+      - name: Validate that the snapshot was freshly written
+        run: |
+          python - <<'PY'
+          import json
+          from datetime import datetime, timezone
+          from pathlib import Path
+          p = Path("data/ayar_live.json")
+          if not p.exists():
+              raise SystemExit("data/ayar_live.json was not created")
+          data = json.loads(p.read_text(encoding="utf-8"))
+          stamp = datetime.fromisoformat(data["retrieved_at"])
+          age = (datetime.now(stamp.tzinfo) - stamp).total_seconds()
+          if age < -60 or age > 180:
+              raise SystemExit(f"Snapshot is stale or timestamp invalid: age={age:.0f}s")
+          if data.get("symbol") != "عیار" or data.get("insCode") != "34144395039913458":
+              raise SystemExit("Snapshot symbol/insCode validation failed")
+          print(f"Fresh Ayar snapshot validated; age={age:.0f}s")
+          print(f"Quote date={data.get('tsetmc_quote_date')}, trades={data.get('tsetmc_quote_trade_count')}")
+          print(f"Live price={data.get('live_price')}, NAV status={data.get('nav', {}).get('status')}")
+          PY
 
       - name: Build provisional intraday candles from today's TSETMC trades
         run: python scripts/update_ayar_intraday_live.py
