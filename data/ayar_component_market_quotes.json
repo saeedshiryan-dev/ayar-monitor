@@ -1,57 +1,34 @@
 {
-  "status": "synchronized_latest_exchange_session",
-  "retrieved_at": "2026-11-19T18:52:55.516737+03:30",
-  "expected_session_date_gregorian": "2026-11-18",
+  "status": "quotes_not_synchronized_or_not_current",
+  "retrieved_at": "2026-11-21T18:56:53.315236+03:30",
+  "expected_session_date_gregorian": "2026-11-21",
   "calendar_rule": "Iran commodity-certificate sessions scheduled Saturday-Wednesday; Thursday/Friday resolve to the preceding Wednesday unless a holiday intervenes.",
-  "common_quote_date_gregorian": "2026-11-18",
-  "common_quote_date_jalali": "1405/08/27",
-  "macro_quotes_synchronized": true,
+  "common_quote_date_gregorian": null,
+  "common_quote_date_jalali": null,
+  "macro_quotes_synchronized": false,
   "base_anchor_fallback_used": false,
-  "macro_sync_reason": "same_session_base_nav_anchor",
-  "promoted_to_valuation_model": true,
+  "macro_sync_reason": "component_quotes_not_synchronized",
+  "promoted_to_valuation_model": false,
   "quotes": {
-    "coin_certificate": {
-      "key": "coin_certificate",
-      "price": 247950130,
-      "unit": "toman_per_certificate",
-      "jalali_date": "1405/08/27",
-      "date": "2026-11-18",
-      "source": "https://bourseeye.com/commodities/1504/سکه-طلا",
-      "price_type": "last_trade"
-    },
-    "gold_bar_certificate": {
-      "key": "gold_bar_certificate",
-      "price": 3226600,
-      "unit": "toman_per_certificate",
-      "jalali_date": "1405/08/27",
-      "date": "2026-11-18",
-      "source": "https://bourseeye.com/commodities/1503/شمش-طلا",
-      "price_type": "last_trade"
-    },
-    "silver": {
-      "key": "silver",
-      "price": 419000,
-      "unit": "toman_per_gram",
-      "jalali_date": "1405/08/27",
-      "date": "2026-11-18",
-      "source": "https://bourseeye.com/commodities/1507/شمش-نقره",
-      "price_type": "last_trade"
-    },
     "coin_forward": {
       "key": "coin_forward",
       "symbol": "عسکه2",
       "instrument_code": "18650546575861744",
-      "price": 2485152,
-      "volume": 295607,
+      "price": 2449067,
+      "volume": 1235175,
       "unit": "rial_per_paper",
-      "jalali_date": "1405/08/27",
-      "date": "2026-11-18",
+      "jalali_date": "1405/08/30",
+      "date": "2026-11-21",
       "source": "https://cdn.tsetmc.com/api/ClosingPrice/GetClosingPriceDailyList/18650546575861744/0",
       "price_type": "official_daily_close",
       "source_fallback": "TSETMC_CDN"
     }
   },
-  "errors": {},
+  "errors": {
+    "coin_certificate": "ValueError: date_or_price_not_found:coin_certificate",
+    "gold_bar_certificate": "ValueError: date_or_price_not_found:gold_bar_certificate",
+    "silver": "ValueError: date_or_price_not_found:silver"
+  },
   "rules": [
     "Only explicitly dated last-trade/daily-close quotes are accepted.",
     "All four component quotes must share the latest scheduled exchange session before promotion.",

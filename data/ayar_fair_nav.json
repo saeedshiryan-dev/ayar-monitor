@@ -76,7 +76,7 @@
     "Official uploaded portfolio workbook: 4-عملکرد_صندوق_عیار_مهر_1405نهایی.xlsx, sheet «اوراق», row 9, columns Q/S/U/W/Y."
   ],
   "calculation": {
-    "method": "independent_component_valuation_v2_1_official_same_session_anchor",
+    "method": "independent_component_valuation_v2_no_stale_quote_carry_forward",
     "valuation_as_of_date": "2026-11-18",
     "official_nav_not_replaced": true,
     "indicative_nav_rial": 663527,
@@ -90,9 +90,9 @@
       "base_nav_date": "2026-11-18",
       "portfolio_weights_source_date_jalali": "1405/07/30",
       "base_allocations_are_weighted_nav_estimates_not_confirmed_holdings": true,
-      "base_official_redemption_nav_rial": 663527,
+      "base_official_redemption_nav_rial": 663527.0,
       "base_allocations_reconcile": true,
-      "portfolio_weight_sum_pct": 100,
+      "portfolio_weight_sum_pct": 100.0,
       "components": [
         {
           "key": "gold_bullion",
@@ -100,11 +100,13 @@
           "weight_pct": 87.65865306,
           "base_allocated_nav_rial": 581638.83,
           "valuation_method": "spot_index_proxy",
-          "return_pct": 0,
+          "return_pct": 0.0,
           "valued_amount_rial": 581638.83,
           "status": "fine_gold_spot_proxy_xauusd_times_usd",
           "detail": {
-            "quote_date": "2026-11-18"
+            "proxy": "XAUUSD × USD/IRR",
+            "purity_and_exact_fine_gold_quantity": "not_disclosed_in_monthly_portfolio_extract",
+            "premium_discount_and_transaction_costs": "not_observable"
           }
         },
         {
@@ -113,11 +115,16 @@
           "weight_pct": 11.20971945,
           "base_allocated_nav_rial": 74379.52,
           "valuation_method": "direct_exchange_quote",
-          "return_pct": 0,
+          "return_pct": 0.0,
           "valued_amount_rial": 74379.52,
           "status": "same_session_anchor",
           "detail": {
-            "quote_date": "2026-11-18"
+            "unit": "one full new-design Bahar Azadi coin",
+            "base_price_toman": 247950130,
+            "base_quote_date": "2026-11-18",
+            "premium_vs_fine_gold_at_anchor_pct": 5.227878180873247,
+            "current_quote_date": "2026-11-18",
+            "current_price_toman": 247950130
           }
         },
         {
@@ -126,11 +133,15 @@
           "weight_pct": 0.61093504,
           "base_allocated_nav_rial": 4053.72,
           "valuation_method": "direct_exchange_quote",
-          "return_pct": 0,
+          "return_pct": 0.0,
           "valued_amount_rial": 4053.72,
           "status": "same_session_anchor",
           "detail": {
-            "quote_date": "2026-11-18"
+            "unit": "toman_per_gram",
+            "base_price_toman_per_gram": 419000,
+            "base_quote_date": "2026-11-18",
+            "current_price_toman_per_gram": 419000,
+            "current_quote_date": "2026-11-18"
           }
         },
         {
@@ -139,11 +150,19 @@
           "weight_pct": 0.45552608,
           "base_allocated_nav_rial": 3022.54,
           "valuation_method": "direct_exchange_quote_and_contract_payoff",
-          "return_pct": 0,
+          "return_pct": 0.0,
           "valued_amount_rial": 3022.54,
           "status": "same_session_anchor",
           "detail": {
-            "quote_date": "2026-11-18"
+            "symbol": "عسکه۲",
+            "unit": "rial_per_paper",
+            "papers_held_at_month_end": 6645054,
+            "base_price_rial_per_paper": 2485152,
+            "current_price_rial_per_paper": 2485152,
+            "maturity_date": "2026-12-09",
+            "conditional_maturity_floor_toman_per_coin": 252199000.0,
+            "maturity_floor_is_not_early_exit_price": true,
+            "quantity_after_month_end_confirmed": false
           }
         },
         {
@@ -156,9 +175,6 @@
           "valued_amount_rial": 6.17,
           "status": "official_nav_same_session_anchor",
           "detail": {
-            "anchor_rule": "Official redemption NAV includes deposit balance and accrued interest on the exact base NAV date only.",
-            "report_end_mehr_balance_rial": 36332340705,
-            "report_mehr_interest_income_rial": 2437489190,
             "annual_rate_pct": null,
             "accrual_start_date": null,
             "anchor_rule": "official NAV absorbs the balance and accrued interest only on base_nav_date"
@@ -199,10 +215,10 @@
       "premium_gap_percentage_points": 4.4556,
       "forward": {
         "symbol": "عسکه۲",
-        "price_toman_per_coin_equivalent": 248515200,
+        "price_toman_per_coin_equivalent": 248515200.0,
         "premium_vs_coin_certificate_pct": 0.2279,
         "premium_vs_fine_gold_spot_pct": 5.4677,
-        "conditional_maturity_floor_toman": 252199000,
+        "conditional_maturity_floor_toman": 252199000.0,
         "discount_to_conditional_floor_pct": 1.4607,
         "implied_simple_annualized_return_to_floor_pct": 25.7642,
         "implied_compound_annualized_return_to_floor_pct": 29.1431,
@@ -222,11 +238,10 @@
       "independent_component_methods_present": true,
       "no_stale_quote_carried_forward": true,
       "no_unpriced_component_assigned_zero_return": true,
-      "full_nav_blocked_when_component_marks_missing": false,
+      "full_nav_blocked_when_component_marks_missing": true,
       "forward_price_unit_conversion_valid": true,
       "forward_holding_value_reproduced": true,
-      "forward_holding_mapping_high_confidence": true,
-      "official_nav_anchor_reproduced": true
+      "forward_holding_mapping_high_confidence": true
     }
   },
   "component_market_snapshot": {
@@ -307,19 +322,19 @@
       "total_papers_issued": 100000000,
       "coin_equivalent_issued": 100000,
       "papers_per_coin": 1000,
-      "price_toman_per_coin_equivalent": 248515200,
+      "price_toman_per_coin_equivalent": 248515200.0,
       "initial_issue_price_toman_per_coin": 235700000,
       "stated_minimum_maturity_return_pct": 7,
       "maturity_date_jalali": "1405/09/18",
       "maturity_date_gregorian": "2026-12-09",
       "remaining_calendar_days_from_quote": 21,
-      "conditional_maturity_floor_toman_per_coin": 252199000,
+      "conditional_maturity_floor_toman_per_coin": 252199000.0,
       "premium_vs_coin_certificate_pct": 0.2279,
       "premium_vs_fine_gold_spot_pct": 5.4677,
       "discount_to_conditional_floor_pct": 1.4607,
       "implied_simple_annualized_return_to_floor_pct": 25.7642,
       "implied_compound_annualized_return_to_floor_pct": 29.1431,
-      "price_difference_vs_coin_certificate_toman": 565070,
+      "price_difference_vs_coin_certificate_toman": 565070.0,
       "source_price_history": "https://sahmino.com/symbol/sske?tab=chart",
       "source_contract_terms": "https://www.tasnimnews.ir/fa/news/1405/06/17/3691813/آغاز-عرضه-100-هزار-قطعه-سکه-سلف-در-بورس-کالا-از-فردا",
       "source_unit_conversion": "https://sahmino.com/learn/read/hzar-ktaah-skh-dr-kalb-mylyon-orkh-bors-kala-gzyyat-aardh-nkhstyn-aorak-slf-skh-bank-mrkzy-dr-nmad-aaskh-ra-bray-frda-shhryor-aaalam-krd",
@@ -443,8 +458,10 @@
       "isolated_checks_passed": 7,
       "github_actions_or_production_runtime_confirmed": true,
       "checks": [
-        "local_unit_tests_passed_4",
-        "official_nav_same_session_anchor",
+        "syntax_parse",
+        "missing_component_blocks_full_nav",
+        "gold_spot_component_return",
+        "complete_fixture_reproduces_base_nav",
         "stale_quote_rejected",
         "base_allocations_reconcile",
         "official_nav_anchors_bank_and_residual_only_on_base_date"
