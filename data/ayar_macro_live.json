@@ -2,7 +2,7 @@
   "status": "ok",
   "source": "NerkhAra public API",
   "source_url": "https://nerkhara.com/en/api/",
-  "retrieved_at": "2026-11-21T17:26:44.734342+00:00",
+  "retrieved_at": "2026-11-21T18:04:01.860223+00:00",
   "timezone": "UTC",
   "refresh_claim_minutes": 10,
   "max_accepted_age_minutes": 20,
@@ -13,11 +13,11 @@
     "sell": 269330.0,
     "display_price": 269330.0,
     "unit": "تومان به‌ازای هر دلار",
-    "updated_at": "2026-11-21T17:21:52+00:00",
-    "age_seconds": 292,
+    "updated_at": "2026-11-21T18:01:52+00:00",
+    "age_seconds": 129,
     "source_method": "average",
     "source_count": 2,
-    "change_pct": -0.74,
+    "change_pct": -0.78,
     "source_page": "https://nerkhara.com/dollar/"
   },
   "xau": {
@@ -27,17 +27,17 @@
     "sell": 3535.0,
     "display_price": 3535.0,
     "unit": "دلار به‌ازای هر اونس تروا",
-    "updated_at": "2026-11-21T17:21:52+00:00",
-    "age_seconds": 292,
+    "updated_at": "2026-11-21T18:01:52+00:00",
+    "age_seconds": 129,
     "source_method": "lead",
     "source_count": 1,
-    "change_pct": -0.16,
+    "change_pct": 0.22,
     "source_page": "https://nerkhara.com/ons-tala/"
   },
   "validation": {
     "both_quotes_present": true,
     "both_timestamps_fresh": true,
-    "usd_source_timestamp": "2026-11-21T17:21:52+00:00",
-    "xau_source_timestamp": "2026-11-21T17:21:52+00:00"
+    "usd_source_timestamp": "2026-11-21T18:01:52+00:00",
+    "xau_source_timestamp": "2026-11-21T18:01:52+00:00"
   }
 }
