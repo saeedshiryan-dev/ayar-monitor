@@ -1,4 +1,5 @@
 import json
+import random
 import time
 from datetime import datetime, time as datetime_time
 from pathlib import Path
@@ -13,29 +14,49 @@ TEHRAN = ZoneInfo("Asia/Tehran")
 OUTPUT = Path("data/ayar_intraday_live.json")
 SESSION = requests.Session()
 SESSION.headers.update({
-    "User-Agent": "Mozilla/5.0",
-    "Accept": "application/json",
+    "User-Agent": (
+        "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+        "AppleWebKit/537.36 (KHTML, like Gecko) "
+        "Chrome/130.0.0.0 Safari/537.36"
+    ),
+    "Accept": "application/json, text/plain, */*",
+    "Accept-Language": "fa-IR,fa;q=0.9,en;q=0.8",
     "Referer": "https://www.tsetmc.com/",
+    "Origin": "https://www.tsetmc.com",
 })
 
 
-def get_json(url):
+def get_json(url, attempts=5):
+    """Fetch TSETMC JSON with bounded retries for transient gateway/rate-limit errors."""
     last_error = None
-    for attempt in range(2):
+    for attempt in range(attempts):
         try:
-            response = SESSION.get(url, timeout=(10, 25))
-            if response.status_code in (429, 500, 502, 503, 504):
-                response.raise_for_status()
+            response = SESSION.get(url, timeout=(10, 30))
             response.raise_for_status()
-            payload = response.json()
+            try:
+                payload = response.json()
+            except ValueError as error:
+                raise ValueError(
+                    f"پاسخ TSETMC معتبر و JSON نیست؛ HTTP {response.status_code}"
+                ) from error
             if not isinstance(payload, dict):
                 raise ValueError("پاسخ API معاملات ساختار معتبر ندارد")
             return payload
         except requests.RequestException as error:
             last_error = error
-            if attempt == 1:
+            status = getattr(getattr(error, "response", None), "status_code", None)
+            retryable = (
+                status in (408, 425, 429, 500, 502, 503, 504)
+                or isinstance(error, (requests.Timeout, requests.ConnectionError))
+            )
+            if not retryable or attempt == attempts - 1:
                 break
-            time.sleep(2 ** attempt)
+            delay = min(30, 2 ** attempt) + random.uniform(0.2, 1.2)
+            print(
+                f"TSETMC transient error (HTTP {status or 'network'}); "
+                f"retry {attempt + 2}/{attempts} in {delay:.1f}s"
+            )
+            time.sleep(delay)
     raise last_error
 
 
