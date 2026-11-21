@@ -1,0 +1,85 @@
+name: Sample Ayar TSETMC Quote and Rebuild Provisional Candles
+
+on:
+  workflow_dispatch:
+  schedule:
+    # GitHub cron has a five-minute minimum; each run samples every 30 seconds.
+    - cron: "*/5 * * * *"
+  push:
+    paths:
+      - "scripts/sample_ayar_quote_candles.py"
+      - ".github/workflows/ayar-quote-sampler.yml"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ayar-quote-sampler-main
+  cancel-in-progress: false
+
+jobs:
+  sample:
+    runs-on: ubuntu-latest
+    timeout-minutes: 8
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependency
+        run: python -m pip install requests
+
+      - name: Sample official TSETMC quote every 30 seconds
+        run: python scripts/sample_ayar_quote_candles.py
+
+      - name: Validate reconstructed data
+        run: |
+          python - <<'PY'
+          import json
+          from pathlib import Path
+          p = Path("data/ayar_quote_candles.json")
+          j = json.loads(p.read_text(encoding="utf-8"))
+          assert j.get("symbol") == "عیار"
+          assert j.get("sampling_interval_seconds") == 30
+          assert j.get("warning_fa")
+          print("Reconstructed quote-candle file validated.")
+          print("1h candles:", len(j["timeframes"]["1h"]))
+          print("4h candles:", len(j["timeframes"]["4h"]))
+          print("Status:", j["status"])
+          PY
+
+      - name: Commit samples and reconstructed candles
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          for attempt in 1 2 3 4 5; do
+            git fetch origin main
+            git reset --hard origin/main
+            # Preserve this run's newly sampled data while syncing concurrent quote updates.
+            cp data/ayar_quote_samples.jsonl /tmp/ayar_quote_samples.jsonl
+            cp data/ayar_quote_candles.json /tmp/ayar_quote_candles.json
+            git checkout -- data/ayar_quote_samples.jsonl data/ayar_quote_candles.json 2>/dev/null || true
+            cp /tmp/ayar_quote_samples.jsonl data/ayar_quote_samples.jsonl
+            cp /tmp/ayar_quote_candles.json data/ayar_quote_candles.json
+            git add data/ayar_quote_samples.jsonl data/ayar_quote_candles.json
+            if git diff --cached --quiet; then
+              echo "No sampled data changes to commit."
+              exit 0
+            fi
+            git commit -m "Update Ayar sampled quote candles"
+            if git push origin HEAD:main; then
+              echo "Sampled quote data pushed."
+              exit 0
+            fi
+            sleep $((attempt * 2))
+          done
+          echo "Unable to push sampled quote data after five attempts."
+          exit 1
