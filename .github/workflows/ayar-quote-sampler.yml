@@ -60,12 +60,12 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          cp data/ayar_quote_samples.jsonl /tmp/ayar_quote_samples.jsonl
+          cp data/ayar_quote_candles.json /tmp/ayar_quote_candles.json
           for attempt in 1 2 3 4 5; do
             git fetch origin main
             git reset --hard origin/main
-            # Preserve this run's newly sampled data while syncing concurrent quote updates.
-            cp data/ayar_quote_samples.jsonl /tmp/ayar_quote_samples.jsonl
-            cp data/ayar_quote_candles.json /tmp/ayar_quote_candles.json
+            # Restore this run's sampled data after syncing concurrent commits.
             git checkout -- data/ayar_quote_samples.jsonl data/ayar_quote_candles.json 2>/dev/null || true
             cp /tmp/ayar_quote_samples.jsonl data/ayar_quote_samples.jsonl
             cp /tmp/ayar_quote_candles.json data/ayar_quote_candles.json
