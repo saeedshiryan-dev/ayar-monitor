@@ -3,11 +3,11 @@
   "source": "TSETMC GetTrade",
   "date": "20261121",
   "timezone": "Asia/Tehran",
-  "retrieved_at": "2026-11-21T11:15:13.485241+03:30",
+  "retrieved_at": "2026-11-21T12:02:42.146092+03:30",
   "status": "not_available",
   "trade_count": 0,
   "candles_1h": [],
   "candles_4h": [],
   "note_fa": "کندل‌های موقت از endpoint معاملات زنده TSETMC؛ آمار نهایی روز نیست.",
-  "reason": "بازار در وضعیت معاملات پیوسته نیست"
+  "reason": "اختلال موقت TSETMC پس از چند تلاش: 502 Server Error: Bad Gateway for url: https://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458"
 }
