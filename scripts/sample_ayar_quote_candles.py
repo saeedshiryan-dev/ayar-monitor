@@ -136,7 +136,7 @@ def build_candles(samples):
             candle = make_candle(selected, hour, hour + 1, now)
             if candle:
                 output["timeframes"]["1h"].append(candle)
-        for start, end in ((12, 16), (16, 18)):
+        for start, end in ((12, 16),):
             selected = [x for x in rows if start <= datetime.fromisoformat(x["timestamp"]).hour < end]
             candle = make_candle(selected, start, end, now)
             if candle:
@@ -175,7 +175,7 @@ def main():
             continue
     retained.sort(key=lambda x: x["timestamp"])
     temp = SAMPLES_FILE.with_suffix(".tmp")
-    temp.write_text("".join(json.dumps(x, ensure_ascii=False) + "\\n" for x in retained), encoding="utf-8")
+    temp.write_text("".join(json.dumps(x, ensure_ascii=False) + "\n" for x in retained), encoding="utf-8")
     temp.replace(SAMPLES_FILE)
 
     candles = build_candles(retained)
