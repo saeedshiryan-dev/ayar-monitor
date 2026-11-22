@@ -114,8 +114,11 @@ def main():
           "quote_trade_count","quote_retrieved_at","observed_trade_count_delta",
           "count_reconciliation_status","quality_note_fa","error")}
         if (live.get("status")=="ok"
-                and live.get("count_reconciled") is True
-                and live.get("volume_reconciled") is True):
+                and live.get("volume_reconciled") is True
+                and (
+                    live.get("count_reconciled") is True
+                    or live.get("reconciliation_basis") == "aggregate_volume_and_time_coverage"
+                )):
             def merge(base,new):
                 d={(x["date"],x["start"]):x for x in base}
                 for x in new:
