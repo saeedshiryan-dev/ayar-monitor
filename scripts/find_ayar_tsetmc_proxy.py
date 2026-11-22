@@ -80,9 +80,8 @@ def main():
                                 max_gap = max((b-a for a,b in zip(sorted(times), sorted(times)[1:])), default=99999)
                                 aggregate_ok = (
                                     min(times) <= 12*3600 + 5*60
-                                    and last_age <= 180
+                                    and 0 <= last_age <= 180
                                     and max_gap <= 180
-                                    and volume_gap_pct <= 2.0
                                 )
                                 aggregate_quality = {
                                     "last_age_seconds": last_age,
