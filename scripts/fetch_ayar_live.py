@@ -260,6 +260,7 @@ def main():
         "official_daily_last_price": official_last if official_last > 0 else None,
         "tsetmc_quote_date": quote_date,
         "tsetmc_quote_trade_count": quote_trades,
+        "tsetmc_quote_total_volume": as_int(quote.get("qTotTran5J")),
         "trade_endpoint_rows": len(trade_rows),
         "trade_endpoint_error": trade_error,
         "orderbook": orderbook,
