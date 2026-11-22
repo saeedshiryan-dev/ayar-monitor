@@ -3,14 +3,14 @@
   "source": "TSETMC real trades; incremental merge with validated baseline",
   "timezone": "Asia/Tehran",
   "history_first_date": "20180609",
-  "history_last_date": "20261121",
-  "expected_trading_days": 1979,
-  "validated_days": 1940,
+  "history_last_date": "20261122",
+  "expected_trading_days": 1980,
+  "validated_days": 1941,
   "failed_days": 39,
-  "one_hour_candles": 6799,
-  "four_hour_candles": 2379,
-  "total_transactions": 38694612,
-  "total_volume": 52789066667,
+  "one_hour_candles": 6806,
+  "four_hour_candles": 2381,
+  "total_transactions": 38773710,
+  "total_volume": 52845815123,
   "daily_validation": [
     {
       "date": "20180609",
@@ -31053,6 +31053,23 @@
       },
       "passed": true,
       "warnings": []
+    },
+    {
+      "date": "20261122",
+      "source_url": "https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261122/false",
+      "raw_rows": 79284,
+      "active_unique_trades": 79098,
+      "volume": 56748456,
+      "checks": {
+        "trade_count": true,
+        "volume": true,
+        "low": true,
+        "high": true,
+        "open": true,
+        "last": true
+      },
+      "passed": true,
+      "warnings": []
     }
   ],
   "failures": [
@@ -31253,15 +31270,15 @@
     }
   ],
   "baseline_validated_days": 1940,
-  "newly_processed_days": 0,
-  "elapsed_seconds": 0.0,
+  "newly_processed_days": 1,
+  "elapsed_seconds": 3.9,
   "candle_validation": {
     "passed": true,
     "status": "passed_with_coverage_gaps",
     "method": "OHLC invariants + daily TSETMC reconciliation + exact H1-to-H4 aggregation",
-    "days_checked": 1940,
-    "h1_rows_checked": 6799,
-    "h4_rows_checked": 2379,
+    "days_checked": 1941,
+    "h1_rows_checked": 6806,
+    "h4_rows_checked": 2381,
     "h4_orphan_rows_quarantined_this_run": 0,
     "h4_quarantined_rows_total": 2,
     "coverage_complete": false,
@@ -31277,9 +31294,9 @@
     ]
   },
   "timeframe_coverage": {
-    "expected_trading_days": 1979,
+    "expected_trading_days": 1980,
     "1h": {
-      "validated_days": 1940,
+      "validated_days": 1941,
       "missing_days": 39,
       "missing_date_list": [
         "20200324",
@@ -31322,11 +31339,11 @@
         "20261024",
         "20261104"
       ],
-      "candles": 6799,
-      "closing_auction_candles": 83
+      "candles": 6806,
+      "closing_auction_candles": 84
     },
     "4h": {
-      "validated_days": 1940,
+      "validated_days": 1941,
       "missing_days": 39,
       "missing_date_list": [
         "20200324",
@@ -31369,8 +31386,8 @@
         "20261024",
         "20261104"
       ],
-      "candles": 2379,
-      "partial_session_remainder_candles": 319
+      "candles": 2381,
+      "partial_session_remainder_candles": 320
     }
   },
   "checkpoint": true
