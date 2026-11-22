@@ -127,6 +127,10 @@ def main():
     validation={
         "source_mode":source_mode,
         "historical_candle_validation_passed":historical_report.get("candle_validation",{}).get("passed"),
+        "candle_validation_status":historical_report.get("candle_validation",{}).get("status"),
+        "candle_validation_coverage_complete":historical_report.get("candle_validation",{}).get("coverage_complete"),
+        "h4_quarantined_rows_total":historical_report.get("candle_validation",{}).get("h4_quarantined_rows_total",0),
+        "candle_validation_errors":sum(len(v) for v in historical_report.get("candle_validation",{}).get("errors",{}).values()),
         "expected_trading_days":historical_report.get("expected_trading_days"),
         "one_hour_validated_days":coverage.get("1h",{}).get("validated_days"),
         "one_hour_missing_days":coverage.get("1h",{}).get("missing_days"),
