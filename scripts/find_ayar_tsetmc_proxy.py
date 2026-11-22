@@ -29,7 +29,7 @@ HEADERS = {
 def main():
     if get_market_status().get("status") != "open":
         with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as env:
-            env.write("TSETMC_PROXY=\\n")
+            env.write("TSETMC_PROXY=\n")
         print("Market closed; proxy discovery skipped.")
         return
     selected = None
