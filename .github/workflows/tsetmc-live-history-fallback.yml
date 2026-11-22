@@ -5,6 +5,7 @@ on:
   push:
     paths:
       - ".github/workflows/tsetmc-live-history-fallback.yml"
+      - "scripts/update_ayar_intraday_live.py"
 
 permissions:
   contents: read
