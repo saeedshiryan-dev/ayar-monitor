@@ -3,11 +3,37 @@
   "source": "TSETMC GetTrade",
   "date": "20261122",
   "timezone": "Asia/Tehran",
-  "retrieved_at": "2026-11-22T13:22:32.302376+03:30",
+  "retrieved_at": "2026-11-22T13:40:56.377833+03:30",
   "status": "not_available",
   "trade_count": 0,
   "candles_1h": [],
   "candles_4h": [],
   "note_fa": "کندل‌های موقت از endpoint معاملات زنده TSETMC؛ آمار نهایی روز نیست.",
-  "reason": "اختلال موقت TSETMC پس از چند تلاش: 502 Server Error: Bad Gateway for url: https://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458"
+  "reason": "همه مسیرهای رسمی دریافت معاملات ناموفق بودند",
+  "endpoint_errors": [
+    {
+      "url": "https://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
+      "error": "502 Server Error: Bad Gateway for url: https://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458"
+    },
+    {
+      "url": "https://cdn10.tsetmc.com/api/Trade/GetTrade/34144395039913458",
+      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTrade/34144395039913458 (Caused by NameResolutionError(\"HTTPSConnection(host='c"
+    },
+    {
+      "url": "https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261122/false",
+      "error": "پاسخ endpoint آرایه معاملات خالی/نامعتبر دارد"
+    },
+    {
+      "url": "https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261122/true",
+      "error": "502 Server Error: Bad Gateway for url: https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261122/true"
+    },
+    {
+      "url": "https://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261122/false",
+      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261122/false (Caused by NameResolutionError(\"H"
+    },
+    {
+      "url": "https://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261122/true",
+      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261122/true (Caused by NameResolutionError(\"HT"
+    }
+  ]
 }
