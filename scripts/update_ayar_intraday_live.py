@@ -10,6 +10,7 @@ import requests
 from ayar_market_status import get_market_status
 
 BASES = ("https://cdn.tsetmc.com/api", "https://cdn10.tsetmc.com/api")
+TRADE_BASES = ("http://cdn.tsetmc.com/api", "https://cdn.tsetmc.com/api", "http://cdn10.tsetmc.com/api", "https://cdn10.tsetmc.com/api")
 INS_CODE = "34144395039913458"
 TEHRAN = ZoneInfo("Asia/Tehran")
 OUTPUT = Path("data/ayar_intraday_live.json")
@@ -111,9 +112,9 @@ def main():
     # GetTrade has intermittent 502s. Fall back to the dated trade-history
     # endpoint and the second official CDN host before declaring data unavailable.
     endpoints = []
-    for base in BASES:
+    for base in TRADE_BASES:
         endpoints.append((f"{base}/Trade/GetTrade/{INS_CODE}", ("trade", "tradeHistory")))
-    for base in BASES:
+    for base in TRADE_BASES:
         for include_canceled in ("false", "true"):
             endpoints.append((
                 f"{base}/Trade/GetTradeHistory/{INS_CODE}/{date}/{include_canceled}",
@@ -215,7 +216,7 @@ def main():
             # If the old chart endpoint is unavailable, try the CDN's
             # aggregated intraday endpoint (with a cache-busting query).
             if not aggregate_rows:
-                aggregate_url = f"{BASES[0]}/Trade/GetTradeIntraDay/{INS_CODE}?_={int(time.time())}"
+                aggregate_url = f"{TRADE_BASES[0]}/Trade/GetTradeIntraDay/{INS_CODE}?_={int(time.time())}"
                 aggregate_payload = get_json(aggregate_url, session=SESSION)
                 aggregate_raw = next((
                     aggregate_payload.get(key)
