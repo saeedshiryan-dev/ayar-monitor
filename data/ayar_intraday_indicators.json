@@ -2,7 +2,7 @@
   "symbol": "عیار",
   "source": "TSETMC raw trades",
   "timezone": "Asia/Tehran",
-  "calculated_at": "2026-11-22T13:22:51.719405+03:30",
+  "calculated_at": "2026-11-22T13:40:56.339659+03:30",
   "method": "EMA seeded by SMA; RSI Wilder; MACD 12-26-9; volume SMA20",
   "validation": {
     "source_mode": "full_history_validated_csv",
@@ -32,7 +32,7 @@
       "error": null
     },
     "one_hour_candle_policy": "Regular-session candles only; exclude the separate 18:00 closing-auction bar.",
-    "four_hour_candle_policy": "Complete 08:00-12:00 and 12:00-16:00 bars only; exclude the partial 16:00-18:00 remainder."
+    "four_hour_candle_policy": "Historical indicators use complete 08:00-12:00 and 12:00-16:00 bars; a reconciled live 12:00-16:00 in-progress bar is included and explicitly marked partial."
   },
   "timeframes": {
     "1h": {

@@ -31262,7 +31262,7 @@
     "days_checked": 1940,
     "h1_rows_checked": 6799,
     "h4_rows_checked": 2379,
-    "h4_orphan_rows_quarantined_this_run": 2,
+    "h4_orphan_rows_quarantined_this_run": 0,
     "h4_quarantined_rows_total": 2,
     "coverage_complete": false,
     "errors": {
@@ -31273,8 +31273,7 @@
       "h4_mismatch_vs_h1": []
     },
     "warnings": [
-      "Historical days without transaction-validated source data are excluded from indicator inputs.",
-      "2 orphan H4 rows moved to quarantined_4h.csv."
+      "Historical days without transaction-validated source data are excluded from indicator inputs."
     ]
   },
   "timeframe_coverage": {
