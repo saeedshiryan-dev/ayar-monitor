@@ -12,6 +12,10 @@ DATE = __import__("datetime").datetime.now(
 ).strftime("%Y%m%d")
 PROXY_LIST = "https://raw.githubusercontent.com/proxifly/free-proxy-list/main/proxies/countries/IR/data.json"
 ENDPOINTS = (
+    (f"http://cdn.tsetmc.com/api/Trade/GetTrade/{INS_CODE}",
+     ("trade", "tradeHistory")),
+    (f"http://cdn.tsetmc.com/api/Trade/GetTradeHistory/{INS_CODE}/{DATE}/false",
+     ("tradeHistory", "trade", "trades")),
     (f"https://cdn.tsetmc.com/api/Trade/GetTradeHistory/{INS_CODE}/{DATE}/false",
      ("tradeHistory", "trade", "trades")),
     (f"https://cdn.tsetmc.com/api/Trade/GetTrade/{INS_CODE}",
