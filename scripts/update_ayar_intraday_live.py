@@ -191,6 +191,48 @@ def main():
             except (OSError, ValueError, TypeError):
                 pass
 
+    # If the first non-empty endpoint returned a truncated list, test the
+    # remaining official variants instead of stopping at the first HTTP 200.
+    # A candidate is accepted only when both cumulative count and volume match.
+    if quote_trade_count is not None and quote_total_volume is not None:
+        for candidate_url, candidate_keys in endpoints:
+            if candidate_url == source_url:
+                continue
+            try:
+                candidate_payload = get_json(candidate_url)
+                candidate_raw = next((candidate_payload.get(key) for key in candidate_keys
+                                      if isinstance(candidate_payload.get(key), list)), None)
+                if not candidate_raw:
+                    continue
+                candidate_unique = {}
+                for item in candidate_raw:
+                    if not isinstance(item, dict) or int(item.get("canceled", 0) or 0) != 0:
+                        continue
+                    try:
+                        number = int(item["nTran"])
+                        hhmmss = int(item["hEven"])
+                        price = int(item["pTran"])
+                        volume = int(item["qTitTran"])
+                    except (KeyError, TypeError, ValueError):
+                        continue
+                    if not 120000 <= hhmmss <= 180000 or price <= 0 or volume <= 0:
+                        continue
+                    hour, minute, second = hhmmss // 10000, (hhmmss // 100) % 100, hhmmss % 100
+                    if hour > now.hour or (hour == now.hour and (minute, second) > (now.minute, now.second)):
+                        continue
+                    candidate_unique[number] = {
+                        "nTran": number, "hEven": hhmmss, "price": price, "volume": volume
+                    }
+                candidate_rows = sorted(candidate_unique.values(), key=lambda x: (x["hEven"], x["nTran"]))
+                if (len(candidate_rows) == quote_trade_count
+                        and sum(x["volume"] for x in candidate_rows) == quote_total_volume):
+                    raw, rows, source_url = candidate_raw, candidate_rows, candidate_url
+                    result["source_url"] = source_url
+                    result["fallback_selected_after_reconciliation"] = True
+                    break
+            except Exception as error:
+                endpoint_errors.append({"url": candidate_url, "error": str(error)[:180]})
+
     observed_delta = quote_trade_count - len(rows) if quote_trade_count is not None else None
     observed_volume_delta = quote_total_volume - sum(x["volume"] for x in rows) if quote_total_volume is not None else None
     comparable = quote_age_seconds is not None and quote_age_seconds <= 5
