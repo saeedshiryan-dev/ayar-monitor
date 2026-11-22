@@ -90,17 +90,12 @@ def main():
     live_price = quote_last if quote_is_today and quote_trades > 0 and quote_last > 0 else None
     last_trade_time = format_time(quote.get("lastHEven") or quote.get("hEven")) if live_price else None
 
-    # fallback کنترل‌شده: API معاملات روز جاری. این مسیر به تنهایی مجوز انتساب
-    # معامله به امروز نیست؛ تاریخ snapshot باید با امروز تطبیق داشته باشد.
+    # دریافت ریزمعاملات عمداً از این مرحله حذف شده است: endpoint زنده
+    # GetTrade گاهی 502 می‌دهد و نباید دریافت قیمت/NAV را معطل کند.
+    # ریزمعاملات در مرحله اختصاصی update_ayar_intraday_live.py با چند
+    # endpoint رسمی و تطبیق تعداد+حجم دریافت و اعتبارسنجی می‌شوند.
     trade_rows = []
-    trade_error = None
-    try:
-        trade_payload = get_json(f"{BASE}/Trade/GetTrade/{INS_CODE}")
-        candidate = unwrap(trade_payload, "trade")
-        if isinstance(candidate, list):
-            trade_rows = [r for r in candidate if isinstance(r, dict)]
-    except Exception as exc:
-        trade_error = str(exc)[:300]
+    trade_error = "دریافت ریزمعاملات به مرحله مستقل کندل‌سازی واگذار شد"
 
     # NAV رسمی ETF از endpoint اختصاصی صندوق در TSETMC.
     # NAV ابطال/صدور بر حسب ریال است؛ تاریخ و ساعت انتشار را جدا نگه می‌داریم.
