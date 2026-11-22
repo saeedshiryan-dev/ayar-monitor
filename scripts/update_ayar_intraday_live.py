@@ -1,4 +1,5 @@
 import json
+import os
 import random
 import time
 from datetime import datetime, time as datetime_time
@@ -13,6 +14,11 @@ INS_CODE = "34144395039913458"
 TEHRAN = ZoneInfo("Asia/Tehran")
 OUTPUT = Path("data/ayar_intraday_live.json")
 SESSION = requests.Session()
+proxy = os.environ.get("TSETMC_PROXY", "").strip()
+if proxy:
+    # HTTPS uses CONNECT tunneling and normal TLS certificate verification.
+    SESSION.proxies.update({"http": proxy, "https": proxy})
+
 SESSION.headers.update({
     "User-Agent": (
         "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
