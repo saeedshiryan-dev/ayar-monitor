@@ -3,7 +3,7 @@
   "source": "TSETMC ClosingPrice/GetClosingPriceInfo",
   "sampling_interval_seconds": 30,
   "sampling_method": "repeated_quote_snapshots",
-  "updated_at": "2026-11-22T11:17:47.141492+03:30",
+  "updated_at": "2026-11-22T12:09:23.884865+03:30",
   "status": "ok",
   "warning_fa": "این‌ها کندل رسمی معاملات نیستند؛ کندل‌های بازسازی‌شده از نمونه‌های تابلو هستند و فقط برای تحلیل کمکی مناسب‌اند.",
   "timeframes": {
@@ -25,8 +25,45 @@
         "provisional": true,
         "source_type": "sampled_quote_reconstruction",
         "quality_note_fa": "OHLC از نمونه‌های ۳۰ثانیه‌ای قیمت تابلو بازسازی شده؛ بین نمونه‌ها ممکن است سقف/کف یا معاملات جا افتاده باشد."
+      },
+      {
+        "date": "20261122",
+        "start": "12:00",
+        "end": "13:00",
+        "timestamp": "20261122T12:00:00+03:30",
+        "open": 632700,
+        "high": 633999,
+        "low": 632700,
+        "close": 633999,
+        "volume_delta_sampled": 1492647,
+        "trade_count_delta_sampled": 1706,
+        "sample_count": 9,
+        "max_sample_gap_seconds": 30.226147,
+        "partial": true,
+        "provisional": true,
+        "source_type": "sampled_quote_reconstruction",
+        "quality_note_fa": "OHLC از نمونه‌های ۳۰ثانیه‌ای قیمت تابلو بازسازی شده؛ بین نمونه‌ها ممکن است سقف/کف یا معاملات جا افتاده باشد."
       }
     ],
-    "4h": []
+    "4h": [
+      {
+        "date": "20261122",
+        "start": "12:00",
+        "end": "16:00",
+        "timestamp": "20261122T12:00:00+03:30",
+        "open": 632700,
+        "high": 633999,
+        "low": 632700,
+        "close": 633999,
+        "volume_delta_sampled": 1492647,
+        "trade_count_delta_sampled": 1706,
+        "sample_count": 9,
+        "max_sample_gap_seconds": 30.226147,
+        "partial": true,
+        "provisional": true,
+        "source_type": "sampled_quote_reconstruction",
+        "quality_note_fa": "OHLC از نمونه‌های ۳۰ثانیه‌ای قیمت تابلو بازسازی شده؛ بین نمونه‌ها ممکن است سقف/کف یا معاملات جا افتاده باشد."
+      }
+    ]
   }
 }
