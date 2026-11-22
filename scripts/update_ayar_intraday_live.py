@@ -30,14 +30,18 @@ SESSION.headers.update({
     "Referer": "https://www.tsetmc.com/",
     "Origin": "https://www.tsetmc.com",
 })
+# Quote snapshots work directly from the runner; only trade-detail requests
+# use the regional proxy so a slow proxy cannot block price/NAV reconciliation.
+DIRECT_SESSION = requests.Session()
+DIRECT_SESSION.headers.update(SESSION.headers)
 
 
-def get_json(url, attempts=2):
+def get_json(url, attempts=2, session=None):
     """Fetch TSETMC JSON with bounded retries for transient gateway/rate-limit errors."""
     last_error = None
     for attempt in range(attempts):
         try:
-            response = SESSION.get(url, timeout=(8, 15))
+            response = (session or SESSION).get(url, timeout=(8, 15))
             response.raise_for_status()
             try:
                 payload = response.json()
@@ -171,7 +175,7 @@ def main():
     quote_retrieved_at = None
     quote_age_seconds = None
     try:
-        quote_payload = get_json(f"{BASES[0]}/ClosingPrice/GetClosingPriceInfo/{INS_CODE}")
+        quote_payload = get_json(f"{BASES[0]}/ClosingPrice/GetClosingPriceInfo/{INS_CODE}", session=DIRECT_SESSION)
         quote_info = quote_payload.get("closingPriceInfo") if isinstance(quote_payload, dict) else None
         if isinstance(quote_info, dict) and str(quote_info.get("dEven") or quote_info.get("finalLastDate")) == date:
             quote_trade_count = int(quote_info.get("zTotTran") or 0) or None
