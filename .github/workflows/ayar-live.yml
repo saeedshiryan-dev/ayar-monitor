@@ -19,7 +19,8 @@ permissions:
 # Prevent overlapping scheduled/manual runs from racing to update the snapshot.
 concurrency:
   group: ayar-live-snapshot-main
-  cancel-in-progress: false
+  # Live snapshots are replaceable: the newest run must supersede queued/stale runs.
+  cancel-in-progress: true
 
 jobs:
   refresh:
