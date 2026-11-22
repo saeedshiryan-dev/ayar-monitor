@@ -7,6 +7,7 @@ on:
       - 'scripts/ayar_market_status.py'
       - 'scripts/fetch_ayar_live.py'
       - 'scripts/update_ayar_intraday_live.py'
+      - 'scripts/find_ayar_tsetmc_proxy.py'
       - 'calculate_ayar_intraday_indicators.py'
       - '.github/workflows/ayar-live.yml'
   schedule:
@@ -38,6 +39,9 @@ jobs:
 
       - name: Install dependency
         run: python -m pip install requests
+
+      - name: Find a working Iranian route for TSETMC trade endpoints
+        run: python scripts/find_ayar_tsetmc_proxy.py
 
       - name: Fetch official TSETMC quote (retry transient TSETMC failures)
         shell: bash
