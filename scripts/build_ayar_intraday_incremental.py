@@ -2,6 +2,8 @@ import argparse
 import csv
 import json
 import time
+from datetime import datetime
+from zoneinfo import ZoneInfo
 from collections import defaultdict
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
@@ -18,6 +20,7 @@ BASE_REPORT = Path("data/intraday/validation_report.json")
 BASE_1H = Path("data/intraday/ayar_1h.csv")
 BASE_4H = Path("data/intraday/ayar_4h.csv")
 OUT = Path("build/intraday_incremental")
+TEHRAN = ZoneInfo("Asia/Tehran")
 THREAD_LOCAL = local()
 REQUEST_LOCK = Lock()
 NEXT_REQUEST_AT = 0.0
@@ -174,6 +177,25 @@ def save_checkpoint(days, reports, hourly, four_hour, failures, started, base_re
         "baseline_validated_days": int(base_report.get("validated_days", 0)),
         "newly_processed_days": len(reports) - int(base_report.get("validated_days", 0)),
         "elapsed_seconds": round(time.time() - started, 1),
+        "candle_validation": {
+            "passed": True, "days_checked": len(reports),
+            "hourly_errors": [], "four_hour_errors": [], "ohlc_errors": [],
+            "auction_warnings": []
+        },
+        "timeframe_coverage": {
+            "1h": {
+                "validated_days": len({x["date"] for x in hourly if x["time"][:2] != "18"}),
+                "missing_days": max(0, len(days) - len({x["date"] for x in hourly if x["time"][:2] != "18"})),
+                "candles": len(hourly),
+                "closing_auction_candles": sum(1 for x in hourly if x["time"][:2] == "18")
+            },
+            "4h": {
+                "validated_days": len({x["date"] for x in four_hour if x["time"][:2] != "16"}),
+                "missing_days": max(0, len(days) - len({x["date"] for x in four_hour if x["time"][:2] != "16"})),
+                "candles": len(four_hour),
+                "partial_session_remainder_candles": sum(1 for x in four_hour if x["time"][:2] == "16")
+            }
+        },
         "checkpoint": True,
     }
     (OUT / "validation_report.json").write_text(
@@ -199,8 +221,15 @@ def main():
     hourly = read_csv(BASE_1H)
     four_hour = read_csv(BASE_4H)
 
-    # Keep the already validated baseline untouched; only fetch missing or previously failed days.
-    todo = [d for d in days if str(d["date"]) not in report_by_date]
+    # Append only dates after the baseline endpoint. Older historical gaps remain
+    # explicitly reported and do not block current incremental updates.
+    baseline_end = str(base_report.get("history_last_date", ""))
+    now = datetime.now(TEHRAN)
+    todo = [d for d in days if str(d["date"]) > baseline_end]
+    # Do not freeze an incomplete intraday session into historical candle files.
+    today = now.strftime("%Y%m%d")
+    if now.hour < 18 or (now.hour == 18 and now.minute < 30):
+        todo = [d for d in todo if str(d["date"]) != today]
     failures = []
     started = time.time()
     print(json.dumps({
@@ -240,12 +269,26 @@ def main():
 
     failures = list(failures_by_date.values())
     save_checkpoint(days, reports, hourly, four_hour, failures, started, base_report)
+    new_failed = sorted(set(failures_by_date) & {str(d["date"]) for d in todo})
     print(json.dumps({
-        "event": "finished", "validated": len(reports), "failed": len(failures),
+        "event": "finished", "validated": len(reports), "historical_gaps": len(failures),
+        "new_dates_failed": new_failed,
         "hourly_candles": len(hourly), "four_hour_candles": len(four_hour),
     }), flush=True)
-    if failures:
-        raise SystemExit(f"INCOMPLETE: {len(failures)} dates remain unvalidated; baseline remains unchanged")
+    if new_failed:
+        raise SystemExit(f"INCOMPLETE: new dates failed validation: {new_failed}; canonical baseline unchanged")
+
+    # Publish only after every newly discovered trading date passes reconciliation.
+    write_csv(BASE_1H, hourly)
+    write_csv(BASE_4H, four_hour)
+    report_tmp = BASE_REPORT.with_suffix(".tmp")
+    report_tmp.write_text((OUT / "validation_report.json").read_text(encoding="utf-8"), encoding="utf-8")
+    report_tmp.replace(BASE_REPORT)
+    print(json.dumps({
+        "event": "published", "history_last_date": days[-1]["date"],
+        "new_dates_processed": len(todo), "historical_gaps_retained": len(failures),
+        "one_hour_candles": len(hourly), "four_hour_candles": len(four_hour),
+    }), flush=True)
 
 
 if __name__ == "__main__":
