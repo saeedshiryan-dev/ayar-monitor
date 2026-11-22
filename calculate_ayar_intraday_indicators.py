@@ -113,15 +113,20 @@ def main():
         meta={k:live.get(k) for k in ("status","date","retrieved_at","trade_count",
           "quote_trade_count","quote_retrieved_at","observed_trade_count_delta",
           "count_reconciliation_status","quality_note_fa","error")}
-        if live.get("status")=="ok":
+        if (live.get("status")=="ok"
+                and live.get("count_reconciled") is True
+                and live.get("volume_reconciled") is True):
             def merge(base,new):
                 d={(x["date"],x["start"]):x for x in base}
                 for x in new:
                     d[(x["date"],x["start"])]=x
                 return sorted(d.values(),key=lambda x:(x["date"],x["start"]))
-            h1=merge(h1,[x for x in live.get("candles_1h",[]) if not x.get("partial",False)])
+            # Keep the current in-progress hour/four-hour candle. It is a
+            # genuine trade-derived partial bar, not a sampled quote estimate;
+            # the partial flag remains visible in latest metadata.
+            h1=merge(h1,live.get("candles_1h",[]))
             h4=merge(h4,[x for x in live.get("candles_4h",[]) if
-                int(x.get("end","00:00")[:2])-int(x.get("start","00:00")[:2])==4 and not x.get("partial",False)])
+                int(x.get("end","00:00")[:2])-int(x.get("start","00:00")[:2])==4])
 
     coverage=historical_report.get("timeframe_coverage",{})
     validation={
@@ -141,7 +146,7 @@ def main():
         "minimum_candles_for_EMA200":200,
         "live_intraday_overlay":meta,
         "one_hour_candle_policy":"Regular-session candles only; exclude the separate 18:00 closing-auction bar.",
-        "four_hour_candle_policy":"Complete 08:00-12:00 and 12:00-16:00 bars only; exclude the partial 16:00-18:00 remainder."
+        "four_hour_candle_policy":"Historical indicators use complete 08:00-12:00 and 12:00-16:00 bars; a reconciled live 12:00-16:00 in-progress bar is included and explicitly marked partial."
     }
     result={"symbol":"عیار","source":"TSETMC raw trades","timezone":"Asia/Tehran",
       "calculated_at":datetime.now(TEHRAN).isoformat(),
