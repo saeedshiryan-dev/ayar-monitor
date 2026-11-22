@@ -3,7 +3,7 @@
   "source": "TSETMC ClosingPrice/GetClosingPriceInfo",
   "sampling_interval_seconds": 30,
   "sampling_method": "repeated_quote_snapshots",
-  "updated_at": "2026-11-22T21:05:08.768410+03:30",
+  "updated_at": "2026-11-22T21:49:47.822373+03:30",
   "status": "ok",
   "warning_fa": "این‌ها کندل رسمی معاملات نیستند؛ کندل‌های بازسازی‌شده از نمونه‌های تابلو هستند و فقط برای تحلیل کمکی مناسب‌اند.",
   "timeframes": {
