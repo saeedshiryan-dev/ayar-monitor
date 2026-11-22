@@ -119,6 +119,28 @@ def main():
                 f"{base}/Trade/GetTradeHistory/{INS_CODE}/{date}/{include_canceled}",
                 ("tradeHistory", "trade", "trades")
             ))
+    # Capture an official cumulative quote immediately before the slower
+    # full-session trade download. Large trade payloads can take 20-30 seconds
+    # through a regional proxy; comparing only to a quote fetched afterward
+    # falsely labels a complete list as incomplete because new trades arrived
+    # while the response was transferring.
+    pre_quote = None
+    try:
+        pre_payload = get_json(
+            f"{BASES[0]}/ClosingPrice/GetClosingPriceInfo/{INS_CODE}",
+            session=DIRECT_SESSION,
+        )
+        pre_info = pre_payload.get("closingPriceInfo") if isinstance(pre_payload, dict) else None
+        if isinstance(pre_info, dict) and str(pre_info.get("dEven") or pre_info.get("finalLastDate")) == date:
+            pre_quote = {
+                "count": int(pre_info.get("zTotTran") or 0) or None,
+                "volume": int(pre_info.get("qTotTran5J") or 0) or None,
+                "retrieved_at": datetime.now(TEHRAN).isoformat(),
+                "basis": "pre_trade_download",
+            }
+    except Exception as error:
+        print(f"Pre-trade official quote unavailable: {str(error)[:180]}")
+
     raw = None
     source_url = None
     endpoint_errors = []
@@ -296,38 +318,40 @@ def main():
         unique[number] = row
 
     rows = sorted(unique.values(), key=lambda x: (x["hEven"], x["nTran"]))
-    # Re-fetch the official quote AFTER the trade list, so the reconciliation
-    # compares two near-simultaneous snapshots rather than an older workflow file.
-    quote_trade_count = None
-    quote_total_volume = None
-    quote_retrieved_at = None
-    quote_age_seconds = None
+    # Also take a post-download quote. Accept an exact match against either
+    # snapshot: the trade payload is generated server-side at request time,
+    # not at the moment the large response finishes downloading.
+    post_quote = None
     try:
-        quote_payload = get_json(f"{BASES[0]}/ClosingPrice/GetClosingPriceInfo/{INS_CODE}", session=DIRECT_SESSION)
+        quote_payload = get_json(
+            f"{BASES[0]}/ClosingPrice/GetClosingPriceInfo/{INS_CODE}",
+            session=DIRECT_SESSION,
+        )
         quote_info = quote_payload.get("closingPriceInfo") if isinstance(quote_payload, dict) else None
         if isinstance(quote_info, dict) and str(quote_info.get("dEven") or quote_info.get("finalLastDate")) == date:
-            quote_trade_count = int(quote_info.get("zTotTran") or 0) or None
-            quote_total_volume = int(quote_info.get("qTotTran5J") or 0) or None
-            quote_retrieved_at = datetime.now(TEHRAN).isoformat()
-            quote_age_seconds = 0.0
+            post_quote = {
+                "count": int(quote_info.get("zTotTran") or 0) or None,
+                "volume": int(quote_info.get("qTotTran5J") or 0) or None,
+                "retrieved_at": datetime.now(TEHRAN).isoformat(),
+                "basis": "post_trade_download",
+            }
     except Exception as error:
         endpoint_errors.append({"url": "ClosingPrice/GetClosingPriceInfo", "error": str(error)[:180]})
 
-    # A stored snapshot is a safe fallback only when it is genuinely recent.
-    if quote_trade_count is None:
-        live_quote_file = Path("data/ayar_live.json")
-        if live_quote_file.exists():
-            try:
-                snapshot = json.loads(live_quote_file.read_text(encoding="utf-8"))
-                stamp = datetime.fromisoformat(snapshot.get("retrieved_at", ""))
-                age = abs((datetime.now(TEHRAN) - stamp).total_seconds())
-                if age <= 5 and str(snapshot.get("tsetmc_quote_date")) == date:
-                    quote_trade_count = int(snapshot.get("tsetmc_quote_trade_count") or 0) or None
-                    quote_total_volume = int(snapshot.get("tsetmc_quote_total_volume") or 0) or None
-                    quote_retrieved_at = snapshot.get("retrieved_at")
-                    quote_age_seconds = age
-            except (OSError, ValueError, TypeError):
-                pass
+    trade_volume = sum(x["volume"] for x in rows)
+    quote_candidates = [q for q in (pre_quote, post_quote) if q and q.get("count") and q.get("volume")]
+    matching_quote = next((
+        q for q in quote_candidates
+        if q["count"] == len(rows) and q["volume"] == trade_volume
+    ), None)
+    chosen_quote = matching_quote or post_quote or pre_quote or {}
+    quote_trade_count = chosen_quote.get("count")
+    quote_total_volume = chosen_quote.get("volume")
+    quote_retrieved_at = chosen_quote.get("retrieved_at")
+    quote_match_basis = chosen_quote.get("basis")
+    # Exact count+volume equality is the reconciliation criterion; the two
+    # quote snapshots bracket the potentially slow trade response.
+    quote_age_seconds = 0.0 if chosen_quote else None
 
     # If the first non-empty endpoint returned a truncated list, test the
     # remaining official variants instead of stopping at the first HTTP 200.
@@ -386,6 +410,9 @@ def main():
         "quote_trade_count": quote_trade_count,
         "quote_total_volume": quote_total_volume,
         "quote_retrieved_at": quote_retrieved_at,
+        "quote_match_basis": quote_match_basis,
+        "quote_pre_trade": pre_quote,
+        "quote_post_trade": post_quote,
         "quote_age_seconds": round(quote_age_seconds, 2) if quote_age_seconds is not None else None,
         "observed_trade_count_delta": observed_delta,
         "observed_volume_delta": observed_volume_delta,
