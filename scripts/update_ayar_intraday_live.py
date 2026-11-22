@@ -135,6 +135,134 @@ def main():
             endpoint_errors.append({"url": url, "error": str(error)[:180]})
 
     if raw is None:
+        # Last-resort official TSETMC endpoint: intraday OHLCV aggregates.
+        # It is accepted only when it covers the session from the open, ends
+        # close to now, has no large time gaps, and its summed volume matches
+        # the official cumulative quote volume.
+        try:
+            aggregate_url = (
+                f"{BASES[0]}/Trade/GetTradeIntraDay/{INS_CODE}?_={int(time.time())}"
+            )
+            aggregate_payload = get_json(aggregate_url, session=SESSION)
+            aggregate_raw = next((
+                aggregate_payload.get(key)
+                for key in ("tradeIntraDay", "trade", "trades", "tradeHistory")
+                if isinstance(aggregate_payload.get(key), list)
+            ), None)
+            aggregate_rows = []
+            for item in aggregate_raw or []:
+                if not isinstance(item, dict):
+                    continue
+                try:
+                    hms = int(item["hEven"])
+                    values = {
+                        "hEven": hms,
+                        "open": int(float(item["openPrice"])),
+                        "high": int(float(item["maxPrice"])),
+                        "low": int(float(item["minPrice"])),
+                        "close": int(float(item["closePrice"])),
+                        "volume": int(float(item["volume"])),
+                    }
+                except (KeyError, TypeError, ValueError):
+                    continue
+                if not 120000 <= hms <= 180000 or min(values["open"], values["high"], values["low"], values["close"]) <= 0 or values["volume"] < 0:
+                    continue
+                aggregate_rows.append(values)
+            aggregate_rows.sort(key=lambda x: x["hEven"])
+            if len(aggregate_rows) < 10:
+                raise ValueError("تعداد میله‌های تجمیعی TSETMC کافی نیست")
+
+            times = []
+            for item in aggregate_rows:
+                hms = item["hEven"]
+                times.append((hms // 10000) * 3600 + ((hms // 100) % 100) * 60 + (hms % 100))
+            now_seconds = now.hour * 3600 + now.minute * 60 + now.second
+            last_age = now_seconds - times[-1]
+            max_gap = max((b-a for a, b in zip(times, times[1:])), default=99999)
+            aggregate_volume = sum(x["volume"] for x in aggregate_rows)
+
+            quote_payload = get_json(
+                f"{BASES[0]}/ClosingPrice/GetClosingPriceInfo/{INS_CODE}",
+                session=DIRECT_SESSION,
+            )
+            quote_info = quote_payload.get("closingPriceInfo") if isinstance(quote_payload, dict) else None
+            if not isinstance(quote_info, dict) or str(quote_info.get("dEven") or quote_info.get("finalLastDate")) != date:
+                raise ValueError("snapshot رسمی حجم معاملات برای تطبیق aggregate در دسترس نیست")
+            quote_total_volume = int(quote_info.get("qTotTran5J") or 0)
+            volume_gap_pct = abs(aggregate_volume - quote_total_volume) / quote_total_volume * 100 if quote_total_volume else 999
+            if (times[0] > 12 * 3600 + 300 or last_age < -30 or last_age > 180
+                    or max_gap > 180 or volume_gap_pct > 2.0):
+                raise ValueError(
+                    f"aggregate ناقص/قدیمی است: last_age={last_age}s, "
+                    f"max_gap={max_gap}s, volume_gap={volume_gap_pct:.2f}%"
+                )
+
+            def aggregate_candle(items, start_hour, end_hour):
+                if not items:
+                    return None
+                items = sorted(items, key=lambda x: x["hEven"])
+                partial = (end_hour * 3600) > now_seconds
+                return {
+                    "date": date,
+                    "start": f"{start_hour:02d}:00",
+                    "end": f"{end_hour:02d}:00",
+                    "open": items[0]["open"],
+                    "high": max(x["high"] for x in items),
+                    "low": min(x["low"] for x in items),
+                    "close": items[-1]["close"],
+                    "volume": sum(x["volume"] for x in items),
+                    "trade_count": None,
+                    "sample_count": len(items),
+                    "partial": partial,
+                    "provisional": True,
+                    "source_type": "TSETMC GetTradeIntraDay OHLCV aggregate",
+                }
+
+            candles_1h = []
+            for hour in range(12, 18):
+                subset = [x for x in aggregate_rows if x["hEven"] // 10000 == hour]
+                candle = aggregate_candle(subset, hour, hour + 1)
+                if candle:
+                    candles_1h.append(candle)
+            candles_4h = []
+            for start_hour, end_hour in ((12, 16), (16, 18)):
+                subset = [x for x in aggregate_rows if start_hour <= x["hEven"] // 10000 < end_hour]
+                candle = aggregate_candle(subset, start_hour, end_hour)
+                if candle:
+                    candles_4h.append(candle)
+            result.update({
+                "status": "ok",
+                "source": aggregate_url,
+                "source_type": "TSETMC intraday OHLCV aggregate",
+                "reconciliation_basis": "aggregate_volume_and_time_coverage",
+                "trade_count": None,
+                "quote_total_volume": quote_total_volume,
+                "aggregate_volume": aggregate_volume,
+                "volume_gap_percent": round(volume_gap_pct, 4),
+                "volume_reconciled": True,
+                "count_reconciled": None,
+                "count_reconciliation_status": "not_applicable_aggregate_source",
+                "volume_reconciliation_status": "reconciled",
+                "first_bar_time": aggregate_rows[0]["hEven"],
+                "last_bar_time": aggregate_rows[-1]["hEven"],
+                "last_bar_age_seconds": last_age,
+                "max_bar_gap_seconds": max_gap,
+                "candles_1h": candles_1h,
+                "candles_4h": candles_4h,
+                "quality_note_fa": "کندل‌ها از OHLCV تجمیعی رسمی TSETMC ساخته شده‌اند؛ حجم کل با تابلو و پوشش زمانی با ساعت بازار تطبیق دارد، اما تعداد ریزمعاملات در این endpoint ارائه نمی‌شود.",
+            })
+            OUTPUT.parent.mkdir(parents=True, exist_ok=True)
+            temp = OUTPUT.with_suffix(".tmp")
+            temp.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+            temp.replace(OUTPUT)
+            print(json.dumps(result, ensure_ascii=False))
+            return
+        except Exception as aggregate_error:
+            endpoint_errors.append({
+                "url": "Trade/GetTradeIntraDay",
+                "error": str(aggregate_error)[:250],
+            })
+
         result["reason"] = "همه مسیرهای رسمی دریافت معاملات ناموفق بودند"
         result["endpoint_errors"] = endpoint_errors
         OUTPUT.parent.mkdir(parents=True, exist_ok=True)
