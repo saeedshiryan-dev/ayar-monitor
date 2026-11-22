@@ -21,7 +21,7 @@ permissions:
 concurrency:
   group: ayar-live-snapshot-main
   # Live snapshots are replaceable: the newest run must supersede queued/stale runs.
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   refresh:
