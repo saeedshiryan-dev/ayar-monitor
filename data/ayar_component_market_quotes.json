@@ -1,7 +1,7 @@
 {
   "status": "quotes_not_synchronized_or_not_current",
-  "retrieved_at": "2026-11-21T18:56:53.315236+03:30",
-  "expected_session_date_gregorian": "2026-11-21",
+  "retrieved_at": "2026-11-22T18:57:07.589069+03:30",
+  "expected_session_date_gregorian": "2026-11-22",
   "calendar_rule": "Iran commodity-certificate sessions scheduled Saturday-Wednesday; Thursday/Friday resolve to the preceding Wednesday unless a holiday intervenes.",
   "common_quote_date_gregorian": null,
   "common_quote_date_jalali": null,

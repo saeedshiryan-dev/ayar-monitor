@@ -165,7 +165,7 @@
     "next_session_quote_available": false
   },
   "latest_report_search": {
-    "checked_at": "2026-11-21T16:12:42.281545+00:00",
+    "checked_at": "2026-11-22T15:27:07.439045+00:00",
     "result": "No newer Codal portfolio report was confirmed; retained the existing official workbook.",
     "fallback_not_promoted": true,
     "existing_report_period": "1405/07/30",
