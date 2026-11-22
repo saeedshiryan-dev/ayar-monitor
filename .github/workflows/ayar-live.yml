@@ -40,9 +40,6 @@ jobs:
       - name: Install dependency
         run: python -m pip install requests
 
-      - name: Find a working Iranian route for TSETMC trade endpoints
-        run: python scripts/find_ayar_tsetmc_proxy.py
-
       - name: Fetch official TSETMC quote (retry transient TSETMC failures)
         shell: bash
         run: |
@@ -79,6 +76,9 @@ jobs:
           print(f"Quote date={data.get('tsetmc_quote_date')}, trades={data.get('tsetmc_quote_trade_count')}")
           print(f"Live price={data.get('live_price')}, NAV status={data.get('nav', {}).get('status')}")
           PY
+
+      - name: Find a working Iranian route for TSETMC trade endpoints
+        run: python scripts/find_ayar_tsetmc_proxy.py
 
       - name: Build provisional intraday candles from today's TSETMC trades
         run: python scripts/update_ayar_intraday_live.py
