@@ -2,6 +2,7 @@
 """Find a short-lived Iranian HTTPS CONNECT proxy that can reach TSETMC trade APIs."""
 import json
 import os
+import time
 import requests
 from ayar_market_status import get_market_status
 
@@ -49,7 +50,8 @@ def main():
             proxies = {"http": proxy, "https": proxy}
             for url, keys in ENDPOINTS:
                 try:
-                    r = requests.get(url, proxies=proxies, headers=HEADERS, timeout=(3, 5))
+                    request_url = url + ("?_= " + str(int(time.time()))).replace(" ", "") if "/GetTradeIntraDay/" in url else url
+                    r = requests.get(request_url, proxies=proxies, headers=HEADERS, timeout=(3, 5))
                     r.raise_for_status()
                     payload = r.json()
                     if not isinstance(payload, dict):
@@ -58,24 +60,65 @@ def main():
                                  if isinstance(payload.get(k), list)), None)
                     if rows is not None:
                         sample = rows[0] if rows else None
+                        aggregate_ok = False
+                        aggregate_quality = {}
+                        if "/GetTradeIntraDay/" in url and rows:
+                            try:
+                                hms = [int(x.get("hEven") or 0) for x in rows if isinstance(x, dict)]
+                                times = []
+                                for value in hms:
+                                    hh, mm, ss = value // 10000, (value // 100) % 100, value % 100
+                                    times.append(hh * 3600 + mm * 60 + ss)
+                                volumes = sum(int(float(x.get("volume") or 0)) for x in rows if isinstance(x, dict))
+                                quote = json.loads(open("data/ayar_live.json", encoding="utf-8").read())
+                                quote_volume = int(quote.get("tsetmc_quote_total_volume") or 0)
+                                now = __import__("datetime").datetime.now(
+                                    __import__("zoneinfo").ZoneInfo("Asia/Tehran")
+                                )
+                                last_age = now.hour * 3600 + now.minute * 60 + now.second - max(times)
+                                volume_gap_pct = abs(volumes - quote_volume) / quote_volume * 100 if quote_volume else 999
+                                max_gap = max((b-a for a,b in zip(sorted(times), sorted(times)[1:])), default=99999)
+                                aggregate_ok = (
+                                    min(times) <= 12*3600 + 5*60
+                                    and last_age <= 180
+                                    and max_gap <= 180
+                                    and volume_gap_pct <= 2.0
+                                )
+                                aggregate_quality = {
+                                    "last_age_seconds": last_age,
+                                    "max_gap_seconds": max_gap,
+                                    "aggregate_volume": volumes,
+                                    "quote_volume": quote_volume,
+                                    "volume_gap_pct": round(volume_gap_pct, 3),
+                                }
+                            except Exception as exc:
+                                aggregate_quality = {"validation_error": str(exc)[:160]}
                         print(json.dumps({
                             "candidate": index,
                             "ip": item.get("ip"),
                             "port": item.get("port"),
-                            "endpoint": url,
+                            "endpoint": request_url,
                             "row_count": len(rows),
                             "row_fields": sorted(sample.keys()) if isinstance(sample, dict) else None,
                             "sample_first": sample,
                             "sample_last": rows[-1] if rows else None,
+                            "aggregate_quality": aggregate_quality,
                         }, ensure_ascii=False), flush=True)
-                        # The full-day transaction endpoints must return a
-                        # substantial list. Reject short intraday fragments.
                         if len(rows) >= 1000 and "/GetTradeIntraDay/" not in url:
                             selected = proxy
                             print(
                                 f"Working full-session TSETMC trade proxy found at candidate {index} "
                                 f"({item.get('ip')}:{item.get('port')}); "
                                 f"endpoint returned {len(rows)} rows."
+                            )
+                            break
+                        if aggregate_ok:
+                            selected = proxy
+                            os.environ["TSETMC_AGGREGATE_ONLY"] = "1"
+                            print(
+                                f"Working recent TSETMC intraday-aggregate proxy found at candidate {index} "
+                                f"({item.get('ip')}:{item.get('port')}); "
+                                f"endpoint returned {len(rows)} reconciled rows."
                             )
                             break
                 except Exception as exc:
@@ -89,6 +132,7 @@ def main():
 
     with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as env:
         env.write(f"TSETMC_PROXY={selected or ''}\n")
+        env.write(f"TSETMC_AGGREGATE_ONLY={os.environ.get('TSETMC_AGGREGATE_ONLY', '')}\n")
 
 
 if __name__ == "__main__":
