@@ -3,6 +3,7 @@
 import json
 import os
 import requests
+from ayar_market_status import get_market_status
 
 INS_CODE = "34144395039913458"
 DATE = __import__("datetime").datetime.now(
@@ -26,6 +27,11 @@ HEADERS = {
 
 
 def main():
+    if get_market_status().get("status") != "open":
+        with open(os.environ["GITHUB_ENV"], "a", encoding="utf-8") as env:
+            env.write("TSETMC_PROXY=\\n")
+        print("Market closed; proxy discovery skipped.")
+        return
     selected = None
     try:
         response = requests.get(PROXY_LIST, timeout=(5, 10))
