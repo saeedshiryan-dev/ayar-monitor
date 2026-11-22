@@ -162,37 +162,87 @@ def main():
         # close to now, has no large time gaps, and its summed volume matches
         # the official cumulative quote volume.
         try:
-            aggregate_url = (
-                f"{BASES[0]}/Trade/GetTradeIntraDay/{INS_CODE}?_={int(time.time())}"
-            )
-            aggregate_payload = get_json(aggregate_url, session=SESSION)
-            aggregate_raw = next((
-                aggregate_payload.get(key)
-                for key in ("tradeIntraDay", "trade", "trades", "tradeHistory")
-                if isinstance(aggregate_payload.get(key), list)
-            ), None)
             aggregate_rows = []
-            for item in aggregate_raw or []:
-                if not isinstance(item, dict):
-                    continue
+            aggregate_url = None
+            legacy_headers = dict(DIRECT_SESSION.headers)
+            legacy_headers["Accept"] = "text/csv,text/plain,application/xml,*/*"
+            # Old TSEv2 intraday chart endpoint is independent of the CDN JSON
+            # trade service and returns time, high, low, open, close, volume.
+            legacy_urls = (
+                f"https://old.tsetmc.com/tsev2/chart/data/IntraDayPrice.aspx?i={INS_CODE}&_={int(time.time())}",
+                f"http://old.tsetmc.com/tsev2/chart/data/IntraDayPrice.aspx?i={INS_CODE}&_={int(time.time())}",
+                f"https://www.tsetmc.com/tsev2/chart/data/IntraDayPrice.aspx?i={INS_CODE}&_={int(time.time())}",
+                f"http://www.tsetmc.com/tsev2/chart/data/IntraDayPrice.aspx?i={INS_CODE}&_={int(time.time())}",
+            )
+            legacy_errors = []
+            for legacy_url in legacy_urls:
                 try:
-                    hms = int(item["hEven"])
-                    values = {
-                        "hEven": hms,
-                        "open": int(float(item["openPrice"])),
-                        "high": int(float(item["maxPrice"])),
-                        "low": int(float(item["minPrice"])),
-                        "close": int(float(item["closePrice"])),
-                        "volume": int(float(item["volume"])),
-                    }
-                except (KeyError, TypeError, ValueError):
-                    continue
-                if not 120000 <= hms <= 180000 or min(values["open"], values["high"], values["low"], values["close"]) <= 0 or values["volume"] < 0:
-                    continue
-                aggregate_rows.append(values)
+                    response = DIRECT_SESSION.get(legacy_url, headers=legacy_headers, timeout=(6, 12))
+                    response.raise_for_status()
+                    body = response.text.strip()
+                    parsed = []
+                    for record in body.replace("\\r", "").split(";"):
+                        fields = [x.strip() for x in record.split(",")]
+                        if len(fields) < 6:
+                            continue
+                        try:
+                            time_text = fields[0]
+                            if ":" in time_text:
+                                time_parts = [int(x) for x in time_text.split(":")]
+                                hh, mm = time_parts[0], time_parts[1]
+                                ss = time_parts[2] if len(time_parts) > 2 else 0
+                                hms = hh * 10000 + mm * 100 + ss
+                            else:
+                                hms = int(time_text)
+                            # IntraDayPrice column order: time, high, low, open, close, volume.
+                            high, low, open_price, close_price, volume = [int(float(x)) for x in fields[1:6]]
+                            parsed.append({
+                                "hEven": hms, "open": open_price, "high": high,
+                                "low": low, "close": close_price, "volume": volume,
+                            })
+                        except (TypeError, ValueError):
+                            continue
+                    parsed = [x for x in parsed if 120000 <= x["hEven"] <= 180000
+                              and min(x["open"], x["high"], x["low"], x["close"]) > 0
+                              and x["volume"] >= 0]
+                    if len(parsed) >= 10:
+                        aggregate_rows = parsed
+                        aggregate_url = legacy_url
+                        break
+                except Exception as error:
+                    legacy_errors.append({"url": legacy_url, "error": str(error)[:180]})
+
+            # If the old chart endpoint is unavailable, try the CDN's
+            # aggregated intraday endpoint (with a cache-busting query).
+            if not aggregate_rows:
+                aggregate_url = f"{BASES[0]}/Trade/GetTradeIntraDay/{INS_CODE}?_={int(time.time())}"
+                aggregate_payload = get_json(aggregate_url, session=SESSION)
+                aggregate_raw = next((
+                    aggregate_payload.get(key)
+                    for key in ("tradeIntraDay", "trade", "trades", "tradeHistory")
+                    if isinstance(aggregate_payload.get(key), list)
+                ), None)
+                for item in aggregate_raw or []:
+                    if not isinstance(item, dict):
+                        continue
+                    try:
+                        hms = int(item["hEven"])
+                        values = {
+                            "hEven": hms,
+                            "open": int(float(item["openPrice"])),
+                            "high": int(float(item["maxPrice"])),
+                            "low": int(float(item["minPrice"])),
+                            "close": int(float(item["closePrice"])),
+                            "volume": int(float(item["volume"])),
+                        }
+                    except (KeyError, TypeError, ValueError):
+                        continue
+                    if not 120000 <= hms <= 180000 or min(values["open"], values["high"], values["low"], values["close"]) <= 0 or values["volume"] < 0:
+                        continue
+                    aggregate_rows.append(values)
             aggregate_rows.sort(key=lambda x: x["hEven"])
             if len(aggregate_rows) < 10:
-                raise ValueError("تعداد میله‌های تجمیعی TSETMC کافی نیست")
+                raise ValueError("تعداد میله‌های تجمیعی TSETMC کافی نیست: " + str(legacy_errors[:2]))
 
             times = []
             for item in aggregate_rows:
