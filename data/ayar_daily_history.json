@@ -2,17 +2,17 @@
   "symbol": "عیار",
   "insCode": "34144395039913458",
   "source": "TSETMC",
-  "retrieved_at": "2026-11-18T02:55:21.063549+03:30",
+  "retrieved_at": "2026-11-22T11:35:55.706032+03:30",
   "timezone": "Asia/Tehran",
   "validated": true,
-  "record_count": 2033,
-  "valid_record_count": 1977,
+  "record_count": 2035,
+  "valid_record_count": 1979,
   "no_trade_day_count": 48,
   "excluded_record_count": 8,
   "first_date": "20180602",
-  "last_date": "20261117",
+  "last_date": "20261121",
   "first_valid_date": "20180609",
-  "last_valid_date": "20261117",
+  "last_valid_date": "20261121",
   "history": [
     {
       "date": "20180602",
@@ -20343,6 +20343,26 @@
       "last": 662301,
       "volume": 34796364,
       "trade_count": 50526
+    },
+    {
+      "date": "20261118",
+      "open": 651900,
+      "high": 657700,
+      "low": 651550,
+      "close": 654752,
+      "last": 655602,
+      "volume": 41648100,
+      "trade_count": 61228
+    },
+    {
+      "date": "20261121",
+      "open": 630000,
+      "high": 633994,
+      "low": 626314,
+      "close": 630764,
+      "last": 630790,
+      "volume": 87403379,
+      "trade_count": 117868
     }
   ],
   "valid_history": [
@@ -40115,6 +40135,26 @@
       "last": 662301,
       "volume": 34796364,
       "trade_count": 50526
+    },
+    {
+      "date": "20261118",
+      "open": 651900,
+      "high": 657700,
+      "low": 651550,
+      "close": 654752,
+      "last": 655602,
+      "volume": 41648100,
+      "trade_count": 61228
+    },
+    {
+      "date": "20261121",
+      "open": 630000,
+      "high": 633994,
+      "low": 626314,
+      "close": 630764,
+      "last": 630790,
+      "volume": 87403379,
+      "trade_count": 117868
     }
   ],
   "data_quality": {

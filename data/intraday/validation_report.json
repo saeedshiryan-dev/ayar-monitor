@@ -1,28 +1,16 @@
 {
   "symbol": "عیار",
-  "source": "TSETMC raw individual trades; seed run 44623122817 plus targeted gap repair",
+  "source": "TSETMC real trades; incremental merge with validated baseline",
   "timezone": "Asia/Tehran",
-  "hour_bucket_anchor": "local clock hour",
-  "four_hour_bucket_anchor": "local clock 00:00",
   "history_first_date": "20180609",
-  "history_last_date": "20261117",
-  "expected_trading_days": 1977,
-  "seed_validated_days": 1938,
-  "repaired_days": 0,
-  "validated_days": 1938,
+  "history_last_date": "20261121",
+  "expected_trading_days": 1979,
+  "validated_days": 1940,
   "failed_days": 39,
-  "one_hour_candles": 6786,
-  "four_hour_candles": 2377,
-  "total_transactions": 38515516,
-  "total_volume": 52660015188,
-  "candle_validation": {
-    "days_checked": 1938,
-    "hourly_errors": [],
-    "four_hour_errors": [],
-    "ohlc_errors": [],
-    "auction_warnings": [],
-    "passed": true
-  },
+  "one_hour_candles": 6799,
+  "four_hour_candles": 2381,
+  "total_transactions": 38694612,
+  "total_volume": 52789066667,
   "daily_validation": [
     {
       "date": "20180609",
@@ -31031,6 +31019,40 @@
         "last": true
       },
       "passed": true
+    },
+    {
+      "date": "20261118",
+      "source_url": "https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261118/false",
+      "raw_rows": 61228,
+      "active_unique_trades": 61228,
+      "volume": 41648100,
+      "checks": {
+        "trade_count": true,
+        "volume": true,
+        "low": true,
+        "high": true,
+        "open": true,
+        "last": true
+      },
+      "passed": true,
+      "warnings": []
+    },
+    {
+      "date": "20261121",
+      "source_url": "https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261121/false",
+      "raw_rows": 117959,
+      "active_unique_trades": 117868,
+      "volume": 87403379,
+      "checks": {
+        "trade_count": true,
+        "volume": true,
+        "low": true,
+        "high": true,
+        "open": true,
+        "last": true
+      },
+      "passed": true,
+      "warnings": []
     }
   ],
   "failures": [
@@ -31230,48 +31252,30 @@
       "repair_error": "No usable active trades from either TSETMC host/flag; attempts=[{\"url\": \"https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261104/false\", \"error\": \"HTTPSConnectionPool(host='cdn.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261104/false (Caused by ReadTimeoutError(\\\"HTTPSConnectionPool(host='cdn.tsetmc.com', port=443): Read timed out. (read timeout=15)\\\"))\"}, {\"url\": \"https://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261104/false\", \"error\": \"HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261104/false (Caused by NameResolutionError(\\\"HTTPSConnection(host='cdn10.tsetmc.com', port=443): Failed to resolve 'cdn10.tsetmc.com' ([Errno -2] Name or service not known)\\\"))\"}]"
     }
   ],
-  "elapsed_seconds": 269.1,
-  "four_hour_cache_recovered_dates": [
-    "20261104"
-  ],
-  "four_hour_validated_days": 1939,
-  "four_hour_failed_days": 38,
-  "one_hour_validated_days": 1938,
-  "one_hour_failed_days": 39,
+  "baseline_validated_days": 1938,
+  "newly_processed_days": 2,
+  "elapsed_seconds": 23.6,
+  "candle_validation": {
+    "passed": true,
+    "days_checked": 1940,
+    "hourly_errors": [],
+    "four_hour_errors": [],
+    "ohlc_errors": [],
+    "auction_warnings": []
+  },
   "timeframe_coverage": {
     "1h": {
-      "validated_days": 1938,
+      "validated_days": 1940,
       "missing_days": 39,
-      "candles": 6786,
-      "closing_auction_candles": 82
+      "candles": 6799,
+      "closing_auction_candles": 83
     },
     "4h": {
-      "validated_days": 1939,
+      "validated_days": 1941,
       "missing_days": 38,
-      "candles": 2377,
-      "partial_session_remainder_candles": 318
+      "candles": 2381,
+      "partial_session_remainder_candles": 320
     }
   },
-  "timeframe_recoveries": [
-    {
-      "date": "20261104",
-      "timeframe": "4h",
-      "source": "data/intraday/ayar_20261104.json",
-      "validated": true,
-      "validation": {
-        "trade_count": true,
-        "volume": true,
-        "minimum": true,
-        "maximum": true
-      },
-      "transactions": 77985,
-      "volume": 69464602,
-      "one_hour_imported": false,
-      "note": "The 4h candles reconcile exactly. The cached 1h candles omit one closing-time transaction and 93 volume units, so they were excluded."
-    }
-  ],
-  "candle_time_policy": {
-    "1h": "18:00 candles are retained as separate closing-time trade bars when present.",
-    "4h": "16:00 bars are partial 2-hour session remainders; exclude them from full 4-hour indicator calculations."
-  }
+  "checkpoint": true
 }
