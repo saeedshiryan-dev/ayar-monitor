@@ -26,12 +26,12 @@ SESSION.headers.update({
 })
 
 
-def get_json(url, attempts=5):
+def get_json(url, attempts=2):
     """Fetch TSETMC JSON with bounded retries for transient gateway/rate-limit errors."""
     last_error = None
     for attempt in range(attempts):
         try:
-            response = SESSION.get(url, timeout=(10, 30))
+            response = SESSION.get(url, timeout=(8, 15))
             response.raise_for_status()
             try:
                 payload = response.json()
