@@ -3,104 +3,104 @@
   "insCode": "34144395039913458",
   "source": "TSETMC",
   "source_api": "cdn.tsetmc.com/api",
-  "retrieved_at": "2026-11-22T11:57:46.328935+03:30",
+  "retrieved_at": "2026-11-22T12:41:44.723788+03:30",
   "timezone": "Asia/Tehran",
   "market": {
-    "status": "pre_open",
-    "label_fa": "پیش‌گشایش",
+    "status": "open",
+    "label_fa": "ساعت معاملات پیوسته",
     "timezone": "Asia/Tehran",
-    "checked_at": "2026-11-22T11:57:46.328935+03:30",
+    "checked_at": "2026-11-22T12:41:44.723788+03:30",
     "scheduled_pre_open": "11:45",
     "scheduled_open": "12:00",
     "scheduled_close": "18:00",
     "calendar_note": "تعطیلات رسمی/استثنایی فقط در صورت ثبت تاریخ در data/market_holidays.json شناسایی می‌شوند."
   },
   "session_date": "20261122",
-  "today_has_trade": false,
-  "live_price": null,
+  "today_has_trade": true,
+  "live_price": 638478,
   "live_price_unit": "ریال",
-  "closing_price": 630764,
-  "last_trade_price": 630790,
-  "last_trade_time": null,
+  "closing_price": 636822,
+  "last_trade_price": 638478,
+  "last_trade_time": "12:41:48",
   "last_trade_volume": null,
-  "official_daily_last_price": 630790,
+  "official_daily_last_price": 638478,
   "tsetmc_quote_date": "20261122",
-  "tsetmc_quote_trade_count": 0,
+  "tsetmc_quote_trade_count": 27947,
   "trade_endpoint_rows": 0,
   "trade_endpoint_error": "502 Server Error: Bad Gateway for url: https://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
   "orderbook": {
     "status": "ok",
     "source": "TSETMC BestLimits",
-    "retrieved_at": "2026-11-22T11:57:46.328935+03:30",
+    "retrieved_at": "2026-11-22T12:41:44.723788+03:30",
     "unit": "ریال",
     "buy": [
       {
         "level": 1,
-        "price": 631500,
-        "volume": 324349,
-        "orders": 310
+        "price": 638071,
+        "volume": 295,
+        "orders": 1
       },
       {
         "level": 2,
-        "price": 631499,
-        "volume": 387,
+        "price": 638012,
+        "volume": 13,
         "orders": 1
       },
       {
         "level": 3,
-        "price": 631222,
-        "volume": 11443,
-        "orders": 7
-      },
-      {
-        "level": 4,
-        "price": 631221,
-        "volume": 55,
+        "price": 638010,
+        "volume": 2020,
         "orders": 2
       },
       {
+        "level": 4,
+        "price": 638008,
+        "volume": 10,
+        "orders": 1
+      },
+      {
         "level": 5,
-        "price": 631200,
-        "volume": 891,
-        "orders": 8
+        "price": 638002,
+        "volume": 1400,
+        "orders": 2
       }
     ],
     "sell": [
       {
         "level": 1,
-        "price": 631500,
-        "volume": 362650,
-        "orders": 247
+        "price": 638099,
+        "volume": 150,
+        "orders": 1
       },
       {
         "level": 2,
-        "price": 631700,
-        "volume": 1000,
+        "price": 638100,
+        "volume": 80,
         "orders": 1
       },
       {
         "level": 3,
-        "price": 631888,
-        "volume": 50,
-        "orders": 1
+        "price": 638110,
+        "volume": 6383,
+        "orders": 3
       },
       {
         "level": 4,
-        "price": 631896,
-        "volume": 110,
-        "orders": 2
+        "price": 638167,
+        "volume": 470,
+        "orders": 1
       },
       {
         "level": 5,
-        "price": 632000,
-        "volume": 15999,
-        "orders": 13
+        "price": 638185,
+        "volume": 7631,
+        "orders": 1
       }
     ],
-    "buy_total_volume": 337125,
-    "sell_total_volume": 379809,
-    "buy_total_orders": 328,
-    "sell_total_orders": 264,
+    "buy_total_volume": 3738,
+    "sell_total_volume": 14714,
+    "buy_total_orders": 7,
+    "sell_total_orders": 7,
     "note_fa": "۵ سطح برتر دفتر سفارش از TSETMC دریافت شد؛ قیمت‌ها ریال هستند.",
     "error": null
   },
@@ -108,15 +108,15 @@
     "status": "ok",
     "source": "TSETMC Fund/GetETFByInsCode",
     "unit": "ریال",
-    "redemption": 631562,
-    "subscription": 634432,
+    "redemption": 637813,
+    "subscription": 640711,
     "published_date": "20261122",
-    "published_time": "11:58:07",
-    "retrieved_at": "2026-11-22T11:57:46.328935+03:30",
-    "market_price_basis": "last_official_price",
-    "premium_discount_percent": -0.1222,
+    "published_time": "12:40:13",
+    "retrieved_at": "2026-11-22T12:41:44.723788+03:30",
+    "market_price_basis": "live_price",
+    "premium_discount_percent": 0.1043,
     "cross_check_status": "quote_nav_unavailable",
     "error": null
   },
-  "price_note_fa": "snapshot قیمت TSETMC هنوز تاریخ امروز یا تعداد معامله مثبت ندارد؛ قیمت لحظه‌ای عمداً خالی گذاشته شده و آخرین جلسه واقعی گزارش می‌شود."
+  "price_note_fa": "قیمت لحظه‌ای از snapshot قیمت TSETMC دریافت شد."
 }
