@@ -37,8 +37,8 @@ def main():
             and item.get("geolocation", {}).get("country") == "IR"
             and str(item.get("proxy", "")).startswith("http://")
         ]
-        print(f"Testing {min(15, len(candidates))} Iranian proxy candidates.")
-        for index, item in enumerate(candidates[:15], 1):
+        print(f"Testing {min(8, len(candidates))} Iranian proxy candidates.")
+        for index, item in enumerate(candidates[:8], 1):
             proxy = item["proxy"]
             proxies = {"http": proxy, "https": proxy}
             for url, keys in ENDPOINTS:
