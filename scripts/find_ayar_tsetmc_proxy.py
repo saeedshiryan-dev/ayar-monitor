@@ -43,8 +43,8 @@ def main():
             and item.get("geolocation", {}).get("country") == "IR"
             and str(item.get("proxy", "")).startswith("http://")
         ]
-        print(f"Testing {min(8, len(candidates))} Iranian proxy candidates.")
-        for index, item in enumerate(candidates[:8], 1):
+        print(f"Testing {min(15, len(candidates))} Iranian proxy candidates.")
+        for index, item in enumerate(candidates[:15], 1):
             proxy = item["proxy"]
             proxies = {"http": proxy, "https": proxy}
             for url, keys in ENDPOINTS:
@@ -57,13 +57,27 @@ def main():
                     rows = next((payload.get(k) for k in keys
                                  if isinstance(payload.get(k), list)), None)
                     if rows is not None:
-                        selected = proxy
-                        print(
-                            f"Working TSETMC proxy found at candidate {index} "
-                            f"({item.get('ip')}:{item.get('port')}); "
-                            f"endpoint returned {len(rows)} rows."
-                        )
-                        break
+                        sample = rows[0] if rows else None
+                        print(json.dumps({
+                            "candidate": index,
+                            "ip": item.get("ip"),
+                            "port": item.get("port"),
+                            "endpoint": url,
+                            "row_count": len(rows),
+                            "row_fields": sorted(sample.keys()) if isinstance(sample, dict) else None,
+                            "sample_first": sample,
+                            "sample_last": rows[-1] if rows else None,
+                        }, ensure_ascii=False), flush=True)
+                        # The full-day transaction endpoints must return a
+                        # substantial list. Reject short intraday fragments.
+                        if len(rows) >= 1000 and "/GetTradeIntraDay/" not in url:
+                            selected = proxy
+                            print(
+                                f"Working full-session TSETMC trade proxy found at candidate {index} "
+                                f"({item.get('ip')}:{item.get('port')}); "
+                                f"endpoint returned {len(rows)} rows."
+                            )
+                            break
                 except Exception as exc:
                     print(f"Candidate {index} endpoint failed: {type(exc).__name__}")
             if selected:
