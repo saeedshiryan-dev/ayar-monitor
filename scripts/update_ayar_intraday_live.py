@@ -256,6 +256,11 @@ def main():
     temp.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
     temp.replace(OUTPUT)
     print(json.dumps(result, ensure_ascii=False))
+    # A green Actions run must mean usable, reconciled trade data was produced.
+    # Persist the explicit failure snapshot first, then fail the job so later
+    # indicator steps cannot silently reuse stale candles.
+    if market.get("status") == "open" and result.get("status") != "ok":
+        raise SystemExit("LIVE_TRADE_DATA_NOT_VALID: " + str(result.get("reason", "unknown")))
 
 
 if __name__ == "__main__":
