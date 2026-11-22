@@ -1,24 +1,15 @@
 {
   "symbol": "عیار",
-  "source": "TSETMC GetTrade",
+  "source": "http://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
   "date": "20261122",
   "timezone": "Asia/Tehran",
-  "retrieved_at": "2026-11-22T17:07:14.567827+03:30",
-  "status": "not_available",
-  "trade_count": 0,
+  "retrieved_at": "2026-11-22T17:56:13.661777+03:30",
+  "status": "incomplete",
+  "trade_count": 76885,
   "candles_1h": [],
   "candles_4h": [],
   "note_fa": "کندل‌های موقت از endpoint معاملات زنده TSETMC؛ آمار نهایی روز نیست.",
-  "reason": "همه مسیرهای رسمی دریافت معاملات ناموفق بودند",
   "endpoint_errors": [
-    {
-      "url": "http://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
-      "error": "502 Server Error: Bad Gateway for url: https://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458"
-    },
-    {
-      "url": "https://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
-      "error": "502 Server Error: Bad Gateway for url: https://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458"
-    },
     {
       "url": "http://cdn10.tsetmc.com/api/Trade/GetTrade/34144395039913458",
       "error": "HTTPConnectionPool(host='cdn10.tsetmc.com', port=80): Max retries exceeded with url: /api/Trade/GetTrade/34144395039913458 (Caused by NameResolutionError(\"HTTPConnection(host='cdn1"
@@ -26,22 +17,6 @@
     {
       "url": "https://cdn10.tsetmc.com/api/Trade/GetTrade/34144395039913458",
       "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTrade/34144395039913458 (Caused by NameResolutionError(\"HTTPSConnection(host='c"
-    },
-    {
-      "url": "http://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261122/false",
-      "error": "502 Server Error: Bad Gateway for url: https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261122/false"
-    },
-    {
-      "url": "http://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261122/true",
-      "error": "HTTPSConnectionPool(host='cdn.tsetmc.com', port=443): Read timed out. (read timeout=15)"
-    },
-    {
-      "url": "https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261122/false",
-      "error": "پاسخ endpoint آرایه معاملات خالی/نامعتبر دارد"
-    },
-    {
-      "url": "https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261122/true",
-      "error": "پاسخ endpoint آرایه معاملات خالی/نامعتبر دارد"
     },
     {
       "url": "http://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261122/false",
@@ -58,10 +33,32 @@
     {
       "url": "https://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261122/true",
       "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261122/true (Caused by NameResolutionError(\"HT"
-    },
-    {
-      "url": "Trade/GetTradeIntraDay",
-      "error": "502 Server Error: Bad Gateway for url: https://cdn.tsetmc.com/api/Trade/GetTradeIntraDay/34144395039913458?_=1795354745"
     }
-  ]
+  ],
+  "source_url": "http://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
+  "quote_trade_count": 77972,
+  "quote_total_volume": 55642913,
+  "quote_retrieved_at": "2026-11-22T17:57:17.093892+03:30",
+  "quote_match_basis": "post_trade_download",
+  "quote_pre_trade": {
+    "count": 77432,
+    "volume": 55212883,
+    "retrieved_at": "2026-11-22T17:56:22.559272+03:30",
+    "basis": "pre_trade_download"
+  },
+  "quote_post_trade": {
+    "count": 77972,
+    "volume": 55642913,
+    "retrieved_at": "2026-11-22T17:57:17.093892+03:30",
+    "basis": "post_trade_download"
+  },
+  "quote_age_seconds": 0.0,
+  "observed_trade_count_delta": 1087,
+  "observed_volume_delta": 855594,
+  "count_reconciled": false,
+  "volume_reconciled": false,
+  "count_reconciliation_status": "mismatch",
+  "volume_reconciliation_status": "mismatch",
+  "quality_note_fa": "فهرست معاملات با snapshot رسمی تابلو تطبیق کامل ندارد؛ کندل معتبر منتشر نمی‌شود.",
+  "reason": "تعداد یا حجم معاملات با snapshot رسمی تابلو تطبیق کامل ندارد؛ کندل معتبر منتشر نشد."
 }
