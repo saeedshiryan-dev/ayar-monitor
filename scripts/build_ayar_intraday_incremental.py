@@ -223,13 +223,12 @@ def main():
 
     # Append only dates after the baseline endpoint. Older historical gaps remain
     # explicitly reported and do not block current incremental updates.
-    baseline_end = str(base_report.get("history_last_date", ""))
+    # Use the latest date actually reconciled at transaction level, not the
+    # daily-history endpoint (which may include today's still-open session).
+    baseline_end = max(report_by_date, default="")
     now = datetime.now(TEHRAN)
     today = now.strftime("%Y%m%d")
-    # Include an unvalidated current date even if the refreshed daily history has
-    # advanced its endpoint during an earlier pre-close run.
-    todo = [d for d in days if str(d["date"]) > baseline_end or
-            (str(d["date"]) == today and str(d["date"]) not in report_by_date)]
+    todo = [d for d in days if str(d["date"]) > baseline_end]
     # Do not freeze an incomplete intraday session into historical candle files.
     if now.hour < 18 or (now.hour == 18 and now.minute < 30):
         todo = [d for d in todo if str(d["date"]) != today]
