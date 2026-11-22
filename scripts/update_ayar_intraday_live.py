@@ -8,7 +8,7 @@ from zoneinfo import ZoneInfo
 import requests
 from ayar_market_status import get_market_status
 
-BASE = "https://cdn.tsetmc.com/api"
+BASES = ("https://cdn.tsetmc.com/api", "https://cdn10.tsetmc.com/api")
 INS_CODE = "34144395039913458"
 TEHRAN = ZoneInfo("Asia/Tehran")
 OUTPUT = Path("data/ayar_intraday_live.json")
@@ -98,22 +98,43 @@ def main():
         print(json.dumps(result, ensure_ascii=False))
         return
 
-    url = f"{BASE}/Trade/GetTrade/{INS_CODE}"
-    try:
-        payload = get_json(url)
-    except requests.RequestException as error:
-        result["status"] = "not_available"
-        result["reason"] = f"اختلال موقت TSETMC پس از چند تلاش: {str(error)[:250]}"
+    # GetTrade has intermittent 502s. Fall back to the dated trade-history
+    # endpoint and the second official CDN host before declaring data unavailable.
+    endpoints = []
+    for base in BASES:
+        endpoints.append((f"{base}/Trade/GetTrade/{INS_CODE}", ("trade", "tradeHistory")))
+    for base in BASES:
+        for include_canceled in ("false", "true"):
+            endpoints.append((
+                f"{base}/Trade/GetTradeHistory/{INS_CODE}/{date}/{include_canceled}",
+                ("tradeHistory", "trade", "trades")
+            ))
+    raw = None
+    source_url = None
+    endpoint_errors = []
+    for url, keys in endpoints:
+        try:
+            payload = get_json(url)
+            candidate = next((payload.get(key) for key in keys
+                              if isinstance(payload.get(key), list)), None)
+            if candidate is None or not candidate:
+                raise ValueError("پاسخ endpoint آرایه معاملات خالی/نامعتبر دارد")
+            raw, source_url = candidate, url
+            break
+        except Exception as error:
+            endpoint_errors.append({"url": url, "error": str(error)[:180]})
+
+    if raw is None:
+        result["reason"] = "همه مسیرهای رسمی دریافت معاملات ناموفق بودند"
+        result["endpoint_errors"] = endpoint_errors
         OUTPUT.parent.mkdir(parents=True, exist_ok=True)
         temp = OUTPUT.with_suffix(".tmp")
         temp.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
         temp.replace(OUTPUT)
         print(json.dumps(result, ensure_ascii=False))
         return
-
-    raw = payload.get("trade") or payload.get("tradeHistory")
-    if not isinstance(raw, list):
-        raise ValueError("آرایه trade در پاسخ GetTrade TSETMC موجود نیست")
+    result["source"] = source_url
+    result["endpoint_errors"] = endpoint_errors
 
     unique = {}
     for item in raw:
@@ -137,52 +158,77 @@ def main():
         unique[number] = row
 
     rows = sorted(unique.values(), key=lambda x: (x["hEven"], x["nTran"]))
+    # Re-fetch the official quote AFTER the trade list, so the reconciliation
+    # compares two near-simultaneous snapshots rather than an older workflow file.
     quote_trade_count = None
+    quote_total_volume = None
     quote_retrieved_at = None
-    live_quote_file = Path("data/ayar_live.json")
-    if live_quote_file.exists():
-        try:
-            quote_snapshot = json.loads(live_quote_file.read_text(encoding="utf-8"))
-            quote_trade_count = int(quote_snapshot.get("tsetmc_quote_trade_count") or 0) or None
-            quote_retrieved_at = quote_snapshot.get("retrieved_at")
-        except (OSError, ValueError, TypeError):
-            quote_trade_count = None
-            quote_retrieved_at = None
+    quote_age_seconds = None
+    try:
+        quote_payload = get_json(f"{BASES[0]}/ClosingPrice/GetClosingPriceInfo/{INS_CODE}")
+        quote_info = quote_payload.get("closingPriceInfo") if isinstance(quote_payload, dict) else None
+        if isinstance(quote_info, dict) and str(quote_info.get("dEven") or quote_info.get("finalLastDate")) == date:
+            quote_trade_count = int(quote_info.get("zTotTran") or 0) or None
+            quote_total_volume = int(quote_info.get("qTotTran5J") or 0) or None
+            quote_retrieved_at = datetime.now(TEHRAN).isoformat()
+            quote_age_seconds = 0.0
+    except Exception as error:
+        endpoint_errors.append({"url": "ClosingPrice/GetClosingPriceInfo", "error": str(error)[:180]})
+
+    # A stored snapshot is a safe fallback only when it is genuinely recent.
+    if quote_trade_count is None:
+        live_quote_file = Path("data/ayar_live.json")
+        if live_quote_file.exists():
+            try:
+                snapshot = json.loads(live_quote_file.read_text(encoding="utf-8"))
+                stamp = datetime.fromisoformat(snapshot.get("retrieved_at", ""))
+                age = abs((datetime.now(TEHRAN) - stamp).total_seconds())
+                if age <= 5 and str(snapshot.get("tsetmc_quote_date")) == date:
+                    quote_trade_count = int(snapshot.get("tsetmc_quote_trade_count") or 0) or None
+                    quote_total_volume = int(snapshot.get("tsetmc_quote_total_volume") or 0) or None
+                    quote_retrieved_at = snapshot.get("retrieved_at")
+                    quote_age_seconds = age
+            except (OSError, ValueError, TypeError):
+                pass
 
     observed_delta = quote_trade_count - len(rows) if quote_trade_count is not None else None
-    comparable = False
-    quote_age_seconds = None
-    if quote_retrieved_at:
-        try:
-            quote_dt = datetime.fromisoformat(quote_retrieved_at)
-            quote_age_seconds = abs((now - quote_dt).total_seconds())
-            comparable = quote_age_seconds <= 5
-        except ValueError:
-            pass
+    observed_volume_delta = quote_total_volume - sum(x["volume"] for x in rows) if quote_total_volume is not None else None
+    comparable = quote_age_seconds is not None and quote_age_seconds <= 5
     count_reconciled = (observed_delta == 0) if comparable and observed_delta is not None else None
+    volume_reconciled = (observed_volume_delta == 0) if comparable and observed_volume_delta is not None else None
     reconciliation_status = (
         "reconciled" if count_reconciled is True else
         "mismatch" if count_reconciled is False else
         "not_comparable_time_gap"
     )
     result.update({
+        "source_url": source_url,
         "quote_trade_count": quote_trade_count,
+        "quote_total_volume": quote_total_volume,
         "quote_retrieved_at": quote_retrieved_at,
         "quote_age_seconds": round(quote_age_seconds, 2) if quote_age_seconds is not None else None,
         "observed_trade_count_delta": observed_delta,
-        "trade_count_difference": observed_delta if comparable else None,
+        "observed_volume_delta": observed_volume_delta,
         "count_reconciled": count_reconciled,
+        "volume_reconciled": volume_reconciled,
         "count_reconciliation_status": reconciliation_status,
+        "volume_reconciliation_status": (
+            "reconciled" if volume_reconciled is True else
+            "mismatch" if volume_reconciled is False else
+            "not_comparable_time_gap"
+        ),
         "quality_note_fa": (
-            "تعداد معاملات در دو snapshot هم‌زمان برابر است."
-            if count_reconciled is True else
-            "دو snapshot حداکثر ۵ ثانیه اختلاف زمانی دارند اما تعداد معاملات برابر نیست."
-            if count_reconciled is False else
-            "snapshot قیمت و معاملات هم‌زمان نیستند؛ اختلاف مشاهده‌شده معیار قطعی کسری معاملات نیست."
+            "تعداد و حجم معاملات با snapshot رسمی هم‌زمان تطبیق کامل دارد."
+            if count_reconciled is True and volume_reconciled is True else
+            "فهرست معاملات با snapshot رسمی تابلو تطبیق کامل ندارد؛ کندل معتبر منتشر نمی‌شود."
         ),
     })
     if not rows:
-        result["reason"] = "هنوز معامله قابل استفاده‌ای از API معاملات زنده دریافت نشد"
+        result["reason"] = "هیچ معامله فعال و قابل استفاده‌ای دریافت نشد"
+    elif not comparable or count_reconciled is not True or volume_reconciled is not True:
+        result["status"] = "incomplete"
+        result["reason"] = "تعداد یا حجم معاملات با snapshot رسمی تابلو تطبیق کامل ندارد؛ کندل معتبر منتشر نشد."
+        result["trade_count"] = len(rows)
     else:
         candles_1h = []
         for hour in range(12, 18):
