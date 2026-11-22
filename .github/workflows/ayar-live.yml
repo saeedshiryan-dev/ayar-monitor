@@ -81,12 +81,16 @@ jobs:
         run: python scripts/find_ayar_tsetmc_proxy.py
 
       - name: Build provisional intraday candles from today's TSETMC trades
+        id: build_trade_candles
+        continue-on-error: true
         run: python scripts/update_ayar_intraday_live.py
 
       - name: Recalculate 1h and 4h indicators with the latest provisional candles
+        if: steps.build_trade_candles.outcome == 'success'
         run: python calculate_ayar_intraday_indicators.py
 
-      - name: Save snapshot (retry safely if main advances)
+      - name: Save snapshot and explicit data status (retry safely if main advances)
+        if: always()
         shell: bash
         run: |
           set -euo pipefail
@@ -126,3 +130,11 @@ jobs:
 
           echo "Could not push snapshot after 5 attempts."
           exit 1
+
+      - name: Fail the run after publishing the explicit data-quality state
+        if: always()
+        run: |
+          if [ "${{ steps.build_trade_candles.outcome }}" != "success" ]; then
+            echo "::error::Trade-derived live candles were unavailable or failed reconciliation; the failure snapshot was still published."
+            exit 1
+          fi
