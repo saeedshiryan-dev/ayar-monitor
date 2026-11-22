@@ -132,7 +132,7 @@ def main():
         temp.write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
         temp.replace(OUTPUT)
         print(json.dumps(result, ensure_ascii=False))
-        return
+        raise SystemExit("LIVE_TRADE_DATA_NOT_VALID: " + result["reason"])
     result["source"] = source_url
     result["endpoint_errors"] = endpoint_errors
 
