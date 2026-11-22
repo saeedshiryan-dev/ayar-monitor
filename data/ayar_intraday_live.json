@@ -3,7 +3,7 @@
   "source": "TSETMC GetTrade",
   "date": "20261122",
   "timezone": "Asia/Tehran",
-  "retrieved_at": "2026-11-22T13:51:14.972659+03:30",
+  "retrieved_at": "2026-11-22T13:56:29.397474+03:30",
   "status": "not_available",
   "trade_count": 0,
   "candles_1h": [],
@@ -17,7 +17,7 @@
     },
     {
       "url": "https://cdn10.tsetmc.com/api/Trade/GetTrade/34144395039913458",
-      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTrade/34144395039913458 (Caused by ProxyError('Unable to connect to proxy', Con"
+      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTrade/34144395039913458 (Caused by NameResolutionError(\"HTTPSConnection(host='c"
     },
     {
       "url": "https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261122/false",
@@ -29,11 +29,11 @@
     },
     {
       "url": "https://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261122/false",
-      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261122/false (Caused by ProxyError('Unable to "
+      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261122/false (Caused by NameResolutionError(\"H"
     },
     {
       "url": "https://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261122/true",
-      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261122/true (Caused by ProxyError('Unable to c"
+      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261122/true (Caused by NameResolutionError(\"HT"
     }
   ]
 }
