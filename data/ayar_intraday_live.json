@@ -1,9 +1,9 @@
 {
   "symbol": "عیار",
   "source": "TSETMC GetTrade",
-  "date": "20261122",
+  "date": "20261123",
   "timezone": "Asia/Tehran",
-  "retrieved_at": "2026-11-22T23:27:42.077685+03:30",
+  "retrieved_at": "2026-11-23T00:05:09.250201+03:30",
   "status": "not_available",
   "trade_count": 0,
   "candles_1h": [],

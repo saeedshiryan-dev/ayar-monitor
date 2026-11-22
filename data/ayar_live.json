@@ -3,25 +3,25 @@
   "insCode": "34144395039913458",
   "source": "TSETMC",
   "source_api": "cdn.tsetmc.com/api",
-  "retrieved_at": "2026-11-22T23:27:39.293639+03:30",
+  "retrieved_at": "2026-11-23T00:05:06.653164+03:30",
   "timezone": "Asia/Tehran",
   "market": {
-    "status": "closed",
-    "label_fa": "پایان ساعت معاملات",
+    "status": "before_market",
+    "label_fa": "قبل از پیش‌گشایش",
     "timezone": "Asia/Tehran",
-    "checked_at": "2026-11-22T23:27:39.293639+03:30",
+    "checked_at": "2026-11-23T00:05:06.653164+03:30",
     "scheduled_pre_open": "11:45",
     "scheduled_open": "12:00",
     "scheduled_close": "18:00",
     "calendar_note": "تعطیلات رسمی/استثنایی فقط در صورت ثبت تاریخ در data/market_holidays.json شناسایی می‌شوند."
   },
   "session_date": "20261122",
-  "today_has_trade": true,
-  "live_price": 644049,
+  "today_has_trade": false,
+  "live_price": null,
   "live_price_unit": "ریال",
   "closing_price": 640039,
   "last_trade_price": 644049,
-  "last_trade_time": "18:00:00",
+  "last_trade_time": null,
   "last_trade_volume": null,
   "official_daily_last_price": 644049,
   "tsetmc_quote_date": "20261122",
@@ -32,7 +32,7 @@
   "orderbook": {
     "status": "ok",
     "source": "TSETMC BestLimits",
-    "retrieved_at": "2026-11-22T23:27:39.293639+03:30",
+    "retrieved_at": "2026-11-23T00:05:06.653164+03:30",
     "unit": "ریال",
     "buy": [
       {
@@ -113,11 +113,11 @@
     "subscription": 639386,
     "published_date": "20261122",
     "published_time": "17:58:09",
-    "retrieved_at": "2026-11-22T23:27:39.293639+03:30",
-    "market_price_basis": "live_price",
+    "retrieved_at": "2026-11-23T00:05:06.653164+03:30",
+    "market_price_basis": "last_official_price",
     "premium_discount_percent": 1.187,
     "cross_check_status": "quote_nav_unavailable",
     "error": null
   },
-  "price_note_fa": "قیمت لحظه‌ای از snapshot قیمت TSETMC دریافت شد."
+  "price_note_fa": "snapshot قیمت TSETMC هنوز تاریخ امروز یا تعداد معامله مثبت ندارد؛ قیمت لحظه‌ای عمداً خالی گذاشته شده و آخرین جلسه واقعی گزارش می‌شود."
 }
