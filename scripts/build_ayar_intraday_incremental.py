@@ -225,9 +225,12 @@ def main():
     # explicitly reported and do not block current incremental updates.
     baseline_end = str(base_report.get("history_last_date", ""))
     now = datetime.now(TEHRAN)
-    todo = [d for d in days if str(d["date"]) > baseline_end]
-    # Do not freeze an incomplete intraday session into historical candle files.
     today = now.strftime("%Y%m%d")
+    # Include an unvalidated current date even if the refreshed daily history has
+    # advanced its endpoint during an earlier pre-close run.
+    todo = [d for d in days if str(d["date"]) > baseline_end or
+            (str(d["date"]) == today and str(d["date"]) not in report_by_date)]
+    # Do not freeze an incomplete intraday session into historical candle files.
     if now.hour < 18 or (now.hour == 18 and now.minute < 30):
         todo = [d for d in todo if str(d["date"]) != today]
     failures = []
