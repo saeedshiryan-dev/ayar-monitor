@@ -15,6 +15,8 @@ on:
     paths:
       - "scripts/build_ayar_intraday_incremental.py"
       - "scripts/update_ayar_history.py"
+      - "scripts/validate_ayar_candles.py"
+      - "calculate_ayar_intraday_indicators.py"
       - ".github/workflows/build-ayar-intraday-incremental.yml"
 
 permissions:
@@ -46,6 +48,9 @@ jobs:
       - name: Fetch only missing and new trading days
         run: python scripts/build_ayar_intraday_incremental.py --workers "${{ inputs.workers || '2' }}"
 
+      - name: Independently validate OHLC, daily reconciliation and H1-H4 aggregation
+        run: python scripts/validate_ayar_candles.py
+
       - name: Recalculate 1h and 4h indicators from validated historical candles
         run: python calculate_ayar_intraday_indicators.py
 
@@ -55,7 +60,7 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add data/intraday/ayar_1h.csv data/intraday/ayar_4h.csv data/intraday/validation_report.json data/ayar_daily_history.json data/ayar_intraday_indicators.json
+          git add data/intraday/ayar_1h.csv data/intraday/ayar_4h.csv data/intraday/validation_report.json data/intraday/quarantined_4h.csv data/ayar_daily_history.json data/ayar_intraday_indicators.json
           if git diff --cached --quiet; then
             echo "No validated candle updates to publish."
             exit 0
