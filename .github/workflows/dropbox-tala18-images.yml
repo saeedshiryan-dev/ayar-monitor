@@ -27,17 +27,29 @@ jobs:
           DROPBOX_REFRESH_TOKEN: ${{ secrets.DROPBOX_REFRESH_TOKEN }}
         run: |
           python - <<'PY'
-          import base64, json, os, pathlib, urllib.request
+          import base64, json, os, pathlib, urllib.error, urllib.parse, urllib.request
 
           key = os.environ["DROPBOX_APP_KEY"]
           secret = os.environ["DROPBOX_APP_SECRET"]
           refresh = os.environ["DROPBOX_REFRESH_TOKEN"]
+          if not key or not secret or not refresh:
+              raise SystemExit("A required Dropbox GitHub Secret is empty.")
+
           basic = base64.b64encode(f"{key}:{secret}".encode()).decode()
 
-          def request(url, data=None, headers=None):
+          def request(url, data=None, headers=None, stage="Dropbox request"):
               req = urllib.request.Request(url, data=data, headers=headers or {})
-              with urllib.request.urlopen(req, timeout=60) as response:
-                  return response.read()
+              try:
+                  with urllib.request.urlopen(req, timeout=60) as response:
+                      return response.read()
+              except urllib.error.HTTPError as exc:
+                  detail = exc.read().decode("utf-8", "replace")
+                  try:
+                      parsed = json.loads(detail)
+                      detail = json.dumps(parsed, ensure_ascii=False)
+                  except Exception:
+                      pass
+                  raise SystemExit(f"{stage} failed (HTTP {exc.code}): {detail[:1200]}")
 
           token_data = urllib.parse.urlencode({
               "grant_type": "refresh_token",
@@ -47,7 +59,8 @@ jobs:
               "https://api.dropbox.com/oauth2/token",
               token_data,
               {"Authorization": f"Basic {basic}",
-               "Content-Type": "application/x-www-form-urlencoded"}
+               "Content-Type": "application/x-www-form-urlencoded"},
+              "Dropbox OAuth token refresh"
           ))["access_token"]
 
           api_headers = {
@@ -57,7 +70,8 @@ jobs:
           listing = json.loads(request(
               "https://api.dropboxapi.com/2/files/list_folder",
               json.dumps({"path": "/tala 18", "recursive": False}).encode(),
-              api_headers
+              api_headers,
+              "Dropbox folder listing"
           ))
 
           out = pathlib.Path("incoming/tala-18")
@@ -75,7 +89,8 @@ jobs:
               content = request(
                   "https://content.dropboxapi.com/2/files/download",
                   headers={"Authorization": f"Bearer {token}",
-                           "Dropbox-API-Arg": arg}
+                           "Dropbox-API-Arg": arg},
+                  stage=f"Dropbox download for {item['name']}"
               )
               safe_name = pathlib.Path(item["name"]).name
               (out / safe_name).write_bytes(content)
