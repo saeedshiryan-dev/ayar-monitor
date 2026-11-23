@@ -3,7 +3,7 @@
   "source": "TSETMC GetTrade",
   "date": "20261123",
   "timezone": "Asia/Tehran",
-  "retrieved_at": "2026-11-23T13:10:59.130399+03:30",
+  "retrieved_at": "2026-11-23T14:12:22.782865+03:30",
   "status": "not_available",
   "trade_count": 0,
   "candles_1h": [],
@@ -13,27 +13,27 @@
   "endpoint_errors": [
     {
       "url": "http://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
-      "error": "502 Server Error: Bad Gateway for url: https://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458"
+      "error": "504 Server Error: Gateway Timeout for url: http://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458"
     },
     {
       "url": "https://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
-      "error": "502 Server Error: Bad Gateway for url: https://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458"
+      "error": "('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
     },
     {
       "url": "http://cdn10.tsetmc.com/api/Trade/GetTrade/34144395039913458",
-      "error": "HTTPConnectionPool(host='cdn10.tsetmc.com', port=80): Max retries exceeded with url: /api/Trade/GetTrade/34144395039913458 (Caused by NameResolutionError(\"HTTPConnection(host='cdn1"
+      "error": "504 Server Error: DNS Name Not Found for url: http://cdn10.tsetmc.com/api/Trade/GetTrade/34144395039913458"
     },
     {
       "url": "https://cdn10.tsetmc.com/api/Trade/GetTrade/34144395039913458",
-      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTrade/34144395039913458 (Caused by NameResolutionError(\"HTTPSConnection(host='c"
+      "error": "('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
     },
     {
       "url": "http://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/false",
-      "error": "پاسخ endpoint آرایه معاملات خالی/نامعتبر دارد"
+      "error": "504 Server Error: Gateway Timeout for url: http://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/false"
     },
     {
       "url": "http://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/true",
-      "error": "502 Server Error: Bad Gateway for url: https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/true"
+      "error": "('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
     },
     {
       "url": "https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/false",
@@ -45,23 +45,23 @@
     },
     {
       "url": "http://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/false",
-      "error": "HTTPConnectionPool(host='cdn10.tsetmc.com', port=80): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261123/false (Caused by NameResolutionError(\"HTT"
+      "error": "504 Server Error: DNS Name Not Found for url: http://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/false"
     },
     {
       "url": "http://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/true",
-      "error": "HTTPConnectionPool(host='cdn10.tsetmc.com', port=80): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261123/true (Caused by NameResolutionError(\"HTTP"
+      "error": "504 Server Error: DNS Name Not Found for url: http://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/true"
     },
     {
       "url": "https://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/false",
-      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261123/false (Caused by NameResolutionError(\"H"
+      "error": "('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
     },
     {
       "url": "https://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/true",
-      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261123/true (Caused by NameResolutionError(\"HT"
+      "error": "('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
     },
     {
       "url": "Trade/GetTradeIntraDay",
-      "error": "502 Server Error: Bad Gateway for url: https://cdn.tsetmc.com/api/Trade/GetTradeIntraDay/34144395039913458?_=1795426986"
+      "error": "504 Server Error: Gateway Timeout for url: http://cdn.tsetmc.com/api/Trade/GetTradeIntraDay/34144395039913458?_=1795430623"
     }
   ]
 }
