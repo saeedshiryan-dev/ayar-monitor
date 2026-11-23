@@ -1,68 +1,84 @@
 {
   "symbol": "عیار",
-  "source": "http://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
+  "source": "https://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
   "date": "20261123",
   "timezone": "Asia/Tehran",
-  "retrieved_at": "2026-11-23T15:01:50.590172+03:30",
+  "retrieved_at": "2026-11-23T15:58:56.850657+03:30",
   "status": "incomplete",
-  "trade_count": 114377,
+  "trade_count": 123563,
   "candles_1h": [],
   "candles_4h": [],
   "note_fa": "کندل‌های موقت از endpoint معاملات زنده TSETMC؛ آمار نهایی روز نیست.",
   "endpoint_errors": [
     {
-      "url": "https://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
-      "error": "502 Server Error: Bad Gateway for url: https://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458"
+      "url": "http://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
+      "error": "504 Server Error: Gateway Timeout for url: http://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458"
+    },
+    {
+      "url": "http://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
+      "error": "504 Server Error: Gateway Timeout for url: http://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458"
     },
     {
       "url": "http://cdn10.tsetmc.com/api/Trade/GetTrade/34144395039913458",
-      "error": "HTTPConnectionPool(host='cdn10.tsetmc.com', port=80): Max retries exceeded with url: /api/Trade/GetTrade/34144395039913458 (Caused by NameResolutionError(\"HTTPConnection(host='cdn1"
+      "error": "504 Server Error: DNS Name Not Found for url: http://cdn10.tsetmc.com/api/Trade/GetTrade/34144395039913458"
     },
     {
       "url": "https://cdn10.tsetmc.com/api/Trade/GetTrade/34144395039913458",
-      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTrade/34144395039913458 (Caused by NameResolutionError(\"HTTPSConnection(host='c"
+      "error": "('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
     },
     {
       "url": "http://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/false",
-      "error": "502 Server Error: Bad Gateway for url: https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/false"
+      "error": "('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+    },
+    {
+      "url": "http://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/true",
+      "error": "504 Server Error: Gateway Timeout for url: http://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/true"
+    },
+    {
+      "url": "https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/false",
+      "error": "('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+    },
+    {
+      "url": "https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/true",
+      "error": "('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
     },
     {
       "url": "http://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/false",
-      "error": "HTTPConnectionPool(host='cdn10.tsetmc.com', port=80): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261123/false (Caused by NameResolutionError(\"HTT"
+      "error": "504 Server Error: DNS Name Not Found for url: http://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/false"
     },
     {
       "url": "http://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/true",
-      "error": "HTTPConnectionPool(host='cdn10.tsetmc.com', port=80): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261123/true (Caused by NameResolutionError(\"HTTP"
+      "error": "504 Server Error: DNS Name Not Found for url: http://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/true"
     },
     {
       "url": "https://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/false",
-      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261123/false (Caused by NameResolutionError(\"H"
+      "error": "('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
     },
     {
       "url": "https://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/true",
-      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261123/true (Caused by NameResolutionError(\"HT"
+      "error": "('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
     }
   ],
-  "source_url": "http://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
-  "quote_trade_count": 114931,
-  "quote_total_volume": 63296759,
-  "quote_retrieved_at": "2026-11-23T15:02:39.325232+03:30",
+  "source_url": "https://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
+  "quote_trade_count": 123943,
+  "quote_total_volume": 69039452,
+  "quote_retrieved_at": "2026-11-23T15:59:07.674660+03:30",
   "quote_match_basis": "post_trade_download",
   "quote_pre_trade": {
-    "count": 114790,
-    "volume": 63199465,
-    "retrieved_at": "2026-11-23T15:01:59.088065+03:30",
+    "count": 123885,
+    "volume": 69012462,
+    "retrieved_at": "2026-11-23T15:58:57.539179+03:30",
     "basis": "pre_trade_download"
   },
   "quote_post_trade": {
-    "count": 114931,
-    "volume": 63296759,
-    "retrieved_at": "2026-11-23T15:02:39.325232+03:30",
+    "count": 123943,
+    "volume": 69039452,
+    "retrieved_at": "2026-11-23T15:59:07.674660+03:30",
     "basis": "post_trade_download"
   },
   "quote_age_seconds": 0.0,
-  "observed_trade_count_delta": 554,
-  "observed_volume_delta": 449911,
+  "observed_trade_count_delta": 380,
+  "observed_volume_delta": 196717,
   "count_reconciled": false,
   "volume_reconciled": false,
   "count_reconciliation_status": "mismatch",
