@@ -3,65 +3,11 @@
   "source": "TSETMC GetTrade",
   "date": "20261123",
   "timezone": "Asia/Tehran",
-  "retrieved_at": "2026-11-23T17:23:46.186172+03:30",
+  "retrieved_at": "2026-11-23T18:17:57.703179+03:30",
   "status": "not_available",
   "trade_count": 0,
   "candles_1h": [],
   "candles_4h": [],
   "note_fa": "کندل‌های موقت از endpoint معاملات زنده TSETMC؛ آمار نهایی روز نیست.",
-  "reason": "همه مسیرهای رسمی دریافت معاملات ناموفق بودند",
-  "endpoint_errors": [
-    {
-      "url": "http://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
-      "error": "504 Server Error: Gateway Timeout for url: http://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458"
-    },
-    {
-      "url": "https://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
-      "error": "('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
-    },
-    {
-      "url": "http://cdn10.tsetmc.com/api/Trade/GetTrade/34144395039913458",
-      "error": "504 Server Error: DNS Name Not Found for url: http://cdn10.tsetmc.com/api/Trade/GetTrade/34144395039913458"
-    },
-    {
-      "url": "https://cdn10.tsetmc.com/api/Trade/GetTrade/34144395039913458",
-      "error": "('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
-    },
-    {
-      "url": "http://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/false",
-      "error": "504 Server Error: Gateway Timeout for url: http://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/false"
-    },
-    {
-      "url": "http://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/true",
-      "error": "504 Server Error: Gateway Timeout for url: http://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/true"
-    },
-    {
-      "url": "https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/false",
-      "error": "('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
-    },
-    {
-      "url": "https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/true",
-      "error": "('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
-    },
-    {
-      "url": "http://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/false",
-      "error": "HTTPConnectionPool(host='5.200.72.62', port=3128): Read timed out. (read timeout=15)"
-    },
-    {
-      "url": "http://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/true",
-      "error": "504 Server Error: DNS Name Not Found for url: http://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/true"
-    },
-    {
-      "url": "https://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/false",
-      "error": "('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
-    },
-    {
-      "url": "https://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/true",
-      "error": "('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
-    },
-    {
-      "url": "Trade/GetTradeIntraDay",
-      "error": "HTTPSConnectionPool(host='cdn.tsetmc.com', port=443): Read timed out. (read timeout=15)"
-    }
-  ]
+  "reason": "بازار در وضعیت معاملات پیوسته نیست"
 }
