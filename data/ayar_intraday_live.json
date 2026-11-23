@@ -3,11 +3,65 @@
   "source": "TSETMC GetTrade",
   "date": "20261123",
   "timezone": "Asia/Tehran",
-  "retrieved_at": "2026-11-23T11:46:49.121478+03:30",
+  "retrieved_at": "2026-11-23T13:10:59.130399+03:30",
   "status": "not_available",
   "trade_count": 0,
   "candles_1h": [],
   "candles_4h": [],
   "note_fa": "کندل‌های موقت از endpoint معاملات زنده TSETMC؛ آمار نهایی روز نیست.",
-  "reason": "بازار در وضعیت معاملات پیوسته نیست"
+  "reason": "همه مسیرهای رسمی دریافت معاملات ناموفق بودند",
+  "endpoint_errors": [
+    {
+      "url": "http://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
+      "error": "502 Server Error: Bad Gateway for url: https://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458"
+    },
+    {
+      "url": "https://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
+      "error": "502 Server Error: Bad Gateway for url: https://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458"
+    },
+    {
+      "url": "http://cdn10.tsetmc.com/api/Trade/GetTrade/34144395039913458",
+      "error": "HTTPConnectionPool(host='cdn10.tsetmc.com', port=80): Max retries exceeded with url: /api/Trade/GetTrade/34144395039913458 (Caused by NameResolutionError(\"HTTPConnection(host='cdn1"
+    },
+    {
+      "url": "https://cdn10.tsetmc.com/api/Trade/GetTrade/34144395039913458",
+      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTrade/34144395039913458 (Caused by NameResolutionError(\"HTTPSConnection(host='c"
+    },
+    {
+      "url": "http://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/false",
+      "error": "پاسخ endpoint آرایه معاملات خالی/نامعتبر دارد"
+    },
+    {
+      "url": "http://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/true",
+      "error": "502 Server Error: Bad Gateway for url: https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/true"
+    },
+    {
+      "url": "https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/false",
+      "error": "پاسخ endpoint آرایه معاملات خالی/نامعتبر دارد"
+    },
+    {
+      "url": "https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/true",
+      "error": "پاسخ endpoint آرایه معاملات خالی/نامعتبر دارد"
+    },
+    {
+      "url": "http://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/false",
+      "error": "HTTPConnectionPool(host='cdn10.tsetmc.com', port=80): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261123/false (Caused by NameResolutionError(\"HTT"
+    },
+    {
+      "url": "http://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/true",
+      "error": "HTTPConnectionPool(host='cdn10.tsetmc.com', port=80): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261123/true (Caused by NameResolutionError(\"HTTP"
+    },
+    {
+      "url": "https://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/false",
+      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261123/false (Caused by NameResolutionError(\"H"
+    },
+    {
+      "url": "https://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/true",
+      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261123/true (Caused by NameResolutionError(\"HT"
+    },
+    {
+      "url": "Trade/GetTradeIntraDay",
+      "error": "502 Server Error: Bad Gateway for url: https://cdn.tsetmc.com/api/Trade/GetTradeIntraDay/34144395039913458?_=1795426986"
+    }
+  ]
 }
