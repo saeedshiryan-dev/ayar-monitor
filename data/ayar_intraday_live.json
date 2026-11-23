@@ -1,22 +1,23 @@
 {
   "symbol": "عیار",
-  "source": "https://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
+  "source": "TSETMC GetTrade",
   "date": "20261123",
   "timezone": "Asia/Tehran",
-  "retrieved_at": "2026-11-23T15:58:56.850657+03:30",
-  "status": "incomplete",
-  "trade_count": 123563,
+  "retrieved_at": "2026-11-23T17:23:46.186172+03:30",
+  "status": "not_available",
+  "trade_count": 0,
   "candles_1h": [],
   "candles_4h": [],
   "note_fa": "کندل‌های موقت از endpoint معاملات زنده TSETMC؛ آمار نهایی روز نیست.",
+  "reason": "همه مسیرهای رسمی دریافت معاملات ناموفق بودند",
   "endpoint_errors": [
     {
       "url": "http://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
       "error": "504 Server Error: Gateway Timeout for url: http://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458"
     },
     {
-      "url": "http://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
-      "error": "504 Server Error: Gateway Timeout for url: http://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458"
+      "url": "https://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
+      "error": "('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
     },
     {
       "url": "http://cdn10.tsetmc.com/api/Trade/GetTrade/34144395039913458",
@@ -28,7 +29,7 @@
     },
     {
       "url": "http://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/false",
-      "error": "('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+      "error": "504 Server Error: Gateway Timeout for url: http://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/false"
     },
     {
       "url": "http://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/true",
@@ -44,7 +45,7 @@
     },
     {
       "url": "http://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/false",
-      "error": "504 Server Error: DNS Name Not Found for url: http://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/false"
+      "error": "HTTPConnectionPool(host='5.200.72.62', port=3128): Read timed out. (read timeout=15)"
     },
     {
       "url": "http://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/true",
@@ -57,32 +58,10 @@
     {
       "url": "https://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261123/true",
       "error": "('Connection aborted.', RemoteDisconnected('Remote end closed connection without response'))"
+    },
+    {
+      "url": "Trade/GetTradeIntraDay",
+      "error": "HTTPSConnectionPool(host='cdn.tsetmc.com', port=443): Read timed out. (read timeout=15)"
     }
-  ],
-  "source_url": "https://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
-  "quote_trade_count": 123943,
-  "quote_total_volume": 69039452,
-  "quote_retrieved_at": "2026-11-23T15:59:07.674660+03:30",
-  "quote_match_basis": "post_trade_download",
-  "quote_pre_trade": {
-    "count": 123885,
-    "volume": 69012462,
-    "retrieved_at": "2026-11-23T15:58:57.539179+03:30",
-    "basis": "pre_trade_download"
-  },
-  "quote_post_trade": {
-    "count": 123943,
-    "volume": 69039452,
-    "retrieved_at": "2026-11-23T15:59:07.674660+03:30",
-    "basis": "post_trade_download"
-  },
-  "quote_age_seconds": 0.0,
-  "observed_trade_count_delta": 380,
-  "observed_volume_delta": 196717,
-  "count_reconciled": false,
-  "volume_reconciled": false,
-  "count_reconciliation_status": "mismatch",
-  "volume_reconciliation_status": "mismatch",
-  "quality_note_fa": "فهرست معاملات با snapshot رسمی تابلو تطبیق کامل ندارد؛ کندل معتبر منتشر نمی‌شود.",
-  "reason": "تعداد یا حجم معاملات با snapshot رسمی تابلو تطبیق کامل ندارد؛ کندل معتبر منتشر نشد."
+  ]
 }
