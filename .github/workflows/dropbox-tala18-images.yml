@@ -1,0 +1,92 @@
+name: Fetch Tala 18 Dropbox Images
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - '.github/workflows/dropbox-tala18-images.yml'
+  schedule:
+    - cron: "*/5 * * * *"
+
+permissions:
+  contents: read
+  actions: write
+
+concurrency:
+  group: tala18-dropbox-images
+  cancel-in-progress: true
+
+jobs:
+  fetch-images:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download latest image files from Dropbox
+        env:
+          DROPBOX_APP_KEY: ${{ secrets.DROPBOX_APP_KEY }}
+          DROPBOX_APP_SECRET: ${{ secrets.DROPBOX_APP_SECRET }}
+          DROPBOX_REFRESH_TOKEN: ${{ secrets.DROPBOX_REFRESH_TOKEN }}
+        run: |
+          python - <<'PY'
+          import base64, json, os, pathlib, urllib.request
+
+          key = os.environ["DROPBOX_APP_KEY"]
+          secret = os.environ["DROPBOX_APP_SECRET"]
+          refresh = os.environ["DROPBOX_REFRESH_TOKEN"]
+          basic = base64.b64encode(f"{key}:{secret}".encode()).decode()
+
+          def request(url, data=None, headers=None):
+              req = urllib.request.Request(url, data=data, headers=headers or {})
+              with urllib.request.urlopen(req, timeout=60) as response:
+                  return response.read()
+
+          token_data = urllib.parse.urlencode({
+              "grant_type": "refresh_token",
+              "refresh_token": refresh,
+          }).encode()
+          token = json.loads(request(
+              "https://api.dropbox.com/oauth2/token",
+              token_data,
+              {"Authorization": f"Basic {basic}",
+               "Content-Type": "application/x-www-form-urlencoded"}
+          ))["access_token"]
+
+          api_headers = {
+              "Authorization": f"Bearer {token}",
+              "Content-Type": "application/json",
+          }
+          listing = json.loads(request(
+              "https://api.dropboxapi.com/2/files/list_folder",
+              json.dumps({"path": "/tala 18", "recursive": False}).encode(),
+              api_headers
+          ))
+
+          out = pathlib.Path("incoming/tala-18")
+          out.mkdir(parents=True, exist_ok=True)
+          files = [
+              item for item in listing.get("entries", [])
+              if item.get(".tag") == "file"
+              and pathlib.Path(item["name"]).suffix.lower() in {".jpg", ".jpeg", ".png", ".webp"}
+          ]
+          if not files:
+              raise SystemExit("No supported image files found in /tala 18")
+
+          for item in files:
+              arg = json.dumps({"path": item["path_lower"]}, ensure_ascii=False)
+              content = request(
+                  "https://content.dropboxapi.com/2/files/download",
+                  headers={"Authorization": f"Bearer {token}",
+                           "Dropbox-API-Arg": arg}
+              )
+              safe_name = pathlib.Path(item["name"]).name
+              (out / safe_name).write_bytes(content)
+              print(f"Downloaded {safe_name} ({len(content)} bytes)")
+          print(f"Downloaded {len(files)} image(s) from Dropbox.")
+          PY
+
+      - name: Publish images as a short-lived workflow artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: tala-18-images-${{ github.run_id }}
+          path: incoming/tala-18/
+          if-no-files-found: error
+          retention-days: 1
