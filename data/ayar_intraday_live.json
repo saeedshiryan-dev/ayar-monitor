@@ -3,7 +3,7 @@
   "source": "TSETMC GetTrade",
   "date": "20261124",
   "timezone": "Asia/Tehran",
-  "retrieved_at": "2026-11-24T13:22:08.951357+03:30",
+  "retrieved_at": "2026-11-24T14:11:55.470083+03:30",
   "status": "not_available",
   "trade_count": 0,
   "candles_1h": [],
@@ -33,11 +33,11 @@
     },
     {
       "url": "http://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261124/true",
-      "error": "HTTPSConnectionPool(host='cdn.tsetmc.com', port=443): Read timed out. (read timeout=15)"
+      "error": "پاسخ endpoint آرایه معاملات خالی/نامعتبر دارد"
     },
     {
       "url": "https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261124/false",
-      "error": "502 Server Error: Bad Gateway for url: https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261124/false"
+      "error": "پاسخ endpoint آرایه معاملات خالی/نامعتبر دارد"
     },
     {
       "url": "https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261124/true",
@@ -61,7 +61,7 @@
     },
     {
       "url": "Trade/GetTradeIntraDay",
-      "error": "aggregate ناقص/قدیمی است: last_age=1687s, max_gap=121s, volume_gap=21.22%"
+      "error": "502 Server Error: Bad Gateway for url: https://cdn.tsetmc.com/api/Trade/GetTradeIntraDay/34144395039913458?_=1795517116"
     }
   ]
 }
