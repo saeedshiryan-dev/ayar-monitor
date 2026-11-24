@@ -3,17 +3,13 @@
   "source": "https://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
   "date": "20261124",
   "timezone": "Asia/Tehran",
-  "retrieved_at": "2026-11-24T15:02:23.240586+03:30",
+  "retrieved_at": "2026-11-24T15:59:12.948138+03:30",
   "status": "incomplete",
-  "trade_count": 97805,
+  "trade_count": 111586,
   "candles_1h": [],
   "candles_4h": [],
   "note_fa": "کندل‌های موقت از endpoint معاملات زنده TSETMC؛ آمار نهایی روز نیست.",
   "endpoint_errors": [
-    {
-      "url": "http://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
-      "error": "HTTPSConnectionPool(host='cdn.tsetmc.com', port=443): Read timed out. (read timeout=15)"
-    },
     {
       "url": "http://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
       "error": "502 Server Error: Bad Gateway for url: https://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458"
@@ -27,16 +23,16 @@
       "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTrade/34144395039913458 (Caused by NameResolutionError(\"HTTPSConnection(host='c"
     },
     {
+      "url": "http://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261124/false",
+      "error": "502 Server Error: Bad Gateway for url: https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261124/false"
+    },
+    {
       "url": "http://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261124/true",
       "error": "502 Server Error: Bad Gateway for url: https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261124/true"
     },
     {
       "url": "https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261124/false",
       "error": "502 Server Error: Bad Gateway for url: https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261124/false"
-    },
-    {
-      "url": "https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261124/true",
-      "error": "502 Server Error: Bad Gateway for url: https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261124/true"
     },
     {
       "url": "http://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261124/false",
@@ -56,25 +52,25 @@
     }
   ],
   "source_url": "https://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
-  "quote_trade_count": 98152,
-  "quote_total_volume": 107953048,
-  "quote_retrieved_at": "2026-11-24T15:04:32.930978+03:30",
+  "quote_trade_count": 112009,
+  "quote_total_volume": 120185769,
+  "quote_retrieved_at": "2026-11-24T16:00:16.895294+03:30",
   "quote_match_basis": "post_trade_download",
   "quote_pre_trade": {
-    "count": 97809,
-    "volume": 107542393,
-    "retrieved_at": "2026-11-24T15:02:32.092890+03:30",
+    "count": 111567,
+    "volume": 119931741,
+    "retrieved_at": "2026-11-24T15:59:13.470937+03:30",
     "basis": "pre_trade_download"
   },
   "quote_post_trade": {
-    "count": 98152,
-    "volume": 107953048,
-    "retrieved_at": "2026-11-24T15:04:32.930978+03:30",
+    "count": 112009,
+    "volume": 120185769,
+    "retrieved_at": "2026-11-24T16:00:16.895294+03:30",
     "basis": "post_trade_download"
   },
   "quote_age_seconds": 0.0,
-  "observed_trade_count_delta": 347,
-  "observed_volume_delta": 411328,
+  "observed_trade_count_delta": 423,
+  "observed_volume_delta": 239540,
   "count_reconciled": false,
   "volume_reconciled": false,
   "count_reconciliation_status": "mismatch",
