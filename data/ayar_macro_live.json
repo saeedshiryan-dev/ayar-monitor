@@ -2,7 +2,7 @@
   "status": "ok",
   "source": "NerkhAra public API",
   "source_url": "https://nerkhara.com/en/api/",
-  "retrieved_at": "2026-11-24T01:44:02.749117+00:00",
+  "retrieved_at": "2026-11-24T02:40:14.090782+00:00",
   "timezone": "UTC",
   "refresh_claim_minutes": 10,
   "max_accepted_age_minutes": 20,
@@ -13,8 +13,8 @@
     "sell": 272485.0,
     "display_price": 272485.0,
     "unit": "تومان به‌ازای هر دلار",
-    "updated_at": "2026-11-24T01:41:52+00:00",
-    "age_seconds": 130,
+    "updated_at": "2026-11-24T02:31:52+00:00",
+    "age_seconds": 501,
     "source_method": "average",
     "source_count": 2,
     "change_pct": 1.79,
@@ -23,21 +23,21 @@
   "xau": {
     "symbol": "xau",
     "name": "انس طلا",
-    "buy": 3675.74,
-    "sell": 3675.74,
-    "display_price": 3675.74,
+    "buy": 3654.86,
+    "sell": 3654.86,
+    "display_price": 3654.86,
     "unit": "دلار به‌ازای هر اونس تروا",
-    "updated_at": "2026-11-24T01:41:52+00:00",
-    "age_seconds": 130,
+    "updated_at": "2026-11-24T02:31:52+00:00",
+    "age_seconds": 502,
     "source_method": "lead",
     "source_count": 1,
-    "change_pct": 1.63,
+    "change_pct": 1.96,
     "source_page": "https://nerkhara.com/ons-tala/"
   },
   "validation": {
     "both_quotes_present": true,
     "both_timestamps_fresh": true,
-    "usd_source_timestamp": "2026-11-24T01:41:52+00:00",
-    "xau_source_timestamp": "2026-11-24T01:41:52+00:00"
+    "usd_source_timestamp": "2026-11-24T02:31:52+00:00",
+    "xau_source_timestamp": "2026-11-24T02:31:52+00:00"
   }
 }
