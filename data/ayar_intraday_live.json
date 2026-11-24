@@ -1,80 +1,13 @@
 {
   "symbol": "عیار",
-  "source": "http://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
+  "source": "TSETMC GetTrade",
   "date": "20261124",
   "timezone": "Asia/Tehran",
-  "retrieved_at": "2026-11-24T17:16:46.353429+03:30",
-  "status": "incomplete",
-  "trade_count": 127299,
+  "retrieved_at": "2026-11-24T18:10:59.948145+03:30",
+  "status": "not_available",
+  "trade_count": 0,
   "candles_1h": [],
   "candles_4h": [],
   "note_fa": "کندل‌های موقت از endpoint معاملات زنده TSETMC؛ آمار نهایی روز نیست.",
-  "endpoint_errors": [
-    {
-      "url": "https://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
-      "error": "502 Server Error: Bad Gateway for url: https://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458"
-    },
-    {
-      "url": "http://cdn10.tsetmc.com/api/Trade/GetTrade/34144395039913458",
-      "error": "HTTPConnectionPool(host='cdn10.tsetmc.com', port=80): Max retries exceeded with url: /api/Trade/GetTrade/34144395039913458 (Caused by NameResolutionError(\"HTTPConnection(host='cdn1"
-    },
-    {
-      "url": "https://cdn10.tsetmc.com/api/Trade/GetTrade/34144395039913458",
-      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTrade/34144395039913458 (Caused by NameResolutionError(\"HTTPSConnection(host='c"
-    },
-    {
-      "url": "http://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261124/false",
-      "error": "502 Server Error: Bad Gateway for url: https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261124/false"
-    },
-    {
-      "url": "https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261124/false",
-      "error": "502 Server Error: Bad Gateway for url: https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261124/false"
-    },
-    {
-      "url": "https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261124/true",
-      "error": "502 Server Error: Bad Gateway for url: https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261124/true"
-    },
-    {
-      "url": "http://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261124/false",
-      "error": "HTTPConnectionPool(host='cdn10.tsetmc.com', port=80): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261124/false (Caused by NameResolutionError(\"HTT"
-    },
-    {
-      "url": "http://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261124/true",
-      "error": "HTTPConnectionPool(host='cdn10.tsetmc.com', port=80): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261124/true (Caused by NameResolutionError(\"HTTP"
-    },
-    {
-      "url": "https://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261124/false",
-      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261124/false (Caused by NameResolutionError(\"H"
-    },
-    {
-      "url": "https://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261124/true",
-      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261124/true (Caused by NameResolutionError(\"HT"
-    }
-  ],
-  "source_url": "http://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
-  "quote_trade_count": 127605,
-  "quote_total_volume": 138522027,
-  "quote_retrieved_at": "2026-11-24T17:17:28.837592+03:30",
-  "quote_match_basis": "post_trade_download",
-  "quote_pre_trade": {
-    "count": 127457,
-    "volume": 138374588,
-    "retrieved_at": "2026-11-24T17:16:47.038342+03:30",
-    "basis": "pre_trade_download"
-  },
-  "quote_post_trade": {
-    "count": 127605,
-    "volume": 138522027,
-    "retrieved_at": "2026-11-24T17:17:28.837592+03:30",
-    "basis": "post_trade_download"
-  },
-  "quote_age_seconds": 0.0,
-  "observed_trade_count_delta": 306,
-  "observed_volume_delta": 319423,
-  "count_reconciled": false,
-  "volume_reconciled": false,
-  "count_reconciliation_status": "mismatch",
-  "volume_reconciliation_status": "mismatch",
-  "quality_note_fa": "فهرست معاملات با snapshot رسمی تابلو تطبیق کامل ندارد؛ کندل معتبر منتشر نمی‌شود.",
-  "reason": "تعداد یا حجم معاملات با snapshot رسمی تابلو تطبیق کامل ندارد؛ کندل معتبر منتشر نشد."
+  "reason": "بازار در وضعیت معاملات پیوسته نیست"
 }
