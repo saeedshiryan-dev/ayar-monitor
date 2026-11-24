@@ -3,14 +3,14 @@
   "source": "TSETMC real trades; incremental merge with validated baseline",
   "timezone": "Asia/Tehran",
   "history_first_date": "20180609",
-  "history_last_date": "20261123",
-  "expected_trading_days": 1981,
-  "validated_days": 1942,
+  "history_last_date": "20261124",
+  "expected_trading_days": 1982,
+  "validated_days": 1943,
   "failed_days": 39,
-  "one_hour_candles": 6813,
-  "four_hour_candles": 2383,
-  "total_transactions": 38921728,
-  "total_volume": 52937874540,
+  "one_hour_candles": 6820,
+  "four_hour_candles": 2385,
+  "total_transactions": 39064073,
+  "total_volume": 53090402537,
   "daily_validation": [
     {
       "date": "20180609",
@@ -31087,6 +31087,23 @@
       },
       "passed": true,
       "warnings": []
+    },
+    {
+      "date": "20261124",
+      "source_url": "https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261124/false",
+      "raw_rows": 142535,
+      "active_unique_trades": 142345,
+      "volume": 152527997,
+      "checks": {
+        "trade_count": true,
+        "volume": true,
+        "low": true,
+        "high": true,
+        "open": true,
+        "last": true
+      },
+      "passed": true,
+      "warnings": []
     }
   ],
   "failures": [
@@ -31286,16 +31303,16 @@
       "repair_error": "No usable active trades from either TSETMC host/flag; attempts=[{\"url\": \"https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261104/false\", \"error\": \"HTTPSConnectionPool(host='cdn.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261104/false (Caused by ReadTimeoutError(\\\"HTTPSConnectionPool(host='cdn.tsetmc.com', port=443): Read timed out. (read timeout=15)\\\"))\"}, {\"url\": \"https://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261104/false\", \"error\": \"HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261104/false (Caused by NameResolutionError(\\\"HTTPSConnection(host='cdn10.tsetmc.com', port=443): Failed to resolve 'cdn10.tsetmc.com' ([Errno -2] Name or service not known)\\\"))\"}]"
     }
   ],
-  "baseline_validated_days": 1941,
+  "baseline_validated_days": 1942,
   "newly_processed_days": 1,
-  "elapsed_seconds": 14.9,
+  "elapsed_seconds": 45.2,
   "candle_validation": {
     "passed": true,
     "status": "passed_with_coverage_gaps",
     "method": "OHLC invariants + daily TSETMC reconciliation + exact H1-to-H4 aggregation",
-    "days_checked": 1942,
-    "h1_rows_checked": 6813,
-    "h4_rows_checked": 2383,
+    "days_checked": 1943,
+    "h1_rows_checked": 6820,
+    "h4_rows_checked": 2385,
     "h4_orphan_rows_quarantined_this_run": 0,
     "h4_quarantined_rows_total": 2,
     "coverage_complete": false,
@@ -31311,9 +31328,9 @@
     ]
   },
   "timeframe_coverage": {
-    "expected_trading_days": 1981,
+    "expected_trading_days": 1982,
     "1h": {
-      "validated_days": 1942,
+      "validated_days": 1943,
       "missing_days": 39,
       "missing_date_list": [
         "20200324",
@@ -31356,11 +31373,11 @@
         "20261024",
         "20261104"
       ],
-      "candles": 6813,
-      "closing_auction_candles": 85
+      "candles": 6820,
+      "closing_auction_candles": 86
     },
     "4h": {
-      "validated_days": 1942,
+      "validated_days": 1943,
       "missing_days": 39,
       "missing_date_list": [
         "20200324",
@@ -31403,8 +31420,8 @@
         "20261024",
         "20261104"
       ],
-      "candles": 2383,
-      "partial_session_remainder_candles": 321
+      "candles": 2385,
+      "partial_session_remainder_candles": 322
     }
   },
   "checkpoint": true
