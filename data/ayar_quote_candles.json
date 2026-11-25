@@ -3,7 +3,7 @@
   "source": "TSETMC ClosingPrice/GetClosingPriceInfo",
   "sampling_interval_seconds": 30,
   "sampling_method": "repeated_quote_snapshots",
-  "updated_at": "2026-11-25T11:53:20.973996+03:30",
+  "updated_at": "2026-11-25T13:14:17.121901+03:30",
   "status": "ok",
   "warning_fa": "این‌ها کندل رسمی معاملات نیستند؛ کندل‌های بازسازی‌شده از نمونه‌های تابلو هستند و فقط برای تحلیل کمکی مناسب‌اند.",
   "timeframes": {
@@ -313,6 +313,24 @@
         "provisional": true,
         "source_type": "sampled_quote_reconstruction",
         "quality_note_fa": "OHLC از نمونه‌های ۳۰ثانیه‌ای قیمت تابلو بازسازی شده؛ بین نمونه‌ها ممکن است سقف/کف یا معاملات جا افتاده باشد."
+      },
+      {
+        "date": "20261125",
+        "start": "13:00",
+        "end": "14:00",
+        "timestamp": "20261125T13:00:00+03:30",
+        "open": 699000,
+        "high": 699000,
+        "low": 697800,
+        "close": 698300,
+        "volume_delta_sampled": 1486682,
+        "trade_count_delta_sampled": 1724,
+        "sample_count": 9,
+        "max_sample_gap_seconds": 30.239459,
+        "partial": true,
+        "provisional": true,
+        "source_type": "sampled_quote_reconstruction",
+        "quality_note_fa": "OHLC از نمونه‌های ۳۰ثانیه‌ای قیمت تابلو بازسازی شده؛ بین نمونه‌ها ممکن است سقف/کف یا معاملات جا افتاده باشد."
       }
     ],
     "4h": [
@@ -366,6 +384,24 @@
         "sample_count": 36,
         "max_sample_gap_seconds": 3934.475825,
         "partial": false,
+        "provisional": true,
+        "source_type": "sampled_quote_reconstruction",
+        "quality_note_fa": "OHLC از نمونه‌های ۳۰ثانیه‌ای قیمت تابلو بازسازی شده؛ بین نمونه‌ها ممکن است سقف/کف یا معاملات جا افتاده باشد."
+      },
+      {
+        "date": "20261125",
+        "start": "12:00",
+        "end": "16:00",
+        "timestamp": "20261125T12:00:00+03:30",
+        "open": 699000,
+        "high": 699000,
+        "low": 697800,
+        "close": 698300,
+        "volume_delta_sampled": 1486682,
+        "trade_count_delta_sampled": 1724,
+        "sample_count": 9,
+        "max_sample_gap_seconds": 30.239459,
+        "partial": true,
         "provisional": true,
         "source_type": "sampled_quote_reconstruction",
         "quality_note_fa": "OHLC از نمونه‌های ۳۰ثانیه‌ای قیمت تابلو بازسازی شده؛ بین نمونه‌ها ممکن است سقف/کف یا معاملات جا افتاده باشد."
