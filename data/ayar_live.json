@@ -3,13 +3,13 @@
   "insCode": "34144395039913458",
   "source": "TSETMC",
   "source_api": "cdn.tsetmc.com/api",
-  "retrieved_at": "2026-11-25T16:12:03.719561+03:30",
+  "retrieved_at": "2026-11-25T17:27:23.736554+03:30",
   "timezone": "Asia/Tehran",
   "market": {
     "status": "open",
     "label_fa": "ساعت معاملات پیوسته",
     "timezone": "Asia/Tehran",
-    "checked_at": "2026-11-25T16:12:03.719561+03:30",
+    "checked_at": "2026-11-25T17:27:23.736554+03:30",
     "scheduled_pre_open": "11:45",
     "scheduled_open": "12:00",
     "scheduled_close": "18:00",
@@ -17,91 +17,91 @@
   },
   "session_date": "20261125",
   "today_has_trade": true,
-  "live_price": 694022,
+  "live_price": 687730,
   "live_price_unit": "ریال",
-  "closing_price": 696661,
-  "last_trade_price": 694022,
-  "last_trade_time": "16:12:13",
+  "closing_price": 695650,
+  "last_trade_price": 687730,
+  "last_trade_time": "17:27:43",
   "last_trade_volume": null,
-  "official_daily_last_price": 694022,
+  "official_daily_last_price": 687730,
   "tsetmc_quote_date": "20261125",
-  "tsetmc_quote_trade_count": 88247,
-  "tsetmc_quote_total_volume": 88243272,
+  "tsetmc_quote_trade_count": 111351,
+  "tsetmc_quote_total_volume": 104394485,
   "trade_endpoint_rows": 0,
   "trade_endpoint_error": "دریافت ریزمعاملات به مرحله مستقل کندل‌سازی واگذار شد",
   "orderbook": {
     "status": "ok",
     "source": "TSETMC BestLimits",
-    "retrieved_at": "2026-11-25T16:12:03.719561+03:30",
+    "retrieved_at": "2026-11-25T17:27:23.736554+03:30",
     "unit": "ریال",
     "buy": [
       {
         "level": 1,
-        "price": 694019,
-        "volume": 1602,
-        "orders": 8
+        "price": 687724,
+        "volume": 2609,
+        "orders": 4
       },
       {
         "level": 2,
-        "price": 694018,
-        "volume": 802,
-        "orders": 3
+        "price": 687723,
+        "volume": 10559,
+        "orders": 14
       },
       {
         "level": 3,
-        "price": 694017,
-        "volume": 196,
+        "price": 687722,
+        "volume": 944,
         "orders": 6
       },
       {
         "level": 4,
-        "price": 694016,
-        "volume": 88,
-        "orders": 2
+        "price": 687720,
+        "volume": 40,
+        "orders": 4
       },
       {
         "level": 5,
-        "price": 694013,
-        "volume": 165,
-        "orders": 4
+        "price": 687707,
+        "volume": 78,
+        "orders": 2
       }
     ],
     "sell": [
       {
         "level": 1,
-        "price": 694020,
-        "volume": 10028,
-        "orders": 6
-      },
-      {
-        "level": 2,
-        "price": 694021,
-        "volume": 26213,
-        "orders": 3
-      },
-      {
-        "level": 3,
-        "price": 694023,
-        "volume": 10,
+        "price": 687726,
+        "volume": 10170,
         "orders": 1
       },
       {
+        "level": 2,
+        "price": 687729,
+        "volume": 799,
+        "orders": 2
+      },
+      {
+        "level": 3,
+        "price": 687730,
+        "volume": 5830,
+        "orders": 4
+      },
+      {
         "level": 4,
-        "price": 694025,
-        "volume": 32912,
-        "orders": 3
+        "price": 687827,
+        "volume": 25461,
+        "orders": 8
       },
       {
         "level": 5,
-        "price": 694030,
-        "volume": 50218,
-        "orders": 8
+        "price": 687877,
+        "volume": 50,
+        "orders": 3
       }
     ],
-    "buy_total_volume": 2853,
-    "sell_total_volume": 119381,
-    "buy_total_orders": 23,
-    "sell_total_orders": 21,
+    "buy_total_volume": 14230,
+    "sell_total_volume": 42310,
+    "buy_total_orders": 30,
+    "sell_total_orders": 18,
     "note_fa": "۵ سطح برتر دفتر سفارش از TSETMC دریافت شد؛ قیمت‌ها ریال هستند.",
     "error": null
   },
@@ -109,13 +109,13 @@
     "status": "ok",
     "source": "TSETMC Fund/GetETFByInsCode",
     "unit": "ریال",
-    "redemption": 694210,
-    "subscription": 697366,
+    "redemption": 691776,
+    "subscription": 694921,
     "published_date": "20261125",
-    "published_time": "16:12:06",
-    "retrieved_at": "2026-11-25T16:12:03.719561+03:30",
+    "published_time": "17:26:10",
+    "retrieved_at": "2026-11-25T17:27:23.736554+03:30",
     "market_price_basis": "live_price",
-    "premium_discount_percent": -0.0271,
+    "premium_discount_percent": -0.5849,
     "cross_check_status": "quote_nav_unavailable",
     "error": null
   },
