@@ -3,7 +3,7 @@
   "source": "TSETMC ClosingPrice/GetClosingPriceInfo",
   "sampling_interval_seconds": 30,
   "sampling_method": "repeated_quote_snapshots",
-  "updated_at": "2026-11-25T17:38:15.800841+03:30",
+  "updated_at": "2026-11-25T18:45:20.171069+03:30",
   "status": "ok",
   "warning_fa": "این‌ها کندل رسمی معاملات نیستند؛ کندل‌های بازسازی‌شده از نمونه‌های تابلو هستند و فقط برای تحلیل کمکی مناسب‌اند.",
   "timeframes": {
@@ -399,7 +399,7 @@
         "trade_count_delta_sampled": 1300,
         "sample_count": 9,
         "max_sample_gap_seconds": 30.209087,
-        "partial": true,
+        "partial": false,
         "provisional": true,
         "source_type": "sampled_quote_reconstruction",
         "quality_note_fa": "OHLC از نمونه‌های ۳۰ثانیه‌ای قیمت تابلو بازسازی شده؛ بین نمونه‌ها ممکن است سقف/کف یا معاملات جا افتاده باشد."
