@@ -3,13 +3,13 @@
   "insCode": "34144395039913458",
   "source": "TSETMC",
   "source_api": "cdn.tsetmc.com/api",
-  "retrieved_at": "2026-11-27T15:00:13.844212+03:30",
+  "retrieved_at": "2026-11-27T15:55:23.765876+03:30",
   "timezone": "Asia/Tehran",
   "market": {
     "status": "closed_weekend",
     "label_fa": "تعطیل هفتگی",
     "timezone": "Asia/Tehran",
-    "checked_at": "2026-11-27T15:00:13.844212+03:30",
+    "checked_at": "2026-11-27T15:55:23.765876+03:30",
     "scheduled_pre_open": "11:45",
     "scheduled_open": "12:00",
     "scheduled_close": "18:00",
@@ -32,7 +32,7 @@
   "orderbook": {
     "status": "ok",
     "source": "TSETMC BestLimits",
-    "retrieved_at": "2026-11-27T15:00:13.844212+03:30",
+    "retrieved_at": "2026-11-27T15:55:23.765876+03:30",
     "unit": "ریال",
     "buy": [
       {
@@ -113,7 +113,7 @@
     "subscription": 692254,
     "published_date": "20261125",
     "published_time": "17:58:14",
-    "retrieved_at": "2026-11-27T15:00:13.844212+03:30",
+    "retrieved_at": "2026-11-27T15:55:23.765876+03:30",
     "market_price_basis": "last_official_price",
     "premium_discount_percent": 0.0097,
     "cross_check_status": "quote_nav_unavailable",
