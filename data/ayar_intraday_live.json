@@ -3,70 +3,58 @@
   "source": "http://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
   "date": "20261128",
   "timezone": "Asia/Tehran",
-  "retrieved_at": "2026-11-28T15:10:30.355883+03:30",
+  "retrieved_at": "2026-11-28T16:00:07.653950+03:30",
   "status": "incomplete",
-  "trade_count": 47454,
+  "trade_count": 88876,
   "candles_1h": [],
   "candles_4h": [],
   "note_fa": "کندل‌های موقت از endpoint معاملات زنده TSETMC؛ آمار نهایی روز نیست.",
   "endpoint_errors": [
     {
-      "url": "https://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
-      "error": "HTTPSConnectionPool(host='cdn.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTrade/34144395039913458 (Caused by ProxyError('Unable to connect to proxy', OSErr"
-    },
-    {
       "url": "http://cdn10.tsetmc.com/api/Trade/GetTrade/34144395039913458",
-      "error": "502 Server Error: Bad Gateway for url: http://cdn10.tsetmc.com/api/Trade/GetTrade/34144395039913458"
+      "error": "HTTPConnectionPool(host='cdn10.tsetmc.com', port=80): Max retries exceeded with url: /api/Trade/GetTrade/34144395039913458 (Caused by NameResolutionError(\"HTTPConnection(host='cdn1"
     },
     {
       "url": "https://cdn10.tsetmc.com/api/Trade/GetTrade/34144395039913458",
-      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTrade/34144395039913458 (Caused by ProxyError('Unable to connect to proxy', OSE"
-    },
-    {
-      "url": "https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261128/false",
-      "error": "HTTPSConnectionPool(host='cdn.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261128/false (Caused by ProxyError('Unable to co"
-    },
-    {
-      "url": "https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261128/true",
-      "error": "HTTPSConnectionPool(host='cdn.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261128/true (Caused by ProxyError('Unable to con"
+      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTrade/34144395039913458 (Caused by NameResolutionError(\"HTTPSConnection(host='c"
     },
     {
       "url": "http://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261128/false",
-      "error": "502 Server Error: Bad Gateway for url: http://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261128/false"
+      "error": "HTTPConnectionPool(host='cdn10.tsetmc.com', port=80): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261128/false (Caused by NameResolutionError(\"HTT"
     },
     {
       "url": "http://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261128/true",
-      "error": "502 Server Error: Bad Gateway for url: http://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261128/true"
+      "error": "HTTPConnectionPool(host='cdn10.tsetmc.com', port=80): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261128/true (Caused by NameResolutionError(\"HTTP"
     },
     {
       "url": "https://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261128/false",
-      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261128/false (Caused by ProxyError('Unable to "
+      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261128/false (Caused by NameResolutionError(\"H"
     },
     {
       "url": "https://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261128/true",
-      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261128/true (Caused by ProxyError('Unable to c"
+      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261128/true (Caused by NameResolutionError(\"HT"
     }
   ],
   "source_url": "http://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
-  "quote_trade_count": 78834,
-  "quote_total_volume": 80484033,
-  "quote_retrieved_at": "2026-11-28T15:10:48.483407+03:30",
+  "quote_trade_count": 89051,
+  "quote_total_volume": 89555651,
+  "quote_retrieved_at": "2026-11-28T16:00:20.974347+03:30",
   "quote_match_basis": "post_trade_download",
   "quote_pre_trade": {
-    "count": 78834,
-    "volume": 80484033,
-    "retrieved_at": "2026-11-28T15:10:47.466815+03:30",
+    "count": 89014,
+    "volume": 89533754,
+    "retrieved_at": "2026-11-28T16:00:08.727087+03:30",
     "basis": "pre_trade_download"
   },
   "quote_post_trade": {
-    "count": 78834,
-    "volume": 80484033,
-    "retrieved_at": "2026-11-28T15:10:48.483407+03:30",
+    "count": 89051,
+    "volume": 89555651,
+    "retrieved_at": "2026-11-28T16:00:20.974347+03:30",
     "basis": "post_trade_download"
   },
   "quote_age_seconds": 0.0,
-  "observed_trade_count_delta": 31380,
-  "observed_volume_delta": 28246546,
+  "observed_trade_count_delta": 175,
+  "observed_volume_delta": 228825,
   "count_reconciled": false,
   "volume_reconciled": false,
   "count_reconciliation_status": "mismatch",
