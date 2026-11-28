@@ -1,13 +1,76 @@
 {
   "symbol": "عیار",
-  "source": "TSETMC GetTrade",
+  "source": "http://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
   "date": "20261128",
   "timezone": "Asia/Tehran",
-  "retrieved_at": "2026-11-28T11:10:32.977516+03:30",
-  "status": "not_available",
-  "trade_count": 0,
+  "retrieved_at": "2026-11-28T12:04:19.755447+03:30",
+  "status": "incomplete",
+  "trade_count": 7457,
   "candles_1h": [],
   "candles_4h": [],
   "note_fa": "کندل‌های موقت از endpoint معاملات زنده TSETMC؛ آمار نهایی روز نیست.",
-  "reason": "بازار در وضعیت معاملات پیوسته نیست"
+  "endpoint_errors": [
+    {
+      "url": "https://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
+      "error": "HTTPSConnectionPool(host='cdn.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTrade/34144395039913458 (Caused by ProxyError('Unable to connect to proxy', OSErr"
+    },
+    {
+      "url": "http://cdn10.tsetmc.com/api/Trade/GetTrade/34144395039913458",
+      "error": "502 Server Error: Bad Gateway for url: http://cdn10.tsetmc.com/api/Trade/GetTrade/34144395039913458"
+    },
+    {
+      "url": "https://cdn10.tsetmc.com/api/Trade/GetTrade/34144395039913458",
+      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTrade/34144395039913458 (Caused by ProxyError('Unable to connect to proxy', OSE"
+    },
+    {
+      "url": "https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261128/false",
+      "error": "HTTPSConnectionPool(host='cdn.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261128/false (Caused by ProxyError('Unable to co"
+    },
+    {
+      "url": "https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261128/true",
+      "error": "HTTPSConnectionPool(host='cdn.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261128/true (Caused by ProxyError('Unable to con"
+    },
+    {
+      "url": "http://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261128/false",
+      "error": "502 Server Error: Bad Gateway for url: http://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261128/false"
+    },
+    {
+      "url": "http://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261128/true",
+      "error": "502 Server Error: Bad Gateway for url: http://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261128/true"
+    },
+    {
+      "url": "https://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261128/false",
+      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261128/false (Caused by ProxyError('Unable to "
+    },
+    {
+      "url": "https://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261128/true",
+      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261128/true (Caused by ProxyError('Unable to c"
+    }
+  ],
+  "source_url": "http://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
+  "quote_trade_count": 7645,
+  "quote_total_volume": 12711511,
+  "quote_retrieved_at": "2026-11-28T12:04:21.154061+03:30",
+  "quote_match_basis": "post_trade_download",
+  "quote_pre_trade": {
+    "count": 7617,
+    "volume": 12694141,
+    "retrieved_at": "2026-11-28T12:04:20.564450+03:30",
+    "basis": "pre_trade_download"
+  },
+  "quote_post_trade": {
+    "count": 7645,
+    "volume": 12711511,
+    "retrieved_at": "2026-11-28T12:04:21.154061+03:30",
+    "basis": "post_trade_download"
+  },
+  "quote_age_seconds": 0.0,
+  "observed_trade_count_delta": 188,
+  "observed_volume_delta": 1177198,
+  "count_reconciled": false,
+  "volume_reconciled": false,
+  "count_reconciliation_status": "mismatch",
+  "volume_reconciliation_status": "mismatch",
+  "quality_note_fa": "فهرست معاملات با snapshot رسمی تابلو تطبیق کامل ندارد؛ کندل معتبر منتشر نمی‌شود.",
+  "reason": "تعداد یا حجم معاملات با snapshot رسمی تابلو تطبیق کامل ندارد؛ کندل معتبر منتشر نشد."
 }
