@@ -1,67 +1,64 @@
 {
   "symbol": "عیار",
-  "source": "TSETMC GetTrade",
+  "source": "http://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
   "date": "20261128",
   "timezone": "Asia/Tehran",
-  "retrieved_at": "2026-11-28T17:02:08.318656+03:30",
-  "status": "not_available",
-  "trade_count": 0,
+  "retrieved_at": "2026-11-28T17:54:42.355596+03:30",
+  "status": "incomplete",
+  "trade_count": 113879,
   "candles_1h": [],
   "candles_4h": [],
   "note_fa": "کندل‌های موقت از endpoint معاملات زنده TSETMC؛ آمار نهایی روز نیست.",
-  "reason": "همه مسیرهای رسمی دریافت معاملات ناموفق بودند",
   "endpoint_errors": [
     {
-      "url": "http://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
-      "error": "HTTPConnectionPool(host='89.46.219.133', port=8080): Max retries exceeded with url: http://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458 (Caused by ProxyError('Unable to conn"
-    },
-    {
-      "url": "https://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
-      "error": "HTTPSConnectionPool(host='cdn.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTrade/34144395039913458 (Caused by ProxyError('Unable to connect to proxy', Conne"
-    },
-    {
       "url": "http://cdn10.tsetmc.com/api/Trade/GetTrade/34144395039913458",
-      "error": "HTTPConnectionPool(host='89.46.219.133', port=8080): Read timed out. (read timeout=15)"
+      "error": "HTTPConnectionPool(host='cdn10.tsetmc.com', port=80): Max retries exceeded with url: /api/Trade/GetTrade/34144395039913458 (Caused by NameResolutionError(\"HTTPConnection(host='cdn1"
     },
     {
       "url": "https://cdn10.tsetmc.com/api/Trade/GetTrade/34144395039913458",
-      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTrade/34144395039913458 (Caused by ProxyError('Unable to connect to proxy', Con"
-    },
-    {
-      "url": "http://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261128/false",
-      "error": "HTTPConnectionPool(host='89.46.219.133', port=8080): Max retries exceeded with url: http://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261128/false (Caused by Prox"
-    },
-    {
-      "url": "http://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261128/true",
-      "error": "HTTPConnectionPool(host='89.46.219.133', port=8080): Max retries exceeded with url: http://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261128/true (Caused by Proxy"
-    },
-    {
-      "url": "https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261128/false",
-      "error": "HTTPSConnectionPool(host='cdn.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261128/false (Caused by ProxyError('Unable to co"
-    },
-    {
-      "url": "https://cdn.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261128/true",
-      "error": "HTTPSConnectionPool(host='cdn.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261128/true (Caused by ProxyError('Unable to con"
+      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTrade/34144395039913458 (Caused by NameResolutionError(\"HTTPSConnection(host='c"
     },
     {
       "url": "http://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261128/false",
-      "error": "HTTPConnectionPool(host='89.46.219.133', port=8080): Max retries exceeded with url: http://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261128/false (Caused by Pr"
+      "error": "HTTPConnectionPool(host='cdn10.tsetmc.com', port=80): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261128/false (Caused by NameResolutionError(\"HTT"
     },
     {
       "url": "http://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261128/true",
-      "error": "HTTPConnectionPool(host='89.46.219.133', port=8080): Read timed out. (read timeout=15)"
+      "error": "HTTPConnectionPool(host='cdn10.tsetmc.com', port=80): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261128/true (Caused by NameResolutionError(\"HTTP"
     },
     {
       "url": "https://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261128/false",
-      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261128/false (Caused by ProxyError('Unable to "
+      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261128/false (Caused by NameResolutionError(\"H"
     },
     {
       "url": "https://cdn10.tsetmc.com/api/Trade/GetTradeHistory/34144395039913458/20261128/true",
-      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261128/true (Caused by ProxyError('Unable to c"
-    },
-    {
-      "url": "Trade/GetTradeIntraDay",
-      "error": "aggregate ناقص/قدیمی است: last_age=7447s, max_gap=122s, volume_gap=22.13%"
+      "error": "HTTPSConnectionPool(host='cdn10.tsetmc.com', port=443): Max retries exceeded with url: /api/Trade/GetTradeHistory/34144395039913458/20261128/true (Caused by NameResolutionError(\"HT"
     }
-  ]
+  ],
+  "source_url": "http://cdn.tsetmc.com/api/Trade/GetTrade/34144395039913458",
+  "quote_trade_count": 114095,
+  "quote_total_volume": 110252919,
+  "quote_retrieved_at": "2026-11-28T17:55:46.085624+03:30",
+  "quote_match_basis": "post_trade_download",
+  "quote_pre_trade": {
+    "count": 113878,
+    "volume": 110076394,
+    "retrieved_at": "2026-11-28T17:54:51.463965+03:30",
+    "basis": "pre_trade_download"
+  },
+  "quote_post_trade": {
+    "count": 114095,
+    "volume": 110252919,
+    "retrieved_at": "2026-11-28T17:55:46.085624+03:30",
+    "basis": "post_trade_download"
+  },
+  "quote_age_seconds": 0.0,
+  "observed_trade_count_delta": 216,
+  "observed_volume_delta": 176507,
+  "count_reconciled": false,
+  "volume_reconciled": false,
+  "count_reconciliation_status": "mismatch",
+  "volume_reconciliation_status": "mismatch",
+  "quality_note_fa": "فهرست معاملات با snapshot رسمی تابلو تطبیق کامل ندارد؛ کندل معتبر منتشر نمی‌شود.",
+  "reason": "تعداد یا حجم معاملات با snapshot رسمی تابلو تطبیق کامل ندارد؛ کندل معتبر منتشر نشد."
 }
